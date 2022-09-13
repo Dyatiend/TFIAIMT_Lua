@@ -150,12 +150,12 @@ local           { printf("Found LOCAL keyword.\n"); }
     printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number); 
 }
 
-"--.*" { 
+--[^\[\]]* {
     printf("Found SINGLE_LINE_COMMENT: %s\n", yytext + 2); 
 }
 
-"--\[\[" { 
-    comment[0] = 0; 
+--\[\[ {
+    comment[0] = 0;
     BEGIN(ML_COMMENT);
 }
 
@@ -175,13 +175,13 @@ local           { printf("Found LOCAL keyword.\n"); }
 }
 
 \' {
-    string[0] = 0
-    BEGIN(STRING_SINGLE_QUOTES)
+    string[0] = 0;
+    BEGIN(STRING_SINGLE_QUOTES);
 }
 
 "\"" {
-    string[0] = 0
-    BEGIN(STRING_DOUBLE_QUOTES)
+    string[0] = 0;
+    BEGIN(STRING_DOUBLE_QUOTES);
 }
 
 
@@ -193,24 +193,24 @@ local           { printf("Found LOCAL keyword.\n"); }
     strcat(string, yytext); 
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES> \\u\{{HEX_DIGIT}{1,8}\} {
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\u\{{HEX_DIGIT}{1,8}\} {
     // TODO
     remove_char_from_str(yytext,tmp1,'{');
     remove_char_from_str(tmp1,tmp2,'}');
     strcat(string, tmp2);
 }
 
-<STRING_SINGLE_QUOTES, STRING_DOUBLE_QUOTES> \\u\\{(|{HEX_DIGIT}{9,})\\} {
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>"\\u\{(|{HEX_DIGIT}{9,})\}" {
     printf("ERROR: Invalid hex escape \n");
 }
 
-<STRING_SINGLE_QUOTES, STRING_DOUBLE_QUOTES> \\{DIGIT}{1,3} {
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\{DIGIT}{1,3} {
     remove_char_from_str(yytext,tmp1,'{');
     remove_char_from_str(tmp1,tmp2,'}');
     strcat(string, tmp2);
 }
 
-<STRING_SINGLE_QUOTES, STRING_DOUBLE_QUOTES> \\{DIGIT}{4,} {
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\{DIGIT}{4,} {
     printf("ERROR: Invalid hex escape \n");
 }
 
@@ -243,9 +243,9 @@ void remove_char_from_str(const char * str, char * dest, char deleted_char) {
     dest[j] = 0;
 }
 
-void main(int argc, char **argv ){
+int main(int argc, char **argv ){
 	yyin = fopen(argv[1], "r" );
 
     yylex();
-    return;
+    return 0;
 }

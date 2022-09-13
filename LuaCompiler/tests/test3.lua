@@ -1,0 +1,18 @@
+'Text&232\\\n"\''
+"Text&232\\\n'\""
+
+"Texxt\\\\"
+"text1\\\" text2"
+"text a\sd txt123"
+"txt a\\sd txt123"
+"txt a\nsd txt123"
+"txt   \z      txt123"
+"\x"
+"\x123"
+"\xRR"
+"\u{2713}"
+"\u{KKKK}"
+"{"
+"#"
+"}"
+"%"
