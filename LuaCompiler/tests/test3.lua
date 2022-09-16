@@ -3,11 +3,22 @@
 
 "Texxt\\\\"
 "text1\\\" text2"
-"text a\sd txt123"
-"txt a\\sd txt123"
+"text \asd txt123"
+"txt \\asd txt123"
 "txt a\nsd txt123"
-"txt   \z      txt123"
+"txt   v\z      txt123"
+"txt   v\z      txt12'3"
+'txt   v\z      txt12"3'
+'txt   v\z
+    txt12"3'
+"\123"
+"\59"
+"\7"
+"\1233"
+"\ "
 "\x"
+"\x2"
+"\x23"
 "\x123"
 "\xRR"
 "\u{2713}"
@@ -16,3 +27,4 @@
 "#"
 "}"
 "%"
+"✓"

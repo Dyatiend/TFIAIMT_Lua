@@ -19,16 +19,25 @@ VAR_CHARS [a-zA-Z0-9_]
 %x ML_COMMENT
 %x STRING_SINGLE_QUOTES
 %x STRING_DOUBLE_QUOTES
+%x DELETE_WHITESPACE
 
 %%
 
 %{
+    enum TypeString {
+        DOUBLE_QUOTES,
+        SINGLE_QUOTES,
+        MULTISTRING,
+        UNDEFINED
+    };
+    
     int int_number;
     float float_number;
     char tmp1[100];
     char tmp2[100];
     char comment[1000];
     char string[1000];
+    enum TypeString typeString;
 
     int commentLevel;
 %}
@@ -104,7 +113,7 @@ local           { printf("Found LOCAL keyword.\n"); }
 "["             { printf("Found OPEN_SQUARE_BRACKET.\n"); }
 "]"             { printf("Found CLOSE_SQUARE_BRACKET.\n"); }
 
-":"             { printf("Found GOTO_TAG_MARK.\n"); }
+"::"             { printf("Found GOTO_TAG_MARK.\n"); }
 ";"             { printf("Found SEMICOLON_FIELDSEP.\n"); }
 ":"             { printf("Found COLON operator.\n"); }
 ","             { printf("Found COMMA_FIELDSEP operator.\n"); }
@@ -153,6 +162,11 @@ local           { printf("Found LOCAL keyword.\n"); }
     printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number);
 }
 
+%{
+    // +++++++++++++++++++++++++ Комментарии ++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%}
+
 -- {
 BEGIN(COMMENT);
 }
@@ -170,7 +184,6 @@ BEGIN(INITIAL);
 
 <ML_COMMENT>.*"]"=*"]" {
 
-
 int level = 0;
 for(int i = strlen(yytext) - 2; i >= 0; --i) {
 
@@ -179,8 +192,6 @@ for(int i = strlen(yytext) - 2; i >= 0; --i) {
     }
     if(yytext[i] == ']') break;
 }
-
-
 
 if(commentLevel == level) {
 strcat(comment, yytext);
@@ -203,60 +214,167 @@ strcat(comment, yytext);
 }
 
 
-[a-zA-Z_]{VAR_CHARS}* {
-    printf("Found VARIABLE or FUNCTION_NAME %s\n", yytext);
-}
+%{
+    // +++++++++++++++++++++++++ Строки ++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%}
 
 \' {
     string[0] = 0;
+    typeString = SINGLE_QUOTES;
     BEGIN(STRING_SINGLE_QUOTES);
 }
 
-"\"" {
+\" {
     string[0] = 0;
+    typeString = DOUBLE_QUOTES;
     BEGIN(STRING_DOUBLE_QUOTES);
 }
 
 
 <STRING_SINGLE_QUOTES>[^\a\b\f\n\r\t\v\\\'\"]+ {
+    //TODO Здесь поидее можно удалить \a\b\f\n\r\t\v и это \" (тогда можно удалить нижние правила)
     strcat(string, yytext); 
 }
 
 <STRING_DOUBLE_QUOTES>[^\a\b\f\n\r\t\v\\\'\"]+ {
+    //TODO Здесь поидее можно удалить \a\b\f\n\r\t\v и это \' (тогда можно удалить нижние правила)
     strcat(string, yytext); 
 }
 
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\u\{{HEX_DIGIT}{1,8}\} {
-    // TODO
+    //TODO Проверить
     remove_char_from_str(yytext,tmp1,'{');
     remove_char_from_str(tmp1,tmp2,'}');
     strcat(string, tmp2);
+    
+    // sscanf(yytext+2, "%x", &int_number);
+    // tmp1[0] = int_number;
+    // tmp1[1] = 0;
+    // strcat(string, tmp1);
 }
 
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>"\\u\{(|{HEX_DIGIT}{9,})\}" {
+    //TODO Проверить
     printf("ERROR: Invalid hex escape \n");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x{HEX_DIGIT}{2} {
+    sscanf(yytext+2, "%x", &int_number);
+    tmp1[0] = int_number;
+    tmp1[1] = 0;
+    strcat(string, tmp1);
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x{HEX_DIGIT}{0,1} {
+    printf("ERROR: Invalid hex escape \n");
+    //TODO мб надо бегин инишал сделать
+    //TODO мб еще нужная проверка на то что там не хекс числа
 }
 
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\{DIGIT}{1,3} {
-    remove_char_from_str(yytext,tmp1,'{');
-    remove_char_from_str(tmp1,tmp2,'}');
-    strcat(string, tmp2);
+    sscanf(yytext+1, "%d", &int_number);
+    tmp1[0] = int_number;
+    tmp1[1] = 0;
+    strcat(string, tmp1);
 }
 
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\{DIGIT}{4,} {
+    //TODO Здесь вроде не должно быть ошибки а браться 3 числа, а остальные считаются просто числами
+    //а вот просто слеш без чисел - ошибка
     printf("ERROR: Invalid hex escape \n");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\" " {
+    //TODO Надо наверн вместо пробела написать любые символы кроме букв, которые являются эскейп последовательностями и чисел
+    printf("ERROR: Invalid hex escape \n");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\a {
+    strcat(string, "\a");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\b {
+    strcat(string, "\b");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\f {
+    strcat(string, "\f");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\n {
+    strcat(string, "\n");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\r {
+    strcat(string, "\r");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\t {
+    strcat(string, "\t");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\v {
+    strcat(string, "\v");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\z {
+    BEGIN(DELETE_WHITESPACE);
+}
+
+<DELETE_WHITESPACE>(" "|\n)* {
+    if(typeString == DOUBLE_QUOTES)
+    {
+        BEGIN(STRING_DOUBLE_QUOTES);
+    }
+    else if(typeString == SINGLE_QUOTES)
+    {
+        BEGIN(STRING_SINGLE_QUOTES);
+    }
+    //TODO Добавить для многострочного текста
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\\\ {
+    strcat(string, "\\");
+}
+
+<STRING_DOUBLE_QUOTES>\\\" {
+    strcat(string, "\"");
+}
+
+<STRING_SINGLE_QUOTES>\\\' {
+    strcat(string, "'");
+}
+
+<STRING_SINGLE_QUOTES>\" {
+    strcat(string, "\"");
+}
+
+<STRING_DOUBLE_QUOTES>\' {
+    strcat(string, "'");
 }
 
 <STRING_SINGLE_QUOTES>\' {
     printf("Found STRING_SINGLE_QUOTES: %s\n", string);
+    typeString = UNDEFINED;
     BEGIN(INITIAL);
 }
 
 <STRING_DOUBLE_QUOTES>\" {
     printf("Found STRING_DOUBLE_QUOTES: %s\n", string);
+    typeString = UNDEFINED;
     BEGIN(INITIAL);
 }
 
+
+%{
+    // +++++++++++++++++++++++++ _____ ++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%}
+
+[a-zA-Z_]{VAR_CHARS}* {
+    printf("Found VARIABLE or FUNCTION_NAME %s\n", yytext);
+}
 
 \n { 
     //printf("Found NEW_LINE\n");
