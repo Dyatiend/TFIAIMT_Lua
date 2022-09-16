@@ -15,6 +15,7 @@ HEX_EXPONENT [pP][+-]?{HEX_DIGIT}*
 
 VAR_CHARS [a-zA-Z0-9_]
 
+%x COMMENT
 %x ML_COMMENT
 %x STRING_SINGLE_QUOTES
 %x STRING_DOUBLE_QUOTES
@@ -28,6 +29,8 @@ VAR_CHARS [a-zA-Z0-9_]
     char tmp2[100];
     char comment[1000];
     char string[1000];
+
+    int commentLevel;
 %}
 
 %{
@@ -133,40 +136,70 @@ local           { printf("Found LOCAL keyword.\n"); }
     printf("Found INT_HEXADECIMAL_NUMBER %d\n", int_number);
 }
 
-0[xX]{HEX_DIGIT}+[pP][+-]?{DIGIT}+ { 
+0[xX]{HEX_DIGIT}+[pP][+-]?{DIGIT}+ {
     sscanf(yytext, "%a", &float_number);
-    printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number); 
+    printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number);
 }
 
 
 
 
-"({DIGIT})*\.(?(1){DIGIT}*|{DIGIT}+)(?:|[eE][+-]?{DIGIT}+)" { 
-    printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext)); 
+"({DIGIT})*\.(?(1){DIGIT}*|{DIGIT}+)(?:|[eE][+-]?{DIGIT}+)" {
+    printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext));
 }
 
-"0[xX]({HEX_DIGIT})*\.(?(1){HEX_DIGIT}*|{HEX_DIGIT}+)(?:|[pP][+-]?{DIGIT}+)" { 
+"0[xX]({HEX_DIGIT})*\.(?(1){HEX_DIGIT}*|{HEX_DIGIT}+)(?:|[pP][+-]?{DIGIT}+)" {
     sscanf(yytext, "%a", &float_number);
-    printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number); 
+    printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number);
 }
 
---[^\[\]]* {
-    printf("Found SINGLE_LINE_COMMENT: %s\n", yytext + 2); 
+-- {
+BEGIN(COMMENT);
 }
 
---\[\[ {
-    comment[0] = 0;
-    BEGIN(ML_COMMENT);
+<COMMENT>"["=*"["/.* {
+comment[0] = 0;
+commentLevel = strlen(yytext) - 2;
+BEGIN(ML_COMMENT);
+}
+
+<COMMENT>.* {
+printf("Нашел одиночный %s\n", yytext);
+BEGIN(INITIAL);
+}
+
+<ML_COMMENT>.*"]"=*"]" {
+
+
+int level = 0;
+for(int i = strlen(yytext) - 2; i >= 0; --i) {
+
+    if(yytext[i] == '=') {
+    level += 1;
+    }
+    if(yytext[i] == ']') break;
 }
 
 
-<ML_COMMENT>"(?:(?!\]\]).)*" { 
-    strcat(comment, yytext); 
+
+if(commentLevel == level) {
+strcat(comment, yytext);
+comment[strlen(comment) - 2 - commentLevel] = 0;
+printf("Нашел многострочный %s\n", comment);
+commentLevel = 0;
+BEGIN(INITIAL);
+}
+else {
+strcat(comment, yytext);
+}
 }
 
-<ML_COMMENT>\]\] {
-    printf("Found MULTI_LINE_COMMENT: %s\n", comment);
-    BEGIN(INITIAL);
+<ML_COMMENT>.* {
+strcat(comment, yytext);
+}
+
+<ML_COMMENT>\n {
+strcat(comment, yytext);
 }
 
 
@@ -226,7 +259,7 @@ local           { printf("Found LOCAL keyword.\n"); }
 
 
 \n { 
-    printf("Found NEW_LINE\n"); 
+    //printf("Found NEW_LINE\n");
 }
 
 %%
