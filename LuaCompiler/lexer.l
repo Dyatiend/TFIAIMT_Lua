@@ -4,14 +4,14 @@
 %{
     #include <stdio.h>
 
-    void remove_char_from_str(const char * str, char * dest, char deleted_char);
+    int calc_long_bracket_level(const char * str);
 %}
 
 DIGIT [0-9]
 HEX_DIGIT [0-9A-Fa-f]
 
-EXPONENT [eE][+-]?{DIGIT}*
-HEX_EXPONENT [pP][+-]?{HEX_DIGIT}*
+EXPONENT [eE][+-]?{DIGIT}+
+HEX_EXPONENT [pP][+-]?{DIGIT}+
 
 VAR_CHARS [a-zA-Z0-9_]
 
@@ -19,6 +19,7 @@ VAR_CHARS [a-zA-Z0-9_]
 %x ML_COMMENT
 %x STRING_SINGLE_QUOTES
 %x STRING_DOUBLE_QUOTES
+%x ML_STRING
 %x DELETE_WHITESPACE
 
 %%
@@ -27,7 +28,6 @@ VAR_CHARS [a-zA-Z0-9_]
     enum TypeString {
         DOUBLE_QUOTES,
         SINGLE_QUOTES,
-        MULTISTRING,
         UNDEFINED
     };
     
@@ -136,14 +136,20 @@ local           { printf("Found LOCAL keyword.\n"); }
     printf("Found INT_DECIMAL_NUMBER %d\n", atoi(yytext));
 }
 
-{DIGIT}+"."{DIGIT}* {
+{DIGIT}+("."{DIGIT}*)?{EXPONENT}? {
     printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext));
 }
 
-{DIGIT}+("."{DIGIT}*)?[eE][+-]?{DIGIT}+ {
-    //TODO мб можно объединить с регуляркой сверху но пока хз как
-    //TODO мб неправильно что-то с размерностью после запятой
+{DIGIT}+("."{DIGIT}*)?[eE][+-]? {
+    printf("Error: malformed number\n");
+}
+
+{DIGIT}*"."{DIGIT}+{EXPONENT}? {
     printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext));
+}
+
+{DIGIT}*"."{DIGIT}+[eE][+-]? {
+    printf("Error: malformed number\n");
 }
 
 0[xX]{HEX_DIGIT}+ {
@@ -151,22 +157,25 @@ local           { printf("Found LOCAL keyword.\n"); }
     printf("Found INT_HEXADECIMAL_NUMBER %d\n", int_number);
 }
 
-0[xX]{HEX_DIGIT}+[pP][+-]?{DIGIT}+ {
+0[xX]{HEX_DIGIT}+("."{HEX_DIGIT}*)?{HEX_EXPONENT}? {
     sscanf(yytext, "%a", &float_number);
     printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number);
 }
 
-
-
-
-"({DIGIT})*\.(?(1){DIGIT}*|{DIGIT}+)(?:|[eE][+-]?{DIGIT}+)" {
-    printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext));
+0[xX]{HEX_DIGIT}+("."{HEX_DIGIT}*)?[pP][+-]? {
+    printf("Error: malformed number\n");
 }
 
-"0[xX]({HEX_DIGIT})*\.(?(1){HEX_DIGIT}*|{HEX_DIGIT}+)(?:|[pP][+-]?{DIGIT}+)" {
+
+0[xX]{HEX_DIGIT}*"."{HEX_DIGIT}+{HEX_EXPONENT}? {
     sscanf(yytext, "%a", &float_number);
     printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number);
 }
+
+0[xX]{HEX_DIGIT}*"."{HEX_DIGIT}+[pP][+-]? {
+    printf("Error: malformed number\n");
+}
+
 
 %{
     // +++++++++++++++++++++++++ Комментарии ++++++++++++++++++++++++++++++++
@@ -190,14 +199,7 @@ BEGIN(INITIAL);
 
 <ML_COMMENT>.*"]"=*"]" {
 
-int level = 0;
-for(int i = strlen(yytext) - 2; i >= 0; --i) {
-
-    if(yytext[i] == '=') {
-    level += 1;
-    }
-    if(yytext[i] == ']') break;
-}
+int level = calc_long_bracket_level(yytext);
 
 if(commentLevel == level) {
 strcat(comment, yytext);
@@ -225,6 +227,41 @@ strcat(comment, yytext);
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %}
 
+"["=*"["\n? {
+    comment[0] = 0;
+    if(yytext[strlen(yytext)-1] == '\n')
+        commentLevel = strlen(yytext) - 3;
+    else {
+        commentLevel = strlen(yytext) - 2;
+    }
+BEGIN(ML_STRING);
+}
+
+
+<ML_STRING>.*"]"=*"]" {
+
+int level = calc_long_bracket_level(yytext);
+
+if(commentLevel == level) {
+strcat(comment, yytext);
+comment[strlen(comment) - 2 - commentLevel] = 0;
+printf("Нашел многострочный строку %s\n", comment);
+commentLevel = 0;
+BEGIN(INITIAL);
+}
+else {
+strcat(comment, yytext);
+}
+}
+
+<ML_STRING>.* {
+strcat(comment, yytext);
+}
+
+<ML_STRING>\n {
+strcat(comment, yytext);
+}
+
 \' {
     string[0] = 0;
     typeString = SINGLE_QUOTES;
@@ -238,32 +275,15 @@ strcat(comment, yytext);
 }
 
 
-<STRING_SINGLE_QUOTES>[^\a\b\f\n\r\t\v\\\'\"]+ {
-    //TODO Здесь поидее можно удалить \a\b\f\n\r\t\v и это \" (тогда можно удалить нижние правила)
+<STRING_SINGLE_QUOTES>[^\\\'\n]+ {
     strcat(string, yytext); 
 }
 
-<STRING_DOUBLE_QUOTES>[^\a\b\f\n\r\t\v\\\'\"]+ {
-    //TODO Здесь поидее можно удалить \a\b\f\n\r\t\v и это \' (тогда можно удалить нижние правила)
+<STRING_DOUBLE_QUOTES>[^\\\"\n]+ {
     strcat(string, yytext); 
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\u\{{HEX_DIGIT}{1,8}\} {
-    //TODO Проверить
-    remove_char_from_str(yytext,tmp1,'{');
-    remove_char_from_str(tmp1,tmp2,'}');
-    strcat(string, tmp2);
-    
-    // sscanf(yytext+2, "%x", &int_number);
-    // tmp1[0] = int_number;
-    // tmp1[1] = 0;
-    // strcat(string, tmp1);
-}
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>"\\u\{(|{HEX_DIGIT}{9,})\}" {
-    //TODO Проверить
-    printf("ERROR: Invalid hex escape \n");
-}
 
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x{HEX_DIGIT}{2} {
     sscanf(yytext+2, "%x", &int_number);
@@ -272,7 +292,7 @@ strcat(comment, yytext);
     strcat(string, tmp1);
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x[G-Zg-z]{1,2} {
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x[^0-9A-Fa-f\"\'\\]{1,2} {
     printf("ERROR: Invalid hex escape \n");
     //TODO мб надо бегин инишал сделать
 }
@@ -280,18 +300,20 @@ strcat(comment, yytext);
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x{HEX_DIGIT}{0,1} {
     printf("ERROR: Invalid hex escape \n");
     //TODO мб надо бегин инишал сделать
-    //TODO мб еще нужная проверка на то что там не хекс числа
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\{DIGIT}{1,3} {
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\(1[0-9][0-9]|2[0-4][0-9]|25[0-5]|[1-9][0-9]|[0-9]) {
     sscanf(yytext+1, "%d", &int_number);
     tmp1[0] = int_number;
     tmp1[1] = 0;
     strcat(string, tmp1);
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\" " {
-    //TODO Надо наверн вместо пробела написать любые символы кроме букв, которые являются эскейп последовательностями и чисел
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\([3-9][0-9][0-9]|2[6-9][0-9]|25[6-9]) {
+    printf("ERROR: Invalid hex escape \n");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\[^abfnrtvzx\"\'\\0-9] {
     printf("ERROR: Invalid hex escape \n");
 }
 
@@ -327,7 +349,7 @@ strcat(comment, yytext);
     BEGIN(DELETE_WHITESPACE);
 }
 
-<DELETE_WHITESPACE>(" "|\n)* {
+<DELETE_WHITESPACE>[ \f\n\r\t\v]* {
     if(typeString == DOUBLE_QUOTES)
     {
         BEGIN(STRING_DOUBLE_QUOTES);
@@ -336,26 +358,21 @@ strcat(comment, yytext);
     {
         BEGIN(STRING_SINGLE_QUOTES);
     }
-    //TODO Добавить для многострочного текста
 }
 
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\\\ {
     strcat(string, "\\");
 }
 
-<STRING_DOUBLE_QUOTES>\\\" {
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\n {
+    printf("Error: unfinished string\n");
+}
+
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\\" {
     strcat(string, "\"");
 }
 
-<STRING_SINGLE_QUOTES>\\\' {
-    strcat(string, "'");
-}
-
-<STRING_SINGLE_QUOTES>\" {
-    strcat(string, "\"");
-}
-
-<STRING_DOUBLE_QUOTES>\' {
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\\' {
     strcat(string, "'");
 }
 
@@ -391,26 +408,31 @@ strcat(comment, yytext);
     printf("Found VARIABLE or FUNCTION_NAME %s\n", yytext);
 }
 
-\n { 
-    //printf("Found NEW_LINE\n");
+[^ \f\n\r\t\v] { 
+    printf("Error: unexpected symbol \n");
+}
+
+[ \f\n\r\t\v] { 
+    
 }
 
 %%
 
-void remove_char_from_str(const char * str, char * dest, char deleted_char) {
-	int j = 0;
-
-    for(int i = 0; str[i] != 0; i++) {
-        if(str[i] != deleted_char) {
-            dest[j++] = str[i];
+int calc_long_bracket_level(const char * str) {
+    int level = 0;
+    for(int i = strlen(str) - 2; i >= 0; --i) {
+        if(str[i] == '=') {
+            level += 1;
+        }
+        if(str[i] == ']') {
+            break;
         }
     }
-
-    dest[j] = 0;
+    return level;
 }
 
-int main(int argc, char **argv ){
-	yyin = fopen(argv[1], "r" );
+int main(int argc, char ** argv){
+    yyin = fopen(argv[1], "r");
 
     yylex();
     return 0;

@@ -1,6 +1,8 @@
 'Text&232\\\n"\''
 "Text&232\\\n'\""
 
+"asd\'asd'"
+
 "Texxt\\\\"
 "text1\\\" text2"
 "text \asd txt123"
@@ -11,10 +13,13 @@
 'txt   v\z      txt12"3'
 'txt   v\z
     txt12"3'
+'txt   v\z 	 txt12"3'
 "\123"
 "\59"
 "\7"
 "\1233"
+"\2563"
+"\7773"
 "\ "
 "\x"
 "\x2"

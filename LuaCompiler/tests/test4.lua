@@ -54,3 +54,8 @@ text2]===]
 [[text
  text2 'txt' text3
 ]]
+
+[[
+asdasdadas
+asdasdadas
+]]
