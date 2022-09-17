@@ -136,7 +136,13 @@ local           { printf("Found LOCAL keyword.\n"); }
     printf("Found INT_DECIMAL_NUMBER %d\n", atoi(yytext));
 }
 
-{DIGIT}+[eE][+-]?{DIGIT}+ {
+{DIGIT}+"."{DIGIT}* {
+    printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext));
+}
+
+{DIGIT}+("."{DIGIT}*)?[eE][+-]?{DIGIT}+ {
+    //TODO мб можно объединить с регуляркой сверху но пока хз как
+    //TODO мб неправильно что-то с размерностью после запятой
     printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext));
 }
 
