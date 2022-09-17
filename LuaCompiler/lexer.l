@@ -266,6 +266,11 @@ strcat(comment, yytext);
     strcat(string, tmp1);
 }
 
+<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x[G-Zg-z]{1,2} {
+    printf("ERROR: Invalid hex escape \n");
+    //TODO мб надо бегин инишал сделать
+}
+
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x{HEX_DIGIT}{0,1} {
     printf("ERROR: Invalid hex escape \n");
     //TODO мб надо бегин инишал сделать
@@ -277,12 +282,6 @@ strcat(comment, yytext);
     tmp1[0] = int_number;
     tmp1[1] = 0;
     strcat(string, tmp1);
-}
-
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\{DIGIT}{4,} {
-    //TODO Здесь вроде не должно быть ошибки а браться 3 числа, а остальные считаются просто числами
-    //а вот просто слеш без чисел - ошибка
-    printf("ERROR: Invalid hex escape \n");
 }
 
 <STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\" " {
