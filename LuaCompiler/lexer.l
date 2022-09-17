@@ -365,6 +365,16 @@ strcat(comment, yytext);
     BEGIN(INITIAL);
 }
 
+<STRING_DOUBLE_QUOTES><<EOF>> { 
+    printf("ERROR: expected \" \n"); 
+    BEGIN(INITIAL);
+    }
+
+<STRING_SINGLE_QUOTES><<EOF>> { 
+    printf("ERROR: expected ' \n");
+    BEGIN(INITIAL);
+    }
+
 
 %{
     // +++++++++++++++++++++++++ _____ ++++++++++++++++++++++++++++++++

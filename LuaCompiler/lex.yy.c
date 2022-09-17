@@ -1715,13 +1715,27 @@ YY_RULE_SETUP
     BEGIN(INITIAL);
 }
 	YY_BREAK
+case YY_STATE_EOF(STRING_DOUBLE_QUOTES):
+#line 369 "lexer.l"
+{ 
+    printf("ERROR: expected \" \n"); 
+    BEGIN(INITIAL);
+    }
+	YY_BREAK
+case YY_STATE_EOF(STRING_SINGLE_QUOTES):
+#line 374 "lexer.l"
+{ 
+    printf("ERROR: expected ' \n");
+    BEGIN(INITIAL);
+    }
+	YY_BREAK
 
     // +++++++++++++++++++++++++ _____ ++++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 case 95:
 YY_RULE_SETUP
-#line 375 "lexer.l"
+#line 385 "lexer.l"
 {
     printf("Found VARIABLE or FUNCTION_NAME %s\n", yytext);
 }
@@ -1729,22 +1743,20 @@ YY_RULE_SETUP
 case 96:
 /* rule 96 can match eol */
 YY_RULE_SETUP
-#line 379 "lexer.l"
+#line 389 "lexer.l"
 { 
     //printf("Found NEW_LINE\n");
 }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 383 "lexer.l"
+#line 393 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1742 "lex.yy.c"
+#line 1756 "lex.yy.c"
 			case YY_STATE_EOF(INITIAL):
 			case YY_STATE_EOF(COMMENT):
 			case YY_STATE_EOF(ML_COMMENT):
-			case YY_STATE_EOF(STRING_SINGLE_QUOTES):
-			case YY_STATE_EOF(STRING_DOUBLE_QUOTES):
 			case YY_STATE_EOF(DELETE_WHITESPACE):
 				yyterminate();
 
@@ -2722,7 +2734,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 383 "lexer.l"
+#line 393 "lexer.l"
 
 
 void remove_char_from_str(const char * str, char * dest, char deleted_char) {
