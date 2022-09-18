@@ -17,29 +17,34 @@ VAR_CHARS [a-zA-Z0-9_]
 
 %x COMMENT
 %x ML_COMMENT
-%x STRING_SINGLE_QUOTES
-%x STRING_DOUBLE_QUOTES
+
+%x SQ_STRING
+%x DQ_STRING
 %x ML_STRING
-%x DELETE_WHITESPACE
+
+%x REMOVING_WHITESPACES
 
 %%
 
 %{
-    enum TypeString {
-        DOUBLE_QUOTES,
-        SINGLE_QUOTES,
+    enum string_type {
+        SQ,
+        DQ,
         UNDEFINED
     };
-    
+
     int int_number;
     float float_number;
+
     char tmp1[100];
     char tmp2[100];
-    char comment[1000];
-    char string[1000];
-    enum TypeString typeString;
 
-    int commentLevel;
+    char comment[1000];
+
+    char string[1000];
+    enum string_type string_type;
+
+    int long_bracket_level;
 %}
 
 %{
@@ -113,308 +118,291 @@ local           { printf("Found LOCAL keyword.\n"); }
 "["             { printf("Found OPEN_SQUARE_BRACKET.\n"); }
 "]"             { printf("Found CLOSE_SQUARE_BRACKET.\n"); }
 
-"::"             { printf("Found GOTO_TAG_MARK.\n"); }
+"::"            { printf("Found GOTO_TAG_MARK.\n"); }
 ";"             { printf("Found SEMICOLON_FIELDSEP.\n"); }
 ":"             { printf("Found COLON operator.\n"); }
-","             { printf("Found COMMA_FIELDSEP operator.\n"); }
+","             { printf("Found COMMA_FIELDSEP.\n"); }
 "."             { printf("Found DOT operator.\n"); }
 ".."            { printf("Found CONCAT operator.\n"); }
 "..."           { printf("Found VARARG.\n"); }
 
 %{
-    // +++++++++++++++++++++++++ Служебные символы ++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++ Числовые константы +++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%}
-
-%{
-    // +++++++++++++++++++++++++ Служебные символы ++++++++++++++++++++++++++++++++
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // TODO
 %}
 
 {DIGIT}+ {
-    printf("Found INT_DECIMAL_NUMBER %d\n", atoi(yytext));
+    printf("Found INT_DECIMAL_NUMBER <%d>.\n", atoi(yytext));
 }
 
 {DIGIT}+("."{DIGIT}*)?{EXPONENT}? {
-    printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext));
+    printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
 }
 
 {DIGIT}+("."{DIGIT}*)?[eE][+-]? {
-    printf("Error: malformed number\n");
+    printf("Error: malformed number <%s>.\n", yytext);
 }
 
 {DIGIT}*"."{DIGIT}+{EXPONENT}? {
-    printf("Found FLOAT_DECIMAL_NUMBER %f\n", atof(yytext));
+    printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
 }
 
 {DIGIT}*"."{DIGIT}+[eE][+-]? {
-    printf("Error: malformed number\n");
+    printf("Error: malformed number <%s>.\n", yytext);
 }
 
 0[xX]{HEX_DIGIT}+ {
     sscanf(yytext, "%x", &int_number);
-    printf("Found INT_HEXADECIMAL_NUMBER %d\n", int_number);
+    printf("Found INT_HEXADECIMAL_NUMBER <%d>.\n", int_number);
 }
 
 0[xX]{HEX_DIGIT}+("."{HEX_DIGIT}*)?{HEX_EXPONENT}? {
     sscanf(yytext, "%a", &float_number);
-    printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number);
+    printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
 }
 
 0[xX]{HEX_DIGIT}+("."{HEX_DIGIT}*)?[pP][+-]? {
-    printf("Error: malformed number\n");
+    printf("Error: malformed number <%s>.\n", yytext);
 }
-
 
 0[xX]{HEX_DIGIT}*"."{HEX_DIGIT}+{HEX_EXPONENT}? {
     sscanf(yytext, "%a", &float_number);
-    printf("Found FLOAT_HEXADECIMAL_NUMBER %f\n", float_number);
+    printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
 }
 
 0[xX]{HEX_DIGIT}*"."{HEX_DIGIT}+[pP][+-]? {
-    printf("Error: malformed number\n");
+    printf("Error: malformed number <%s>.\n", yytext);
 }
 
-
 %{
-    // +++++++++++++++++++++++++ Комментарии ++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++ Комментарии +++++++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %}
 
 -- {
-BEGIN(COMMENT);
+    BEGIN(COMMENT);
 }
 
 <COMMENT>"["=*"["/.* {
-comment[0] = 0;
-commentLevel = strlen(yytext) - 2;
-BEGIN(ML_COMMENT);
+    comment[0] = 0;
+    long_bracket_level = strlen(yytext) - 2;
+    BEGIN(ML_COMMENT);
 }
 
 <COMMENT>.* {
-printf("Нашел одиночный %s\n", yytext);
-BEGIN(INITIAL);
+    printf("Found COMMENT: <%s>.\n", yytext);
+    BEGIN(INITIAL);
 }
 
-<ML_COMMENT>.*"]"=*"]" {
+<ML_COMMENT>.*"]"=*"]"/.* {
+    int level = calc_long_bracket_level(yytext);
+    if(long_bracket_level == level) {
+        strcat(comment, yytext);
+        comment[strlen(comment) - 2 - long_bracket_level] = 0;
 
-int level = calc_long_bracket_level(yytext);
+        printf("Found ML_COMMENT: \n<<<<<<<<\n%s\n>>>>>>>>\n", comment);
 
-if(commentLevel == level) {
-strcat(comment, yytext);
-comment[strlen(comment) - 2 - commentLevel] = 0;
-printf("Нашел многострочный %s\n", comment);
-commentLevel = 0;
-BEGIN(INITIAL);
-}
-else {
-strcat(comment, yytext);
-}
-}
-
-<ML_COMMENT>.* {
-strcat(comment, yytext);
+        long_bracket_level = 0;
+        BEGIN(INITIAL);
+    }
+    else {
+        strcat(comment, yytext);
+    }
 }
 
-<ML_COMMENT>\n {
-strcat(comment, yytext);
+<ML_COMMENT>.*|\n {
+    strcat(comment, yytext);
 }
-
 
 %{
-    // +++++++++++++++++++++++++ Строки ++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++ Строковые константы +++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %}
 
 "["=*"["\n? {
-    comment[0] = 0;
-    if(yytext[strlen(yytext)-1] == '\n')
-        commentLevel = strlen(yytext) - 3;
+    string[0] = 0;
+
+    if(yytext[strlen(yytext) - 1] == '\n')
+        long_bracket_level = strlen(yytext) - 3;
     else {
-        commentLevel = strlen(yytext) - 2;
+        long_bracket_level = strlen(yytext) - 2;
     }
-BEGIN(ML_STRING);
+
+    BEGIN(ML_STRING);
 }
 
+<ML_STRING>.*"]"=*"]"/.* {
+    int level = calc_long_bracket_level(yytext);
+    if(long_bracket_level == level) {
+        strcat(string, yytext);
+        string[strlen(string) - 2 - long_bracket_level] = 0;
 
-<ML_STRING>.*"]"=*"]" {
+        printf("Found ML_STRING: \n<<<<<<<<\n%s\n>>>>>>>>\n", string);
 
-int level = calc_long_bracket_level(yytext);
-
-if(commentLevel == level) {
-strcat(comment, yytext);
-comment[strlen(comment) - 2 - commentLevel] = 0;
-printf("Нашел многострочный строку %s\n", comment);
-commentLevel = 0;
-BEGIN(INITIAL);
-}
-else {
-strcat(comment, yytext);
-}
-}
-
-<ML_STRING>.* {
-strcat(comment, yytext);
+        long_bracket_level = 0;
+        BEGIN(INITIAL);
+    }
+    else {
+        strcat(string, yytext);
+    }
 }
 
-<ML_STRING>\n {
-strcat(comment, yytext);
+<ML_STRING>.*|\n {
+    strcat(string, yytext);
 }
 
 \' {
     string[0] = 0;
-    typeString = SINGLE_QUOTES;
-    BEGIN(STRING_SINGLE_QUOTES);
+    string_type = SQ;
+    BEGIN(SQ_STRING);
 }
 
 \" {
     string[0] = 0;
-    typeString = DOUBLE_QUOTES;
-    BEGIN(STRING_DOUBLE_QUOTES);
+    string_type = DQ;
+    BEGIN(DQ_STRING);
 }
 
-
-<STRING_SINGLE_QUOTES>[^\\\'\n]+ {
-    strcat(string, yytext); 
+<SQ_STRING>[^\\\'\n]+ {
+    strcat(string, yytext);
 }
 
-<STRING_DOUBLE_QUOTES>[^\\\"\n]+ {
-    strcat(string, yytext); 
+<DQ_STRING>[^\\\"\n]+ {
+    strcat(string, yytext);
 }
 
-
-
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x{HEX_DIGIT}{2} {
-    sscanf(yytext+2, "%x", &int_number);
+<SQ_STRING,DQ_STRING>\\x{HEX_DIGIT}{2} {
+    sscanf(yytext + 2, "%x", &int_number);
     tmp1[0] = int_number;
     tmp1[1] = 0;
     strcat(string, tmp1);
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x[^0-9A-Fa-f\"\'\\]{1,2} {
-    printf("ERROR: Invalid hex escape \n");
-    //TODO мб надо бегин инишал сделать
+<SQ_STRING,DQ_STRING>\\x[^0-9A-Fa-f\"\'\\]{1,2} {
+    // TODO: BEGIN(INITIAL)?
+    printf("Error: invalid hex escape <%s>.\n", yytext);
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\x{HEX_DIGIT}{0,1} {
-    printf("ERROR: Invalid hex escape \n");
-    //TODO мб надо бегин инишал сделать
+<SQ_STRING,DQ_STRING>\\x{HEX_DIGIT}{0,1} {
+    // TODO: BEGIN(INITIAL)?
+    printf("Error: invalid hex escape <%s>.\n", yytext);
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\(1[0-9][0-9]|2[0-4][0-9]|25[0-5]|[1-9][0-9]|[0-9]) {
-    sscanf(yytext+1, "%d", &int_number);
+<SQ_STRING,DQ_STRING>\\(1[0-9][0-9]|2[0-4][0-9]|25[0-5]|[1-9][0-9]|[0-9]) {
+    sscanf(yytext + 1, "%d", &int_number);
     tmp1[0] = int_number;
     tmp1[1] = 0;
     strcat(string, tmp1);
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\([3-9][0-9][0-9]|2[6-9][0-9]|25[6-9]) {
-    printf("ERROR: Invalid hex escape \n");
+<SQ_STRING,DQ_STRING>\\([3-9][0-9][0-9]|2[6-9][0-9]|25[6-9]) {
+    // TODO: BEGIN(INITIAL)?
+    printf("Error: invalid hex escape <%s>.\n", yytext);
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\[^abfnrtvzx\"\'\\0-9] {
-    printf("ERROR: Invalid hex escape \n");
+<SQ_STRING,DQ_STRING>\\[^abfnrtvzx\"\'\\0-9] {
+    // TODO: BEGIN(INITIAL)?
+    printf("Error: invalid hex escape <%s>.\n", yytext);
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\a {
+<SQ_STRING,DQ_STRING>\\a {
     strcat(string, "\a");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\b {
+<SQ_STRING,DQ_STRING>\\b {
     strcat(string, "\b");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\f {
+<SQ_STRING,DQ_STRING>\\f {
     strcat(string, "\f");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\n {
+<SQ_STRING,DQ_STRING>\\n {
     strcat(string, "\n");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\r {
+<SQ_STRING,DQ_STRING>\\r {
     strcat(string, "\r");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\t {
+<SQ_STRING,DQ_STRING>\\t {
     strcat(string, "\t");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\v {
+<SQ_STRING,DQ_STRING>\\v {
     strcat(string, "\v");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\z {
-    BEGIN(DELETE_WHITESPACE);
+<SQ_STRING,DQ_STRING>\\z {
+    BEGIN(REMOVING_WHITESPACES);
 }
 
-<DELETE_WHITESPACE>[ \f\n\r\t\v]* {
-    if(typeString == DOUBLE_QUOTES)
-    {
-        BEGIN(STRING_DOUBLE_QUOTES);
+<REMOVING_WHITESPACES>[ \f\n\r\t\v]* {
+    if(string_type == SQ) {
+        BEGIN(SQ_STRING);
     }
-    else if(typeString == SINGLE_QUOTES)
-    {
-        BEGIN(STRING_SINGLE_QUOTES);
+    else if(string_type == DQ) {
+        BEGIN(DQ_STRING);
     }
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\\\ {
+<SQ_STRING,DQ_STRING>\\\\ {
     strcat(string, "\\");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\n {
-    printf("Error: unfinished string\n");
+<SQ_STRING,DQ_STRING>\n {
+    printf("Error: unfinished string.\n");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\\" {
+<SQ_STRING,DQ_STRING>\\\" {
     strcat(string, "\"");
 }
 
-<STRING_SINGLE_QUOTES,STRING_DOUBLE_QUOTES>\\\' {
+<SQ_STRING,DQ_STRING>\\\' {
     strcat(string, "'");
 }
 
-<STRING_SINGLE_QUOTES>\' {
-    printf("Found STRING_SINGLE_QUOTES: %s\n", string);
-    typeString = UNDEFINED;
+<SQ_STRING>\' {
+    printf("Found SQ_STRING: <<%s>>\n", string);
+    string_type = UNDEFINED;
     BEGIN(INITIAL);
 }
 
-<STRING_DOUBLE_QUOTES>\" {
-    printf("Found STRING_DOUBLE_QUOTES: %s\n", string);
-    typeString = UNDEFINED;
+<DQ_STRING>\" {
+    printf("Found DQ_STRING: <<%s>>\n", string);
+    string_type = UNDEFINED;
     BEGIN(INITIAL);
 }
 
-<STRING_DOUBLE_QUOTES><<EOF>> { 
-    printf("ERROR: expected \" \n"); 
+<SQ_STRING><<EOF>> {
+    printf("Error: expected '.\n");
     BEGIN(INITIAL);
-    }
+}
 
-<STRING_SINGLE_QUOTES><<EOF>> { 
-    printf("ERROR: expected ' \n");
+<DQ_STRING><<EOF>> {
+    printf("Error: expected \".\n");
     BEGIN(INITIAL);
-    }
-
+}
 
 %{
-    // +++++++++++++++++++++++++ _____ ++++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++ Пользовательские имена ++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %}
 
 [a-zA-Z_]{VAR_CHARS}* {
-    printf("Found VARIABLE or FUNCTION_NAME %s\n", yytext);
+    printf("Found VARIABLE or FUNCTION_NAME <%s>.\n", yytext);
 }
 
-[^ \f\n\r\t\v] { 
-    printf("Error: unexpected symbol \n");
+%{
+    // +++++++++++ Пробельные символы и символы, вызывающие ошибку ++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%}
+
+[^ \f\n\r\t\v] {
+    printf("Error: unexpected symbol <%s>.\n", yytext);
 }
 
-[ \f\n\r\t\v] { 
-    
-}
+[ \f\n\r\t\v] { }
 
 %%
 

@@ -36,3 +36,8 @@ Multiline
 comment
 ]==] ]] ]=]
 ]===]
+
+--[[
+asdasdadas
+asdasdadas
+]] a = 1

@@ -59,3 +59,8 @@ text2]===]
 asdasdadas
 asdasdadas
 ]]
+
+[[
+asdasdadas
+asdasdadas
+]] a = 1
