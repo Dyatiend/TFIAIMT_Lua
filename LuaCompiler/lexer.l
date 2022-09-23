@@ -140,6 +140,7 @@ local           { printf("Found LOCAL keyword.\n"); }
 }
 
 {DIGIT}+("."{DIGIT}*)?[eE][+-]? {
+    //TODO: объединить
     printf("Error: malformed number <%s>.\n", yytext);
 }
 
@@ -179,22 +180,25 @@ local           { printf("Found LOCAL keyword.\n"); }
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %}
 
--- {
-    BEGIN(COMMENT);
-}
-
-<COMMENT>"["=*"["/.* {
+--"["=*"["/.* {
     comment[0] = 0;
-    long_bracket_level = strlen(yytext) - 2;
+    long_bracket_level = strlen(yytext) - 4;
     BEGIN(ML_COMMENT);
 }
 
-<COMMENT>.* {
-    printf("Found COMMENT: <%s>.\n", yytext);
-    BEGIN(INITIAL);
+--.* {
+    printf("Found COMMENT: <%s>.\n", yytext + 2);
 }
 
-<ML_COMMENT>.*"]"=*"]"/.* {
+<ML_COMMENT>[^\]]* {
+    strcat(comment, yytext);
+}
+
+<ML_COMMENT>"]" {
+    strcat(comment, yytext);
+}
+
+<ML_COMMENT>"]"=*"]"/.* {
     int level = calc_long_bracket_level(yytext);
     if(long_bracket_level == level) {
         strcat(comment, yytext);
@@ -210,8 +214,9 @@ local           { printf("Found LOCAL keyword.\n"); }
     }
 }
 
-<ML_COMMENT>.*|\n {
-    strcat(comment, yytext);
+<ML_COMMENT><<EOF>> {
+    printf("Error: unclosed multiline comment.\n");
+    BEGIN(INITIAL);
 }
 
 %{
@@ -231,7 +236,15 @@ local           { printf("Found LOCAL keyword.\n"); }
     BEGIN(ML_STRING);
 }
 
-<ML_STRING>.*"]"=*"]"/.* {
+<ML_STRING>[^\]]* {
+    strcat(string, yytext);
+}
+
+<ML_STRING>"]" {
+    strcat(string, yytext);
+}
+
+<ML_STRING>"]"=*"]"/.* {
     int level = calc_long_bracket_level(yytext);
     if(long_bracket_level == level) {
         strcat(string, yytext);
@@ -247,8 +260,9 @@ local           { printf("Found LOCAL keyword.\n"); }
     }
 }
 
-<ML_STRING>.*|\n {
-    strcat(string, yytext);
+<ML_STRING><<EOF>> {
+    printf("Error: unclosed multiline string.\n");
+    BEGIN(INITIAL);
 }
 
 \' {

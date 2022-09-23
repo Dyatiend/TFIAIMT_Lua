@@ -19,6 +19,11 @@ Text
 ]==] ]] ]=]
 text2]===]
 
+[[
+test
+]==]
+]]
+
 [[text
 \z      text2
 ]]
@@ -64,3 +69,9 @@ asdasdadas
 asdasdadas
 asdasdadas
 ]] a = 1
+
+b = [[qwe]] a = [=[asd]=]
+
+[[
+asdasdadas
+asdasdadas

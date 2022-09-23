@@ -4,7 +4,7 @@ jajaaj
 ]]
 
 -- Comment1
---Comment2&^%$#
+--Comme[[nt2&^%$#
 
 --[[
 Multiline
@@ -41,3 +41,12 @@ comment
 asdasdadas
 asdasdadas
 ]] a = 1
+
+--[=[asd]=] --[[asdasd]]
+
+--[===[
+a]====]a
+]===]
+
+--[[
+asd
