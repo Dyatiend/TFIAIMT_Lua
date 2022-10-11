@@ -1,8 +1,8 @@
 // Reserved words
-%token AND BREAK DO ELSE ELSEIF END FALSE FOR FUNCTION IF IN LOCAL NIL NOT OR RETURN REPEAT THEN TRUE UNTIL WHILE GOTO
+%token AND BREAK DO ELSE ELSEIF END FALSE FOR FUNCTION IF IN LOCAL NIL NOT OR RETURN REPEAT THEN TRUE UNTIL WHILE
 
 // Literals
-%token EQL NOT_EQL LE GE FLOOR_DIV BITWISE_RIGHT_SHIFT BITWISE_LEFT_SHIFT CONCAT VAR_ARG IDENT NUMBER STRING GOTO_TAG_MARK
+%token EQL NOT_EQL LE GE FLOOR_DIV CONCAT VAR_ARG IDENT NUMBER STRING
 
 // Operators
 %left OR
@@ -11,7 +11,6 @@
 %left '|'
 %left '~'
 %left '&'
-%left BITWISE_RIGHT_SHIFT BITWISE_LEFT_SHIFT
 %right CONCAT
 %left '+' '-'
 %left '*' '/' '%' FLOOR_DIV
@@ -55,9 +54,7 @@ stat ::=  ';' |
 */
 stmt:                 var_list '=' expr_seq
                     | prefix_expr // Если function_call то reduce/reduce конфликт (prefix_expr включает function_call)
-                    | label
                     | BREAK
-                    | GOTO IDENT
                     | DO block END
                     | WHILE expr DO block END
                     | REPEAT block UNTIL expr 
@@ -80,10 +77,6 @@ elseif_seq:           /* EMPTY */
 // ';' вызывает конфликт (';' есть в block)
 ret_stmt:             RETURN 
                     | RETURN expr_seq
-                    ;
-
-// label ::= '::' Name '::'
-label:                GOTO_TAG_MARK IDENT GOTO_TAG_MARK
                     ;
 
 // funcname ::= Name {'.' Name} [':' Name]
@@ -139,8 +132,6 @@ expr:                 NIL
                     | expr '&' expr
                     | expr '~' expr
                     | expr '|' expr
-                    | expr BITWISE_RIGHT_SHIFT expr
-                    | expr BITWISE_LEFT_SHIFT expr
                     | expr CONCAT expr
                     | expr '<' expr
                     | expr LE expr
@@ -207,7 +198,7 @@ field:                IDENT '=' expr
                     ;
 
 // fieldsep ::= ',' | ';'
-field_sep:             ','
+field_sep:            ','
                     | ';'
                     ;
 
