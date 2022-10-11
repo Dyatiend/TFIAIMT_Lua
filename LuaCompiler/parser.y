@@ -23,16 +23,18 @@
 
 // chunk ::= block
 chunk:                block
+                    ;
 
 // block ::= {stmt} [ret_stmt]
 block:                block_tmp
                     | block_tmp ret_stmt
                     | block_tmp ret_stmt ';'
+                    ;
 
 block_tmp:            /* EMPTY */
                     | block_tmp stmt
                     | block_tmp ';'
-
+                    ;
 /*
 stat ::=  ';' | 
 		 varlist '=' explist | 
@@ -48,7 +50,8 @@ stat ::=  ';' |
 		 for namelist in explist do block end | 
 		 function funcname funcbody | 
 		 local function Name funcbody | 
-		 local namelist ['=' explist] 
+		 local namelist ['=' explist]
+		 ;
 */
 stmt:                 var_list '=' expr_seq
                     | prefix_expr // Если function_call то reduce/reduce конфликт (prefix_expr включает function_call)
@@ -67,41 +70,51 @@ stmt:                 var_list '=' expr_seq
                     | LOCAL FUNCTION IDENT function_body
                     | LOCAL ident_list 
                     | LOCAL ident_list '=' expr_seq
+                    ;
 
 elseif_seq:           /* EMPTY */
                     | elseif_seq ELSEIF expr THEN block
+                    ;
 
 // retstat ::= return [explist] [';']
 // ';' вызывает конфликт (';' есть в block)
 ret_stmt:             RETURN 
                     | RETURN expr_seq
+                    ;
 
 // label ::= '::' Name '::'
 label:                GOTO_TAG_MARK IDENT GOTO_TAG_MARK
+                    ;
 
 // funcname ::= Name {'.' Name} [':' Name]
 function_name:        function_name_tmp
                     | function_name_tmp ':' IDENT
+                    ;
 
 function_name_tmp:    IDENT
                     | function_name_tmp '.' IDENT
+                    ;
 
 // varlist ::= var {',' var}
 var_list:             var
                     | var_list ',' var
+                    ;
 
 // var ::=  Name | prefixexp '[' exp ']' | prefixexp '.' Name 
 var:                  IDENT
                     | prefix_expr '[' expr ']'
                     | prefix_expr '.' IDENT
+                    ;
 
 // namelist ::= Name {',' Name}
 ident_list:           IDENT 
-                    | ident_list ',' IDENT 
+                    | ident_list ',' IDENT
+                    ;
 
 // explist ::= exp {',' exp}
 expr_seq:             expr 
-                    | expr_seq ',' expr 
+                    | expr_seq ',' expr
+                    ;
 
 /*
 exp ::=  nil | false | true | Numeral | LiteralString | '...' | functiondef | 
@@ -141,50 +154,61 @@ expr:                 NIL
                     | NOT expr %prec UNARY
                     | '#' expr %prec UNARY
                     | '~' expr %prec UNARY
+                    ;
 
 // prefixexp ::= var | functioncall | '(' exp ')'
 prefix_expr:          var
                     | function_call
                     | '(' expr ')'
+                    ;
 
 // functioncall ::=  prefixexp args | prefixexp ':' Name args 
 function_call:        prefix_expr args
                     | prefix_expr ':' IDENT args
+                    ;
 
 // args ::=  '(' [explist] ')' | tableconstructor | LiteralString 
 args:                 '(' ')'
                     | '(' expr_seq ')'
                     | table_constructor
                     | STRING
+                    ;
 
 // functiondef ::= function funcbody
 function_def:         FUNCTION function_body
+                    ;
 
 // funcbody ::= '(' [parlist] ')' block end
 function_body:        '(' ')' block END
                     | '(' param_list ')' block END
+                    ;
 
 // parlist ::= namelist [',' '...'] | '...'
 param_list:           ident_list
                     | ident_list ',' VAR_ARG
                     | VAR_ARG
+                    ;
 
 // tableconstructor ::= '{' [fieldlist] '}'
 table_constructor:    '{' '}'
                     | '{' field_list '}'
+                    | '{' field_list field_sep '}'
+                    ;
 
 // fieldlist ::= field {fieldsep field} [fieldsep]
-field_list:           field 
-                    | field_list field_sep
+field_list:           field
                     | field_list field_sep field
+                    ;
 
 // field ::= '[' exp ']' '=' exp | Name '=' exp | exp
 field:                IDENT '=' expr
                     | '[' expr ']' '=' expr
                     | expr
+                    ;
 
 // fieldsep ::= ',' | ';'
 field_sep:             ','
                     | ';'
+                    ;
 
 %%
