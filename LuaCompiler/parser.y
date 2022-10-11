@@ -1,3 +1,58 @@
+%{
+    #include <stdio.h>
+    #include "tree_nodes.h"
+    #include "print_tree.h"
+    #include "dot.h"
+
+    void yyerror(const char * message) {
+        fprintf(stderr, message);
+    }
+
+    int yylex();
+    int yyparse();
+    extern FILE* yyin;
+
+    struct chunk_node * chunk_node;
+%}
+
+%union {
+    double number;
+    char * ident;
+    char * string;
+
+    struct stmt_node * stmt_node;
+    struct stmt_seq_node * stmt_seq_node;
+
+    struct expr_node * expr_node;
+    struct expr_seq_node * expr_seq_node;
+
+    struct ident_list_node * ident_list_node;
+    struct param_list_node * param_list_node;
+
+    struct field_node * field_node;
+    struct field_list_node * field_list_node;
+    char * field_sep_node;
+}
+
+%type<stmt_seq_node> chunk;
+%type<stmt_seq_node> block;
+%type<stmt_seq_node> block_tmp;
+%type<stmt_node> stmt;
+%type<stmt_seq_node> elseif_seq;
+%type<stmt_node> ret_stmt;
+%type<expr_seq_node> var_list;
+%type<expr_node> var;
+%type<expr_node> function_call;
+%type<ident_list_node> ident_list;
+%type<expr_seq_node> expr_seq;
+%type<expr_node> expr;
+%type<expr_seq_node> args;
+%type<param_list_node> param_list;
+%type<expr_node> table_constructor;
+%type<field_node> field;
+%type<field_list_node> field_list;
+%type<field_sep_node> field_sep;
+
 // Reserved words
 %token AND BREAK DO ELSE ELSEIF END FALSE FOR FUNCTION IF IN LOCAL NIL NOT OR RETURN REPEAT THEN TRUE UNTIL WHILE
 
@@ -53,21 +108,21 @@ stat ::=  ';' |
 		 local namelist ['=' explist]
 		 ;
 */
-stmt:                 var_list '=' expr_seq
-                    | function_call
-                    | BREAK
-                    | DO block END
-                    | WHILE expr DO block END
-                    | REPEAT block UNTIL expr 
-                    | IF expr THEN block elseif_seq END 
-                    | IF expr THEN block elseif_seq ELSE block END 
-                    | FOR IDENT '=' expr ',' expr DO block END
-                    | FOR IDENT '=' expr ',' expr ',' expr DO block END
-                    | FOR ident_list IN expr_seq DO block END
-                    | FUNCTION IDENT '(' param_list ')' block END
-                    | LOCAL FUNCTION IDENT '(' param_list ')' block END
+stmt:                 var_list '=' expr_seq { $$ = create_assign_stmt_node($1, $3); }
+                    | function_call { $$ = create_assign_stmt_node($1, $3); }
+                    | BREAK { $$ = create_break_stmt_node(); }
+                    | DO block END { $$ = create_do_stmt_node($2); }
+                    | WHILE expr DO block END { $$ = create_cycle_stmt_node(WHILE_LOOP,$2, $4); }
+                    | REPEAT block UNTIL expr { $$ = create_cycle_stmt_node(REPEAT_LOOP,$2, $4); }
+                    | IF expr THEN block elseif_seq END { $$ = create_if_stmt_node($2, $4, $5, NULL); }
+                    | IF expr THEN block elseif_seq ELSE block END { $$ = create_if_stmt_node($2, $4, $5, $7); }
+                    | FOR IDENT '=' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, $7, $8); }
+                    | FOR IDENT '=' expr ',' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, $7, $8); }
+                    | FOR ident_list IN expr_seq DO block END 
+                    | FUNCTION IDENT '(' param_list ')' block END 
+                    | LOCAL FUNCTION IDENT '(' param_list ')' block END 
                     | LOCAL ident_list 
-                    | LOCAL ident_list '=' expr_seq
+                    | LOCAL ident_list '=' expr_seq 
                     ;
 
 elseif_seq:           /* EMPTY */
@@ -112,39 +167,39 @@ expr_seq:             expr
 exp ::=  nil | false | true | Numeral | LiteralString | '...' | functiondef | 
 	 prefixexp | tableconstructor | exp binop exp | unop exp 
 */
-expr:                 NIL
-                    | FALSE 
-                    | TRUE 
-                    | NUMBER 
-                    | STRING
-                    | VAR_ARG
-                    | var
-                    | function_call
-                    | '(' expr ')'
-                    | table_constructor
-                    | expr '-' expr
-                    | expr '*' expr
-                    | expr '+' expr
-                    | expr '/' expr
-                    | expr FLOOR_DIV expr
-                    | expr '^' expr
-                    | expr '%' expr
-                    | expr '&' expr
-                    | expr '~' expr
-                    | expr '|' expr
-                    | expr CONCAT expr
-                    | expr '<' expr
-                    | expr LE expr
-                    | expr '>' expr
-                    | expr GE expr
-                    | expr EQL expr
-                    | expr NOT_EQL expr
-                    | expr AND expr
-                    | expr OR expr
-                    | '-' expr %prec UNARY 
-                    | NOT expr %prec UNARY
-                    | '#' expr %prec UNARY
-                    | '~' expr %prec UNARY
+expr:                 NIL { $$ = create_expr_node($1); } // FIXME ХЗ
+                    | FALSE { $$ = create_bool_expr_node(false); }
+                    | TRUE { $$ = create_bool_expr_node(true); }
+                    | NUMBER { $$ = create_number_expr_node($1); }
+                    | STRING { $$ = create_string_expr_node($1); }
+                    | VAR_ARG { $$ = create_var_arg_expr_node(); }
+                    | var //FIXME ХЗ
+                    | function_call 
+                    | '(' expr ')' { $$ = create_adjusting_expr($1); }
+                    | table_constructor //FIXME ХЗ
+                    | expr '-' expr { $$ = create_bin_expr_node(MINUS, $1, $3); }
+                    | expr '*' expr { $$ = create_bin_expr_node(MUL, $1, $3); }
+                    | expr '+' expr { $$ = create_bin_expr_node(PLUS, $1, $3); }
+                    | expr '/' expr { $$ = create_bin_expr_node(DIV, $1, $3); }
+                    | expr FLOOR_DIV expr { $$ = create_bin_expr_node(FLOOR_DIV, $1, $3); }
+                    | expr '^' expr { $$ = create_bin_expr_node(POW, $1, $3); }
+                    | expr '%' expr { $$ = create_bin_expr_node(MOD, $1, $3); }
+                    | expr '&' expr { $$ = create_bin_expr_node(BIT_AND, $1, $3); }
+                    | expr '~' expr { $$ = create_bin_expr_node(XOR, $1, $3); }
+                    | expr '|' expr { $$ = create_bin_expr_node(BIT_OR, $1, $3); }
+                    | expr CONCAT expr { $$ = create_bin_expr_node(CONCAT, $1, $3); }
+                    | expr '<' expr { $$ = create_bin_expr_node(LESS, $1, $3); }
+                    | expr LE expr { $$ = create_bin_expr_node(LE, $1, $3); }
+                    | expr '>' expr { $$ = create_bin_expr_node(GREATER, $1, $3); }
+                    | expr GE expr { $$ = create_bin_expr_node(GE, $1, $3); }
+                    | expr EQL expr { $$ = create_bin_expr_node(EQUAL, $1, $3); }
+                    | expr NOT_EQL expr { $$ = create_bin_expr_node(NOT_EQUAL, $1, $3); }
+                    | expr AND expr { $$ = create_bin_expr_node(AND, $1, $3); }
+                    | expr OR expr { $$ = create_bin_expr_node(OR, $1, $3); }
+                    | '-' expr %prec UNARY { $$ = create_unary_expr_Node(UNARY_MINUS, $2); }
+                    | NOT expr %prec UNARY { $$ = create_unary_expr_Node(NOT, $2); }
+                    | '#' expr %prec UNARY { $$ = create_unary_expr_Node(LEN, $2); }
+                    | '~' expr %prec UNARY { $$ = create_unary_expr_Node(BIT_NOT, $2); }
                     ;
 
 // args ::=  '(' [explist] ')' | tableconstructor | LiteralString 
