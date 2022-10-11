@@ -34,6 +34,7 @@ block_tmp:            /* EMPTY */
                     | block_tmp stmt
                     | block_tmp ';'
                     ;
+
 /*
 stat ::=  ';' | 
 		 varlist '=' explist | 
@@ -53,7 +54,7 @@ stat ::=  ';' |
 		 ;
 */
 stmt:                 var_list '=' expr_seq
-                    | prefix_expr // Если function_call то reduce/reduce конфликт (prefix_expr включает function_call)
+                    | function_call
                     | BREAK
                     | DO block END
                     | WHILE expr DO block END
@@ -63,8 +64,8 @@ stmt:                 var_list '=' expr_seq
                     | FOR IDENT '=' expr ',' expr DO block END
                     | FOR IDENT '=' expr ',' expr ',' expr DO block END
                     | FOR ident_list IN expr_seq DO block END
-                    | FUNCTION function_name function_body
-                    | LOCAL FUNCTION IDENT function_body
+                    | FUNCTION IDENT '(' param_list ')' block END
+                    | LOCAL FUNCTION IDENT '(' param_list ')' block END
                     | LOCAL ident_list 
                     | LOCAL ident_list '=' expr_seq
                     ;
@@ -79,15 +80,6 @@ ret_stmt:             RETURN
                     | RETURN expr_seq
                     ;
 
-// funcname ::= Name {'.' Name} [':' Name]
-function_name:        function_name_tmp
-                    | function_name_tmp ':' IDENT
-                    ;
-
-function_name_tmp:    IDENT
-                    | function_name_tmp '.' IDENT
-                    ;
-
 // varlist ::= var {',' var}
 var_list:             var
                     | var_list ',' var
@@ -95,8 +87,15 @@ var_list:             var
 
 // var ::=  Name | prefixexp '[' exp ']' | prefixexp '.' Name 
 var:                  IDENT
-                    | prefix_expr '[' expr ']'
-                    | prefix_expr '.' IDENT
+                    | var '[' expr ']'
+                    | var '.' IDENT
+                    | function_call '[' expr ']'
+                    | function_call '.' IDENT
+                    | '(' expr ')' '[' expr ']'
+                    | '(' expr ')' '.' IDENT
+                    ;
+
+function_call:        IDENT args
                     ;
 
 // namelist ::= Name {',' Name}
@@ -119,8 +118,9 @@ expr:                 NIL
                     | NUMBER 
                     | STRING
                     | VAR_ARG
-                    | function_def
-                    | prefix_expr
+                    | var
+                    | function_call
+                    | '(' expr ')'
                     | table_constructor
                     | expr '-' expr
                     | expr '*' expr
@@ -147,17 +147,6 @@ expr:                 NIL
                     | '~' expr %prec UNARY
                     ;
 
-// prefixexp ::= var | functioncall | '(' exp ')'
-prefix_expr:          var
-                    | function_call
-                    | '(' expr ')'
-                    ;
-
-// functioncall ::=  prefixexp args | prefixexp ':' Name args 
-function_call:        prefix_expr args
-                    | prefix_expr ':' IDENT args
-                    ;
-
 // args ::=  '(' [explist] ')' | tableconstructor | LiteralString 
 args:                 '(' ')'
                     | '(' expr_seq ')'
@@ -165,17 +154,9 @@ args:                 '(' ')'
                     | STRING
                     ;
 
-// functiondef ::= function funcbody
-function_def:         FUNCTION function_body
-                    ;
-
-// funcbody ::= '(' [parlist] ')' block end
-function_body:        '(' ')' block END
-                    | '(' param_list ')' block END
-                    ;
-
 // parlist ::= namelist [',' '...'] | '...'
-param_list:           ident_list
+param_list:           /* EMPTY */
+                    | ident_list
                     | ident_list ',' VAR_ARG
                     | VAR_ARG
                     ;
