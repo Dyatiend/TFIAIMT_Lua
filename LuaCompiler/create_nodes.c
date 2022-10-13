@@ -4,7 +4,7 @@ struct expr_node* create_bool_expr_node(bool val) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     result = expr_node_default;
     result->type = BOOLEAN;
-    result->boolean = val;
+    result->bool_value = val;
     return result;
 }
 
@@ -12,7 +12,7 @@ struct expr_node* create_number_expr_node(float val) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     result = expr_node_default;
     result->type = NUMBER;
-    result->floatVal = val;
+    result->number_value = val;
     return result;
 }
 
@@ -20,7 +20,7 @@ struct expr_node* create_string_expr_node(char* val) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     result = expr_node_default;
     result->type = STRING;
-    result->stringVal = val; //TODO возможно нужно strcpy юзать???
+    result->string_value = val; //TODO возможно нужно strcpy юзать???
     return result;
 }
 
@@ -31,12 +31,36 @@ struct expr_node* create_var_arg_expr_node() {
     return result;
 }
 
+struct expr_node* create_function_call_expr_node(struct expr_node* function_call) {
+    struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
+    result = expr_node_default;
+    result->type = FUNCTION_CALL;
+    result->function_call = function_call;
+    return result;
+}
+
+struct expr_node* create_adjusting_expr_node(struct expr_node* expr) {
+    struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
+    result = expr_node_default;
+    result->type = ADJUST;
+    result->adjusted_expr = expr;
+    return result;
+}
+
+struct expr_node* create_table_constructor_expr_node(struct expr_node* table) {
+    struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
+    result = expr_node_default;
+    result->type = TABLE_CONSTRUCTOR;
+    result->table_constructor = table;
+    return result;
+}
+
 struct expr_node* create_bin_expr_node(enum expr_type type_node, expr_node* first_operand, expr_node* second_operand) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     result = expr_node_default;
     result->type = type_node;
-    result->left = first_operand;
-    result->right = second_operand;
+    result->first_operand = first_operand;
+    result->second_operand = second_operand;
     return result;
 }
 
@@ -44,7 +68,7 @@ struct expr_node* create_unary_expr_Node(enum expr_type type_node, expr_node* op
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     result = expr_node_default;
     result->type = type_node;
-    result->right = operand;
+    result->first_operand = operand;
     return result;
 }
 

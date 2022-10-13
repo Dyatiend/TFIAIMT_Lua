@@ -167,16 +167,16 @@ expr_seq:             expr
 exp ::=  nil | false | true | Numeral | LiteralString | '...' | functiondef | 
 	 prefixexp | tableconstructor | exp binop exp | unop exp 
 */
-expr:                 NIL { $$ = create_expr_node($1); } // FIXME ХЗ
+expr:                 NIL { $$ = create_expr_node($1); } // FIXME Создавать узел с типом NIL или че-то другое делать??
                     | FALSE { $$ = create_bool_expr_node(false); }
                     | TRUE { $$ = create_bool_expr_node(true); }
                     | NUMBER { $$ = create_number_expr_node($1); }
                     | STRING { $$ = create_string_expr_node($1); }
                     | VAR_ARG { $$ = create_var_arg_expr_node(); }
-                    | var //FIXME ХЗ
-                    | function_call 
-                    | '(' expr ')' { $$ = create_adjusting_expr($1); }
-                    | table_constructor //FIXME ХЗ
+                    | var //FIXME Куда записывать в узле????
+                    | function_call { $$ = create_function_call_expr_node($1); }
+                    | '(' expr ')' { $$ = create_adjusting_expr_node($2); }
+                    | table_constructor { $$ = create_table_constructor_expr_node($1); }
                     | expr '-' expr { $$ = create_bin_expr_node(MINUS, $1, $3); }
                     | expr '*' expr { $$ = create_bin_expr_node(MUL, $1, $3); }
                     | expr '+' expr { $$ = create_bin_expr_node(PLUS, $1, $3); }

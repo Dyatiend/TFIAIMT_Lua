@@ -93,11 +93,11 @@ struct expr_node {
     double number_value; // Число
     char * string_value; // Строка
 
-    struct expr_node * function_call; // Вызов функции
+    struct expr_node * function_call; // Вызов функции FIXME здесь должен быть другой тип???
 
     struct expr_node * adjusted_expr; // Выражение в скобках
 	
-    struct expr_node * table_constructor; // Что бы это могло быть
+    struct expr_node * table_constructor; // Что бы это могло быть FIXME тут тожен мб другой тип???
 
     struct expr_node * first_operand; // Первый операнд и операнд для унарных
     struct expr_node * second_operand; // Второй операнд
