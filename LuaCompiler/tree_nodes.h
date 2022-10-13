@@ -46,7 +46,7 @@ enum stmt_type {
     FOR,
     FOR_IN,
     FUNCTION_DEF,
-    VAR_DEF,
+    VAR_DEF, //FIXME Возможно можно убрать нижний или объединить их???
     VAR_DEF_WITH_ASSIGNMENT
 };
 

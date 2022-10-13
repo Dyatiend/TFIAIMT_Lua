@@ -109,20 +109,20 @@ stat ::=  ';' |
 		 ;
 */
 stmt:                 var_list '=' expr_seq { $$ = create_assign_stmt_node($1, $3); }
-                    | function_call { $$ = create_assign_stmt_node($1, $3); }
-                    | BREAK { $$ = create_break_stmt_node(); }
+                    | function_call { $$ = create_function_call_stmt_node($1); }
+                    | BREAK { //TODO хз что тут должно быть }
                     | DO block END { $$ = create_do_stmt_node($2); }
-                    | WHILE expr DO block END { $$ = create_cycle_stmt_node(WHILE_LOOP,$2, $4); }
-                    | REPEAT block UNTIL expr { $$ = create_cycle_stmt_node(REPEAT_LOOP,$2, $4); }
+                    | WHILE expr DO block END { $$ = create_cycle_stmt_node(WHILE_LOOP, $2, $4); }
+                    | REPEAT block UNTIL expr { $$ = create_cycle_stmt_node(REPEAT_LOOP, $4, $2); }
                     | IF expr THEN block elseif_seq END { $$ = create_if_stmt_node($2, $4, $5, NULL); }
                     | IF expr THEN block elseif_seq ELSE block END { $$ = create_if_stmt_node($2, $4, $5, $7); }
-                    | FOR IDENT '=' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, $7, $8); }
-                    | FOR IDENT '=' expr ',' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, $7, $8); }
-                    | FOR ident_list IN expr_seq DO block END 
-                    | FUNCTION IDENT '(' param_list ')' block END 
-                    | LOCAL FUNCTION IDENT '(' param_list ')' block END 
-                    | LOCAL ident_list 
-                    | LOCAL ident_list '=' expr_seq 
+                    | FOR IDENT '=' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, NULL, $8); }
+                    | FOR IDENT '=' expr ',' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, $8, $9); }
+                    | FOR ident_list IN expr_seq DO block END { $$ = create_foreach_stmt_node($2, $4, $6); }
+                    | FUNCTION IDENT '(' param_list ')' block END { $$ = create_function_def_stmt_node($2, $4, $6, false); }
+                    | LOCAL FUNCTION IDENT '(' param_list ')' block END { $$ = create_function_def_stmt_node($2, $4, $6, true); }
+                    | LOCAL ident_list { $$ = create_local_var_stmt_node($2, NULL); }
+                    | LOCAL ident_list '=' expr_seq { $$ = create_local_var_stmt_node($2, $4); }
                     ;
 
 elseif_seq:           /* EMPTY */
