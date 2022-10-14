@@ -31,6 +31,9 @@
 
     struct field_node * field_node;
     struct field_list_node * field_list_node;
+
+    struct var_node * var_node;
+    
     char * field_sep_node;
 }
 
@@ -41,7 +44,7 @@
 %type<stmt_seq_node> elseif_seq;
 %type<stmt_node> ret_stmt;
 %type<expr_seq_node> var_list;
-%type<expr_node> var;
+%type<var_node> var;
 %type<expr_node> function_call;
 %type<ident_list_node> ident_list;
 %type<expr_seq_node> expr_seq;
@@ -76,18 +79,18 @@
 %%
 
 // chunk ::= block
-chunk:                block
+chunk:                block { /*TODO Занести в рут узел*/ }
                     ;
 
 // block ::= {stmt} [ret_stmt]
-block:                block_tmp
-                    | block_tmp ret_stmt
-                    | block_tmp ret_stmt ';'
+block:                block_tmp {  }
+                    | block_tmp ret_stmt {  }
+                    | block_tmp ret_stmt ';' {  }
                     ;
 
 block_tmp:            /* EMPTY */
-                    | block_tmp stmt
-                    | block_tmp ';'
+                    | block_tmp stmt {  }
+                    | block_tmp ';' {  }
                     ;
 
 /*
@@ -110,7 +113,7 @@ stat ::=  ';' |
 */
 stmt:                 var_list '=' expr_seq { $$ = create_assign_stmt_node($1, $3); }
                     | function_call { $$ = create_function_call_stmt_node($1); }
-                    | BREAK { //TODO хз что тут должно быть }
+                    | BREAK { $$ = create_break_stmt_node(); }
                     | DO block END { $$ = create_do_stmt_node($2); }
                     | WHILE expr DO block END { $$ = create_cycle_stmt_node(WHILE_LOOP, $2, $4); }
                     | REPEAT block UNTIL expr { $$ = create_cycle_stmt_node(REPEAT_LOOP, $4, $2); }
@@ -125,42 +128,42 @@ stmt:                 var_list '=' expr_seq { $$ = create_assign_stmt_node($1, $
                     | LOCAL ident_list '=' expr_seq { $$ = create_local_var_stmt_node($2, $4); }
                     ;
 
-elseif_seq:           /* EMPTY */
-                    | elseif_seq ELSEIF expr THEN block
+elseif_seq:           /* EMPTY */ { $$ = create_elseif_seq_stmt_seq_node(); }
+                    | elseif_seq ELSEIF expr THEN block { $$ = add_elseif_seq_stmt_seq_node($1, $3, $5); }
                     ;
 
 // retstat ::= return [explist] [';']
 // ';' вызывает конфликт (';' есть в block)
-ret_stmt:             RETURN 
-                    | RETURN expr_seq
+ret_stmt:             RETURN { $$ = create_return_stmt_node(NULL); }
+                    | RETURN expr_seq { $$ = create_return_stmt_node($2); }
                     ;
 
 // varlist ::= var {',' var}
-var_list:             var
-                    | var_list ',' var
+var_list:             var {  }
+                    | var_list ',' var {  }
                     ;
 
 // var ::=  Name | prefixexp '[' exp ']' | prefixexp '.' Name 
-var:                  IDENT
-                    | var '[' expr ']'
-                    | var '.' IDENT
-                    | function_call '[' expr ']'
-                    | function_call '.' IDENT
-                    | '(' expr ')' '[' expr ']'
-                    | '(' expr ')' '.' IDENT
+var:                  IDENT {  }
+                    | var '[' expr ']' {  }
+                    | var '.' IDENT {  }
+                    | function_call '[' expr ']' {  }
+                    | function_call '.' IDENT {  }
+                    | '(' expr ')' '[' expr ']' {  }
+                    | '(' expr ')' '.' IDENT {  }
                     ;
 
-function_call:        IDENT args
+function_call:        IDENT args { $$ = create_function_call_expr_node($1, $2); }
                     ;
 
 // namelist ::= Name {',' Name}
-ident_list:           IDENT 
-                    | ident_list ',' IDENT
+ident_list:           IDENT { create_ident_list_node($1); }
+                    | ident_list ',' IDENT { add_ident_to_ident_list_node($1, $3); }
                     ;
 
 // explist ::= exp {',' exp}
-expr_seq:             expr 
-                    | expr_seq ',' expr
+expr_seq:             expr { create_expr_seq_node($1); }
+                    | expr_seq ',' expr { add_expr_to_expr_seq_node($1, $3); }
                     ;
 
 /*
@@ -173,8 +176,8 @@ expr:                 NIL { $$ = create_expr_node($1); } // FIXME Создава
                     | NUMBER { $$ = create_number_expr_node($1); }
                     | STRING { $$ = create_string_expr_node($1); }
                     | VAR_ARG { $$ = create_var_arg_expr_node(); }
-                    | var //FIXME Куда записывать в узле????
-                    | function_call { $$ = create_function_call_expr_node($1); }
+                    | var {  }
+                    | function_call { $$ = $1; }
                     | '(' expr ')' { $$ = create_adjusting_expr_node($2); }
                     | table_constructor { $$ = create_table_constructor_expr_node($1); }
                     | expr '-' expr { $$ = create_bin_expr_node(MINUS, $1, $3); }
@@ -203,39 +206,39 @@ expr:                 NIL { $$ = create_expr_node($1); } // FIXME Создава
                     ;
 
 // args ::=  '(' [explist] ')' | tableconstructor | LiteralString 
-args:                 '(' ')'
-                    | '(' expr_seq ')'
-                    | table_constructor
-                    | STRING
+args:                 '(' ')' { $$ = NULL; }
+                    | '(' expr_seq ')' { $$ = $2; }
+                    | table_constructor { $$ = create_table_constructor_expr_seq_node($1); }
+                    | STRING { $$ = create_string_expr_seq_node($1); }
                     ;
 
 // parlist ::= namelist [',' '...'] | '...'
-param_list:           /* EMPTY */
-                    | ident_list
-                    | ident_list ',' VAR_ARG
-                    | VAR_ARG
+param_list:           /* EMPTY */ { $$ = create_param_list_node(NULL, false); }
+                    | ident_list { $$ = create_param_list_node($1, false); }
+                    | ident_list ',' VAR_ARG { $$ = create_param_list_node($1, true); }
+                    | VAR_ARG { $$ = create_param_list_node(NULL, true); }
                     ;
 
 // tableconstructor ::= '{' [fieldlist] '}'
-table_constructor:    '{' '}'
-                    | '{' field_list '}'
-                    | '{' field_list field_sep '}'
+table_constructor:    '{' '}' { $$ = NULL; }
+                    | '{' field_list '}' { $$ = $2; }
+                    | '{' field_list field_sep '}' { $$ = $2; }
                     ;
 
 // fieldlist ::= field {fieldsep field} [fieldsep]
-field_list:           field
-                    | field_list field_sep field
+field_list:           field { $$ = create_field_list_node($1); }
+                    | field_list field_sep field { $$ = add_field_to_field_list_node($1, $3); }
                     ;
 
 // field ::= '[' exp ']' '=' exp | Name '=' exp | exp
-field:                IDENT '=' expr
-                    | '[' expr ']' '=' expr
-                    | expr
+field:                IDENT '=' expr { $$ = create_field_node($1, $3, NULL); }
+                    | '[' expr ']' '=' expr { $$ = create_field_node(NULL, $5, $2); }
+                    | expr { $$ = create_field_node(NULL, $1, NULL); }
                     ;
 
 // fieldsep ::= ',' | ';'
-field_sep:            ','
-                    | ';'
+field_sep:            ',' { $$ = $1; }
+                    | ';' { $$ = $1; }
                     ;
 
 %%

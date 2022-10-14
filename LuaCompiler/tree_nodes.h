@@ -1,3 +1,6 @@
+#include <stddef.h>
+#include <stdbool.h>
+
 enum expr_type {
     UNINITIALIZED,
     NIL,
@@ -32,12 +35,12 @@ enum expr_type {
     NOT,
     LEN,
     BIT_NOT
-}
+};
 
 enum stmt_type {
-    UNINITIALIZED,
+    _UNINITIALIZED,
 	ASSIGNMENT,
-    FUNCTION_CALL,
+    _FUNCTION_CALL,
     BREAK,
     DO_LOOP,
     WHILE_LOOP,
@@ -46,12 +49,24 @@ enum stmt_type {
     FOR,
     FOR_IN,
     FUNCTION_DEF,
-    VAR_DEF, //FIXME Возможно можно убрать нижний или объединить их???
-    VAR_DEF_WITH_ASSIGNMENT
+    VAR_DEF,
+    RETURN,
 };
+
+enum var_type {
+    __UNINITIALIZED,
+    IDENT,
+    __VAR,
+    __FUNCTION_CALL,
+    ADJUSTED_EXPR
+};
+
+unsigned int LAST_ID = 0;
 
 struct stmt_node {
     enum stmt_type type;
+
+    unsigned int id;
 
     bool is_local; // Является ли функция локальной
     char * ident; // Имя переменной цикла или имя функции
@@ -76,7 +91,7 @@ struct stmt_node {
 
     struct stmt_node * next;
 } stmt_node_default = {
-    UNINITIALIZED, false, NULL, NULL,
+    _UNINITIALIZED, 0, false, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL
 };
@@ -89,24 +104,52 @@ struct stmt_seq_node {
 struct expr_node {
     enum expr_type type;
 
+    unsigned int id;
+
     bool bool_value; // Значение бул
     double number_value; // Число
     char * string_value; // Строка
 
-    struct expr_node * function_call; // Вызов функции FIXME здесь должен быть другой тип???
+    // Вызов функции
+    char * ident;
+    struct expr_seq_node * args;
 
     struct expr_node * adjusted_expr; // Выражение в скобках
 	
-    struct expr_node * table_constructor; // Что бы это могло быть FIXME тут тожен мб другой тип???
+    struct field_list_node * table_constructor; // Таблица
 
     struct expr_node * first_operand; // Первый операнд и операнд для унарных
     struct expr_node * second_operand; // Второй операнд
 
+    struct var_node * var; // Переменная
+
     struct expr_node * next;
 } expr_node_default = {
-    UNINITIALIZED, false, 0, NULL,
+    UNINITIALIZED, 0, false, 0, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL
 };
+
+struct var_item_node {
+    enum var_type type; // Тип переменной
+
+    unsigned int id;
+
+    bool is_map_key; // Получена ли переменная по ключу (через точку)
+
+    char * ident; // Переменная либо имя ключа
+    
+    struct expr_node * first_expr; // Function call или expr в скобках
+    struct expr_node * second_expr; // expr в квадратных скобках
+
+    struct var_item_node * next;
+} var_item_node_default = {
+    __UNINITIALIZED, 0, false, NULL, NULL, NULL, NULL
+};
+
+struct var_node {
+    struct var_item_node * first;
+    struct var_item_node * last;
+} var_node_default = { NULL, NULL };
 
 struct expr_seq_node {
     struct expr_node * first;
@@ -114,33 +157,32 @@ struct expr_seq_node {
 } expr_seq_node_default = { NULL, NULL };
 
 struct ident_node {
+    unsigned int id;
+
     char * ident;
 
     struct ident_node * next;
-} ident_node_default = { NULL, NULL };
+} ident_node_default = { 0, NULL, NULL };
 
 struct ident_list_node {
     struct ident_node * first;
     struct ident_node * last;
-} ident_list_node_default = {};
-
-struct param_node {
-    char * param;
-
-    struct param_node * next;
-} param_node_default = { NULL, NULL };
+} ident_list_node_default = { NULL, NULL };
 
 struct param_list_node {
     bool has_var_arg;
-    struct param_node * first;
-    struct param_node * last;
-} param_list_node_default = { false, NULL, NULL };
+    struct ident_list_node * list;
+} param_list_node_default = { false, NULL };
 
 struct field_node {
+    unsigned int id;
+
     char * ident;
     struct expr_node * key;
     struct expr_node * value;
-} field_node_default = { NULL, NULL, NULL };
+
+    struct field_node * next;
+} field_node_default = { 0, NULL, NULL, NULL };
 
 struct field_list_node {
     struct field_node * first;

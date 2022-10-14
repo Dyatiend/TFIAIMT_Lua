@@ -31,11 +31,12 @@ struct expr_node* create_var_arg_expr_node() {
     return result;
 }
 
-struct expr_node* create_function_call_expr_node(struct expr_node* function_call) {
+struct expr_node* create_function_call_expr_node(char* ID, struct expr_seq_node* args) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     result = expr_node_default;
     result->type = FUNCTION_CALL;
-    result->function_call = function_call;
+    result->ident = ID;
+    result->args = args;
     return result;
 }
 
@@ -72,6 +73,44 @@ struct expr_node* create_unary_expr_Node(enum expr_type type_node, expr_node* op
     return result;
 }
 
+struct expr_seq_node* create_table_constructor_expr_seq_node(struct field_list_node* table_constructor) {
+    struct expr_seq_node* result = (struct expr_seq_node*)malloc(sizeof(struct expr_seq_node));
+    result = expr_seq_node_default;
+    struct expr_node* expr_node_table = (struct expr_node*)malloc(sizeof(struct expr_node));
+    expr_node_table = expr_node_default;
+    expr_node_table->type = TABLE_CONSTRUCTOR;
+    expr_node_table->table_constructor = table_constructor;
+    result->first = expr_node_table;
+    result->last = expr_node_table;
+    return result;
+}
+
+struct expr_seq_node* create_string_expr_seq_node(char* string) {
+    struct expr_seq_node* result = (struct expr_seq_node*)malloc(sizeof(struct expr_seq_node));
+    result = expr_seq_node_default;
+    struct expr_node* expr_node_string = (struct expr_node*)malloc(sizeof(struct expr_node));
+    expr_node_string = expr_node_default;
+    expr_node_string->type = STRING;
+    expr_node_string->string_value = string;
+    result->first = expr_node_string;
+    result->last = expr_node_string;
+    return result;
+}
+
+struct expr_seq_node* create_expr_seq_node(struct expr_node* expr) {
+    struct expr_seq_node* result = (struct expr_seq_node*)malloc(sizeof(struct expr_seq_node));
+    result = expr_seq_node_default;
+    result->first = expr;
+    result->last = expr;
+    return result;
+}
+
+struct expr_seq_node* add_expr_to_expr_seq_node(struct expr_seq_node* list, struct expr_node* expr) {
+    list->last->next = expr;
+    list->last = expr;
+    return list;
+}
+
 struct stmt_node* create_assign_stmt_node(struct expr_seq_node* var_list, struct expr_seq_node* expr_seq) {
     struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
     result = stmt_node_default;
@@ -86,6 +125,13 @@ struct stmt_node* create_function_call_stmt_node(struct expr_node* function_call
     result = stmt_node_default;
     result->type = FUNCTION_CALL;
     result->function_call = function_call;
+    return result;
+}
+
+struct stmt_node* create_break_stmt_node() {
+    struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
+    result = stmt_node_default;
+    result->type = BREAK;
     return result;
 }
 
@@ -153,13 +199,93 @@ struct stmt_node* create_function_def_stmt_node(char* ID, struct param_list_node
 struct stmt_node* create_local_var_stmt_node(struct ident_list_node* ident_list, struct expr_seq_node* expr_seq) {
     struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
     result = stmt_node_default;
-    if(expr_seq != NULL) {
-        result->type = VAR_DEF_WITH_ASSIGNMENT;
-    } else {
-        result->type = VAR_DEF;
-    }
+    result->type = VAR_DEF;
     result->ident_list = ident_list;
     result->values = expr_seq;
     result->is_local = true;
     return result;
+}
+
+struct stmt_node* create_return_stmt_node(struct expr_seq_node* expr_seq ) {
+    struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
+    result = stmt_node_default;
+    result->type = RETURN;
+    result->values = expr_seq;
+    return result;
+}
+
+struct stmt_seq_node* create_elseif_seq_stmt_seq_node() {
+    struct stmt_seq_node* result = (struct stmt_seq_node*)malloc(sizeof(struct stmt_seq_node));
+    result = stmt_seq_node_default;
+    return result;
+}
+
+struct stmt_seq_node* add_elseif_seq_stmt_seq_node(struct stmt_seq_node* elseif_seq, struct expr_node* expr, struct stmt_seq_node* block) {
+    struct stmt_node* else_if = (struct stmt_node*)malloc(sizeof(struct stmt_node));
+    else_if = stmt_node_default;
+    else_if->condition_expr = expr;
+    else_if->action_block = block;
+
+    if(elseif_seq->last == NULL) {
+        elseif_seq->first = else_if;
+        elseif_seq->last = else_if;
+    }
+    else {
+        elseif_seq->last->next = val;
+        elseif_seq->last = val;
+    }
+    return elseif_seq;
+}
+
+
+struct field_node* create_field_node(char* ID, struct expr_node* expr_value, struct expr_node* expr_key) {
+    struct field_node* result = (struct field_node*)malloc(sizeof(struct field_node));
+    result = field_node_default;
+    result->ident = ID;
+    result->key = expr_value;
+    result->value = expr_key;
+    return result;
+}
+
+
+struct field_list_node* create_field_list_node(struct field_node* field) {
+    struct field_list_node* result = (struct field_list_node*)malloc(sizeof(struct field_list_node));
+    result = field_list_node_default;
+    result->first = field;
+    result->last = field;
+    return result;
+}
+
+struct field_list_node* add_field_to_field_list_node(struct field_list_node* list, struct field_node* field) {
+    list->last->next = field;
+    list->last = field;
+    return list;
+}
+
+struct ident_list_node* create_ident_list_node(char* ID) {
+    struct ident_list_node* result = (struct ident_list_node*)malloc(sizeof(struct ident_list_node));
+    result = ident_list_node_default;
+    struct ident_node* new_indent_node = (struct ident_node*)malloc(sizeof(struct ident_node));
+    new_indent_node = ident_node_default;
+    new_indent_node->ident = ID;
+    result->first = new_indent_node;
+    result->last = new_indent_node;
+    return result;
+}
+
+struct ident_list_node* add_ident_to_ident_list_node(struct ident_list_node* list, char* ID) {
+    struct ident_node* new_indent_node = (struct ident_node*)malloc(sizeof(struct ident_node));
+    new_indent_node = ident_node_default;
+    new_indent_node->ident = ID;
+    list->last->next = new_indent_node;
+    list->last = new_indent_node;
+    return list;
+}
+
+struct param_list_node* create_param_list_node(ident_list_node* ident_list, bool var_arg) {
+    struct param_list_node* result = (struct param_list_node*)malloc(sizeof(struct param_list_node));
+    result = param_list_node_default;
+    result->has_var_arg = var_arg;
+    result->list = ident_list;
+    return list;
 }
