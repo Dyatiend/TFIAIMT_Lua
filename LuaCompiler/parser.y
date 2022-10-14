@@ -79,18 +79,18 @@
 %%
 
 // chunk ::= block
-chunk:                block { /*TODO Занести в рут узел*/ }
+chunk:                block { chunk_node = create_chunk_node($1); }
                     ;
 
 // block ::= {stmt} [ret_stmt]
-block:                block_tmp {  }
-                    | block_tmp ret_stmt {  }
-                    | block_tmp ret_stmt ';' {  }
+block:                block_tmp { $$ = $1; }
+                    | block_tmp ret_stmt { $$ = add_stmt_to_stmt_seq_node($1, $2); }
+                    | block_tmp ret_stmt ';' { $$ = add_stmt_to_stmt_seq_node($1, $2); }
                     ;
 
-block_tmp:            /* EMPTY */
-                    | block_tmp stmt {  }
-                    | block_tmp ';' {  }
+block_tmp:            /* EMPTY */ { $$ = create_stmt_seq_node(); }
+                    | block_tmp stmt { $$ = add_stmt_to_stmt_seq_node($1, $2); }
+                    | block_tmp ';' { $$ = $1; }
                     ;
 
 /*
@@ -139,18 +139,18 @@ ret_stmt:             RETURN { $$ = create_return_stmt_node(NULL); }
                     ;
 
 // varlist ::= var {',' var}
-var_list:             var {  }
-                    | var_list ',' var {  }
+var_list:             var { $$ = create_var_list_node($1); }
+                    | var_list ',' var { $$ = add_var_to_var_list_node($1, $3); }
                     ;
 
 // var ::=  Name | prefixexp '[' exp ']' | prefixexp '.' Name 
-var:                  IDENT {  }
-                    | var '[' expr ']' {  }
-                    | var '.' IDENT {  }
-                    | function_call '[' expr ']' {  }
-                    | function_call '.' IDENT {  }
-                    | '(' expr ')' '[' expr ']' {  }
-                    | '(' expr ')' '.' IDENT {  }
+var:                  IDENT { $$ = create_id_var_node($1); }
+                    | var '[' expr ']' { $$ = add_expr_to_var_node($1, $3); }
+                    | var '.' IDENT { $$ = add_id_to_var_node($1, $3); }
+                    | function_call '[' expr ']' { $$ = create_function_with_expr_var_node($1, $3); }
+                    | function_call '.' IDENT { $$ = create_function_with_id_var_node($1, $3); }
+                    | '(' expr ')' '[' expr ']' { $$ = create_expr_with_expr_var_node($2, $5); }
+                    | '(' expr ')' '.' IDENT { $$ = create_expr_with_id_var_node($2, $5); }
                     ;
 
 function_call:        IDENT args { $$ = create_function_call_expr_node($1, $2); }
@@ -170,13 +170,13 @@ expr_seq:             expr { create_expr_seq_node($1); }
 exp ::=  nil | false | true | Numeral | LiteralString | '...' | functiondef | 
 	 prefixexp | tableconstructor | exp binop exp | unop exp 
 */
-expr:                 NIL { $$ = create_expr_node($1); } // FIXME Создавать узел с типом NIL или че-то другое делать??
+expr:                 NIL { $$ = create_nil_expr_node(); } // TODO возможно нужно че-то другое делать??
                     | FALSE { $$ = create_bool_expr_node(false); }
                     | TRUE { $$ = create_bool_expr_node(true); }
                     | NUMBER { $$ = create_number_expr_node($1); }
                     | STRING { $$ = create_string_expr_node($1); }
                     | VAR_ARG { $$ = create_var_arg_expr_node(); }
-                    | var {  }
+                    | var { $$ = create_var_expr_node($1); }
                     | function_call { $$ = $1; }
                     | '(' expr ')' { $$ = create_adjusting_expr_node($2); }
                     | table_constructor { $$ = create_table_constructor_expr_node($1); }

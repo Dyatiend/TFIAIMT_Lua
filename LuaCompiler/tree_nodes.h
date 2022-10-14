@@ -56,7 +56,7 @@ enum stmt_type {
 enum var_type {
     __UNINITIALIZED,
     IDENT,
-    __VAR,
+    EXPR, //TODO __VAR заменил на EXPR. Для чего VAR был нужен??
     __FUNCTION_CALL,
     ADJUSTED_EXPR
 };
@@ -188,3 +188,7 @@ struct field_list_node {
     struct field_node * first;
     struct field_node * last;
 } field_list_node_default = { NULL, NULL };
+
+struct chunk_node {
+    struct stmt_seq_node* block;
+};

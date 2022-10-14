@@ -2,10 +2,12 @@
 #include <malloc.h>
 
 //expr
+struct expr_node* create_nil_expr_node();
 struct expr_node* create_bool_expr_node(bool val);
 struct expr_node* create_number_expr_node(float val);
 struct expr_node* create_string_expr_node(char* val);
 struct expr_node* create_var_arg_expr_node();
+struct expr_node* create_var_expr_node(struct var_node* var);
 struct expr_node* create_function_call_expr_node(char* ID, struct expr_seq_node* args);
 struct expr_node* create_adjusting_expr_node(struct expr_node* expr);
 struct expr_node* create_table_constructor_expr_node(struct expr_node* table);
@@ -34,6 +36,8 @@ struct stmt_node* create_return_stmt_node(struct expr_seq_node* expr_seq );
 //stmt_seq
 struct stmt_seq_node* create_elseif_seq_stmt_seq_node();
 struct stmt_seq_node* add_elseif_seq_stmt_seq_node(struct stmt_seq_node* elseif_seq, struct expr_node* expr, struct stmt_seq_node* block);
+struct stmt_seq_node* create_stmt_seq_node();
+struct stmt_seq_node* add_stmt_to_stmt_seq_node(struct stmt_seq_node* stmt_seq, struct stmt_node* stmt);
 
 //field
 struct field_node* create_field_node(char* ID, struct expr_node* expr_value, struct expr_node* expr_key);
@@ -48,3 +52,19 @@ struct ident_list_node* add_ident_to_ident_list_node(struct ident_list_node* lis
 
 //param_list
 struct param_list_node* create_param_list_node(ident_list_node* ident_list, bool var_arg);
+
+//var
+struct var_node* create_id_var_node(char* id);
+struct var_node* add_expr_to_var_node(struct var_node* var, struct expr_node* expr);
+struct var_node* add_id_to_var_node(struct var_node* var, char* id);
+struct var_node* create_function_with_expr_var_node(struct expr_node* function_call, struct expr_node* expr);
+struct var_node* create_function_with_id_var_node(struct expr_node* function_call, char* id);
+struct var_node* create_expr_with_expr_var_node(struct expr_node* expr1, struct expr_node* expr2);
+struct var_node* create_expr_with_id_var_node(struct expr_node* expr, char* id);
+
+//var_list
+struct expr_seq_node* create_var_list_node(struct var_node* var);
+struct expr_seq_node* add_var_to_var_list_node(struct expr_seq_node* list, struct var_node* var);
+
+//chunk
+struct chunk_node* create_chunk_node(struct stmt_seq_node* block);
