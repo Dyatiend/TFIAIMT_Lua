@@ -3,6 +3,7 @@
 
 %{
     #include <stdio.h>
+    #include "parser.tab.h"
 
     int calc_long_bracket_level(const char * str);
 %}
@@ -52,79 +53,79 @@ VAR_CHARS [a-zA-Z0-9_]
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %}
 
-and             { printf("Found AND keyword.\n"); }
-or              { printf("Found OR keyword.\n"); }
-not             { printf("Found NOT keyword.\n"); }
+and             { return AND; /*printf("Found AND keyword.\n");*/ }
+or              { return OR; /*printf("Found OR keyword.\n");*/ }
+not             { return NOT; /*printf("Found NOT keyword.\n");*/ }
 
-if              { printf("Found IF keyword.\n"); }
-then            { printf("Found THEN keyword.\n"); }
-else            { printf("Found ELSE keyword.\n"); }
-elseif          { printf("Found ELSEIF keyword.\n"); }
+if              { return IF; /*printf("Found IF keyword.\n");*/ }
+then            { return THEN; /*printf("Found THEN keyword.\n");*/ }
+else            { return ELSE; /*printf("Found ELSE keyword.\n");*/ }
+elseif          { return ELSEIF; /*printf("Found ELSEIF keyword.\n");*/ }
 
-repeat          { printf("Found REPEAT keyword.\n"); }
-for             { printf("Found FOR keyword.\n"); }
-in              { printf("Found IN keyword.\n"); }
-do              { printf("Found DO keyword.\n"); }
-while           { printf("Found WHILE keyword.\n"); }
-until           { printf("Found UNTIL keyword.\n"); }
-break           { printf("Found BREAK keyword.\n"); }
-end             { printf("Found END keyword.\n"); }
+repeat          { return REPEAT; /*printf("Found REPEAT keyword.\n");*/ }
+for             { return FOR; /*printf("Found FOR keyword.\n");*/ }
+in              { return IN; /*printf("Found IN keyword.\n");*/ }
+do              { return DO; /*printf("Found DO keyword.\n");*/ }
+while           { return WHILE; /*printf("Found WHILE keyword.\n");*/ }
+until           { return UNTIL; /*printf("Found UNTIL keyword.\n");*/ }
+break           { return BREAK; /*printf("Found BREAK keyword.\n");*/ }
+end             { return END; /*printf("Found END keyword.\n");*/ }
 
-true            { printf("Found TRUE keyword.\n"); }
-false           { printf("Found FALSE keyword.\n"); }
-nil             { printf("Found NIL keyword.\n"); }
+true            { return TRUE; /*printf("Found TRUE keyword.\n");*/ }
+false           { return FALSE; /*printf("Found FALSE keyword.\n");*/ }
+nil             { return NIL; /*printf("Found NIL keyword.\n");*/ }
 
-function        { printf("Found FUNCTION keyword.\n"); }
-return          { printf("Found RETURN keyword.\n"); }
+function        { return FUNCTION; /*printf("Found FUNCTION keyword.\n");*/ }
+return          { return RETURN; /*printf("Found RETURN keyword.\n");*/ }
 
-goto            { printf("Found GOTO keyword.\n"); }
+goto            { return GOTO; /*printf("Found GOTO keyword.\n");*/ }
 
-local           { printf("Found LOCAL keyword.\n"); }
+local           { return LOCAL; /*printf("Found LOCAL keyword.\n");*/ }
 
 %{
     // +++++++++++++++++++++++++ Служебные символы ++++++++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %}
 
-"+"             { printf("Found ADD operator.\n"); }
-"-"             { printf("Found SUB operator.\n"); }
-"*"             { printf("Found MUL operator.\n"); }
-"/"             { printf("Found DIV operator.\n"); }
-"//"            { printf("Found FLOOR_DIV operator.\n"); }
-"%"             { printf("Found MOD operator.\n"); }
-"^"             { printf("Found POW operator.\n"); }
+"+"             { return '+'; /*printf("Found ADD operator.\n");*/ }
+"-"             { return '-'; /*printf("Found SUB operator.\n");*/ }
+"*"             { return '*'; /*printf("Found MUL operator.\n");*/ }
+"/"             { return '/'; /*printf("Found DIV operator.\n");*/ }
+"//"            { return FLOOR_DIV; /*printf("Found FLOOR_DIV operator.\n");*/ }
+"%"             { return '%'; /*printf("Found MOD operator.\n");*/ }
+"^"             { return '^'; /*printf("Found POW operator.\n");*/ }
 
-"#"             { printf("Found LEN operator.\n"); }
+"#"             { return '#'; /*printf("Found LEN operator.\n");*/ }
 
-"&"             { printf("Found BITWISE_AND operator.\n"); }
-"~"             { printf("Found BITWISE_XOR or BITWISE_NOT operator.\n"); }
-"|"             { printf("Found BITWISE_OR operator.\n"); }
-"<<"            { printf("Found BITWISE_LEFT_SHIFT operator.\n"); }
-">>"            { printf("Found BITWISE_RIGHT_SHIFT operator.\n"); }
+"&"             { return '&'; /*printf("Found BITWISE_AND operator.\n");*/ }
+"~"             { return '~'; /*printf("Found BITWISE_XOR or BITWISE_NOT operator.\n");*/ }
+"|"             { return '|'; /*printf("Found BITWISE_OR operator.\n");*/ }
+"<<"            { return BITWISE_LEFT_SHIFT; /*printf("Found BITWISE_LEFT_SHIFT operator.\n");*/ }
+">>"            { return BITWISE_RIGHT_SHIFT; /*printf("Found BITWISE_RIGHT_SHIFT operator.\n");*/ }
 
-"=="            { printf("Found EQL operator.\n"); }
-"~="            { printf("Found NOT_EQL operator.\n"); }
-"<="            { printf("Found LE operator.\n"); }
-">="            { printf("Found GE operator.\n"); }
-"<"             { printf("Found LESS operator.\n"); }
-">"             { printf("Found GREATER operator.\n"); }
+"=="            { return EQL; /*printf("Found EQL operator.\n");*/ }
+"~="            { return NOT_EQL; /*printf("Found NOT_EQL operator.\n");*/ }
+"<="            { return LE; /*printf("Found LE operator.\n");*/ }
+">="            { return GE; /*printf("Found GE operator.\n");*/ }
+"<"             { return '<'; /*printf("Found LESS operator.\n");*/ }
+">"             { return '>'; /*printf("Found GREATER operator.\n");*/ }
 
-"="             { printf("Found ASSIGN operator.\n"); }
+"="             { return '='; /*printf("Found ASSIGN operator.\n");*/ }
 
-"("             { printf("Found OPEN_PARENTHESIS.\n"); }
-")"             { printf("Found CLOSE_PARENTHESIS.\n"); }
-"{"             { printf("Found OPEN_CURLY_BRACKET.\n"); }
-"}"             { printf("Found CLOSE_CURLY_BRACKET.\n"); }
-"["             { printf("Found OPEN_SQUARE_BRACKET.\n"); }
-"]"             { printf("Found CLOSE_SQUARE_BRACKET.\n"); }
+"("             { return '('; /*printf("Found OPEN_PARENTHESIS.\n");*/ }
+")"             { return ')'; /*printf("Found CLOSE_PARENTHESIS.\n");*/ }
+"{"             { return '{'; /*printf("Found OPEN_CURLY_BRACKET.\n");*/ }
+"}"             { return '}'; /*printf("Found CLOSE_CURLY_BRACKET.\n");*/ }
+"["             { return '['; /*printf("Found OPEN_SQUARE_BRACKET.\n");*/ }
+"]"             { return ']'; /*printf("Found CLOSE_SQUARE_BRACKET.\n");*/ }
 
-"::"            { printf("Found GOTO_TAG_MARK.\n"); }
-";"             { printf("Found SEMICOLON_FIELDSEP.\n"); }
-":"             { printf("Found COLON operator.\n"); }
-","             { printf("Found COMMA_FIELDSEP.\n"); }
-"."             { printf("Found DOT operator.\n"); }
-".."            { printf("Found CONCAT operator.\n"); }
-"..."           { printf("Found VARARG.\n"); }
+"::"            { return GOTO_TAG_MARK; /*printf("Found GOTO_TAG_MARK.\n");*/ }
+";"             { return ';'; /*printf("Found SEMICOLON_FIELDSEP.\n");*/ }
+":"             { return COLON; /*printf("Found COLON operator.\n");*/ }
+","             { return ','; /*printf("Found COMMA_FIELDSEP.\n");*/ }
+"."             { return '.'; /*printf("Found DOT operator.\n");*/ }
+".."            { return CONCAT; /*printf("Found CONCAT operator.\n");*/ }
+"..."           { return VAR_ARG; /*printf("Found VARARG.\n");*/ }
 
 %{
     // +++++++++++++++++++++++++ Числовые константы +++++++++++++++++++++++++++++++
@@ -132,11 +133,15 @@ local           { printf("Found LOCAL keyword.\n"); }
 %}
 
 {DIGIT}+ {
-    printf("Found INT_DECIMAL_NUMBER <%d>.\n", atoi(yytext));
+    // printf("Found INT_DECIMAL_NUMBER <%d>.\n", atoi(yytext));
+    yylval.number = atof(yytext); //TODO возможно надо поменять
+    return NUMBER;
 }
 
 {DIGIT}+("."{DIGIT}*)?{EXPONENT}? {
-    printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
+    // printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
+    yylval.number = atof(yytext);
+    return NUMBER;
 }
 
 {DIGIT}+("."{DIGIT}*)?[eE][+-]? {
@@ -145,7 +150,9 @@ local           { printf("Found LOCAL keyword.\n"); }
 }
 
 {DIGIT}*"."{DIGIT}+{EXPONENT}? {
-    printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
+    // printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
+    yylval.number = atof(yytext);
+    return NUMBER;
 }
 
 {DIGIT}*"."{DIGIT}+[eE][+-]? {
@@ -154,12 +161,16 @@ local           { printf("Found LOCAL keyword.\n"); }
 
 0[xX]{HEX_DIGIT}+ {
     sscanf(yytext, "%x", &int_number);
-    printf("Found INT_HEXADECIMAL_NUMBER <%d>.\n", int_number);
+    // printf("Found INT_HEXADECIMAL_NUMBER <%d>.\n", int_number);
+    yylval.number = (double) int_number; //TODO возможно надо поменять
+    return NUMBER;
 }
 
 0[xX]{HEX_DIGIT}+("."{HEX_DIGIT}*)?{HEX_EXPONENT}? {
     sscanf(yytext, "%a", &float_number);
-    printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
+    // printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
+    yylval.number = float_number;
+    return NUMBER;
 }
 
 0[xX]{HEX_DIGIT}+("."{HEX_DIGIT}*)?[pP][+-]? {
@@ -168,7 +179,9 @@ local           { printf("Found LOCAL keyword.\n"); }
 
 0[xX]{HEX_DIGIT}*"."{HEX_DIGIT}+{HEX_EXPONENT}? {
     sscanf(yytext, "%a", &float_number);
-    printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
+    // printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
+    yylval.number = float_number;
+    return NUMBER;
 }
 
 0[xX]{HEX_DIGIT}*"."{HEX_DIGIT}+[pP][+-]? {
@@ -250,10 +263,13 @@ local           { printf("Found LOCAL keyword.\n"); }
         strcat(string, yytext);
         string[strlen(string) - 2 - long_bracket_level] = 0;
 
-        printf("Found ML_STRING: \n<<<<<<<<\n%s\n>>>>>>>>\n", string);
+        // printf("Found ML_STRING: \n<<<<<<<<\n%s\n>>>>>>>>\n", string);
+        yylval.string=(char *)malloc(strlen(string)+1);
+        strcpy(yylval.string, string);
 
         long_bracket_level = 0;
         BEGIN(INITIAL);
+        return STRING;
     }
     else {
         strcat(string, yytext);
@@ -377,15 +393,21 @@ local           { printf("Found LOCAL keyword.\n"); }
 }
 
 <SQ_STRING>\' {
-    printf("Found SQ_STRING: <<%s>>\n", string);
+    // printf("Found SQ_STRING: <<%s>>\n", string);
+    yylval.string=(char *)malloc(strlen(string)+1);
+    strcpy(yylval.string, string);
     string_type = UNDEFINED;
     BEGIN(INITIAL);
+    return STRING;
 }
 
 <DQ_STRING>\" {
-    printf("Found DQ_STRING: <<%s>>\n", string);
+    // printf("Found DQ_STRING: <<%s>>\n", string);
+    yylval.string=(char *)malloc(strlen(string)+1);
+    strcpy(yylval.string, string);
     string_type = UNDEFINED;
     BEGIN(INITIAL);
+    return STRING;
 }
 
 <SQ_STRING><<EOF>> {
@@ -404,7 +426,10 @@ local           { printf("Found LOCAL keyword.\n"); }
 %}
 
 [a-zA-Z_]{VAR_CHARS}* {
-    printf("Found VARIABLE or FUNCTION_NAME <%s>.\n", yytext);
+    // printf("Found VARIABLE or FUNCTION_NAME <%s>.\n", yytext);
+    yylval.ident=(char *)malloc(strlen(yytext)+1);
+    strcpy(yylval.ident, yytext);
+    return IDENT;
 }
 
 %{
@@ -431,11 +456,4 @@ int calc_long_bracket_level(const char * str) {
         }
     }
     return level;
-}
-
-int main(int argc, char ** argv){
-    yyin = fopen(argv[1], "r");
-
-    yylex();
-    return 0;
 }

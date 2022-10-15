@@ -249,3 +249,10 @@ field_sep:            ',' { $$ = $1; /*Возможно тут как-то по-
                     ;
 
 %%
+
+int main(int argc, char ** argv){
+    yyin = fopen(argv[1], "r");
+
+    yyparse();
+    return 0;
+}
