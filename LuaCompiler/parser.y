@@ -20,6 +20,8 @@
     char * ident;
     char * string;
 
+    struct chunk_node * chunk_node;
+
     struct stmt_node * stmt_node;
     struct stmt_seq_node * stmt_seq_node;
 
@@ -37,7 +39,7 @@
     char * field_sep_node;
 }
 
-%type<stmt_seq_node> chunk;
+%type<chunk_node> chunk;
 %type<stmt_seq_node> block;
 %type<stmt_seq_node> block_tmp;
 %type<stmt_node> stmt;

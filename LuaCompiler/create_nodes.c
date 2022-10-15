@@ -239,7 +239,7 @@ struct stmt_seq_node* add_elseif_seq_stmt_seq_node(struct stmt_seq_node* elseif_
     struct stmt_node* else_if = (struct stmt_node*)malloc(sizeof(struct stmt_node));
     else_if = stmt_node_default;
     else_if->condition_expr = expr;
-    else_if->action_block = block;
+    else_if->if_block = block;
 
     if(elseif_seq->last == NULL) {
         elseif_seq->first = else_if;

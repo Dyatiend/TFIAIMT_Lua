@@ -3,7 +3,7 @@
 #include "tree_nodes.h"
 #include <stdio.h>
 
-void print_program(struct stmt_seq_node * node, FILE * file);
+void print_program(struct chunk_node * node, FILE * file);
 void print_stmt_node(struct stmt_node * node, FILE * file);
 void print_stmt_seq_node(struct stmt_seq_node * node, void * parent, FILE * file);
 void print_expr_node(struct expr_node * node, FILE * file);
