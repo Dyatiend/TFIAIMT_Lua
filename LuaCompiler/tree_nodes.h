@@ -58,7 +58,7 @@ enum stmt_type {
 enum var_type {
     __UNINITIALIZED,
     _IDENT,
-    EXPR, //TODO __VAR заменил на EXPR. Для чего VAR был нужен??
+    __VAR, //TODO __VAR заменил на EXPR. Для чего VAR был нужен??
     __FUNCTION_CALL,
     ADJUSTED_EXPR
 };

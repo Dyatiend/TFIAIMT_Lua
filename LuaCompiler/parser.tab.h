@@ -118,23 +118,23 @@ typedef union YYSTYPE
     char * ident;
     char * string;
 
-    struct chunk_node * chunk_node;
+    struct chunk_node * _chunk_node;
 
-    struct stmt_node * stmt_node;
-    struct stmt_seq_node * stmt_seq_node;
+    struct stmt_node * _stmt_node;
+    struct stmt_seq_node * _stmt_seq_node;
 
-    struct expr_node * expr_node;
-    struct expr_seq_node * expr_seq_node;
+    struct expr_node * _expr_node;
+    struct expr_seq_node * _expr_seq_node;
 
-    struct ident_list_node * ident_list_node;
-    struct param_list_node * param_list_node;
+    struct ident_list_node * _ident_list_node;
+    struct param_list_node * _param_list_node;
 
-    struct field_node * field_node;
-    struct field_list_node * field_list_node;
+    struct field_node * _field_node;
+    struct field_list_node * _field_list_node;
 
-    struct var_node * var_node;
+    struct var_node * _var_node;
     
-    char * field_sep_node;
+    char * _field_sep_node;
 }
 /* Line 1529 of yacc.c.  */
 #line 141 "parser.tab.h"

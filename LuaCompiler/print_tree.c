@@ -115,18 +115,18 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
 
                 fprintf(file, "ID%p [label=\"PARAMS\"]\n", node->params);
                 fprintf(file, "ID%p->ID%p\n", node, node->params);
-                print_stmt_seq_node(node->params, node->params, file);
+                print_param_list_node(node->params, node->params, file);
 
                 fprintf(file, "ID%p [label=\"BLOCK\"]\n", node->action_block);
                 fprintf(file, "ID%p->ID%p\n", node, node->action_block);
                 print_stmt_seq_node(node->action_block, node->action_block, file);
             
             } else {
-                fprintf(file, "ID%p [label=\"LOCAL FUNC id %d\"]\n", node, node->id);
+                fprintf(file, "ID%p [label=\"FUNC id %d\"]\n", node, node->id);
 
                 fprintf(file, "ID%p [label=\"PARAMS\"]\n", node->params);
                 fprintf(file, "ID%p->ID%p\n", node, node->params);
-                print_stmt_seq_node(node->params, node->params, file);
+                print_param_list_node(node->params, node->params, file);
 
                 fprintf(file, "ID%p [label=\"BLOCK\"]\n", node->action_block);
                 fprintf(file, "ID%p->ID%p\n", node, node->action_block);
@@ -218,8 +218,6 @@ void print_expr_node(struct expr_node * node, FILE * file) {
             fprintf(file, "ID%p [label=\"TABLE id %d\"]\n", node, node->id);
             
             print_field_list_node(node->table_constructor, node, file);
-            fprintf(file, "ID%p->ID%p\n", node, node->table_constructor);
-            
 
             break;
         case PLUS:
@@ -458,34 +456,34 @@ void print_expr_seq_node(struct expr_seq_node * node, void * parent, FILE * file
 void print_var_item_node(struct var_item_node * node, FILE * file) {
     switch (node->type) {
         case _IDENT:
+            fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "IDENT", node->id);
+            fprintf(file, "ID%p [label=\"ident %s\"]\n", node->ident, node->ident);
+            fprintf(file, "ID%p->ID%p\n", node, node->ident);
+            break;
+        case __VAR:
             if(node->is_map_key) {
-                fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "IDENT KEY", node->id);
+                fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "VAR KEY", node->id);
                 fprintf(file, "ID%p [label=\"ident key %s\"]\n", node->ident, node->ident);
                 fprintf(file, "ID%p->ID%p\n", node, node->ident);
             } else {
-                fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "IDENT", node->id);
-                fprintf(file, "ID%p [label=\"ident %s\"]\n", node->ident, node->ident);
-                fprintf(file, "ID%p->ID%p\n", node, node->ident);
+                fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "VAR EXPR", node->id);
+                print_expr_node(node->second_expr, file);
+                fprintf(file, "ID%p->ID%p\n", node, node->second_expr);
             }
-            break;
-        case EXPR:
-            fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "VAR EXPR", node->id);
-            print_expr_node(node->second_expr, file);
-            fprintf(file, "ID%p->ID%p\n", node, node->second_expr);
             break;
         case __FUNCTION_CALL:
             if(node->is_map_key) {
                 fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "FUNC CALL KEY", node->id);
                 print_expr_node(node->first_expr, file);
                 fprintf(file, "ID%p [label=\"ident %s\"]\n", node->ident, node->ident);
-                printf(file, "ID%p->ID%p [label=\"fun call\"]\n", node, node->first_expr);
-                printf(file, "ID%p->ID%p [label=\"key ident\"]\n", node, node->ident);
+                fprintf(file, "ID%p->ID%p [label=\"fun call\"]\n", node, node->first_expr);
+                fprintf(file, "ID%p->ID%p [label=\"key ident\"]\n", node, node->ident);
             } else {
                 fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "FUNC CALL EXPR", node->id);
                 print_expr_node(node->first_expr, file);
                 print_expr_node(node->second_expr, file);
-                printf(file, "ID%p->ID%p [label=\"fun call\"]\n", node, node->first_expr);
-                printf(file, "ID%p->ID%p [label=\"key expr\"]\n", node, node->second_expr);
+                fprintf(file, "ID%p->ID%p [label=\"fun call\"]\n", node, node->first_expr);
+                fprintf(file, "ID%p->ID%p [label=\"key expr\"]\n", node, node->second_expr);
             }
             break;
         case ADJUSTED_EXPR:
@@ -493,14 +491,14 @@ void print_var_item_node(struct var_item_node * node, FILE * file) {
                 fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "ADJUSTED EXPR KEY", node->id);
                 print_expr_node(node->first_expr, file);
                 fprintf(file, "ID%p [label=\"ident %s\"]\n", node->ident, node->ident);
-                printf(file, "ID%p->ID%p [label=\"expr\"]\n", node, node->first_expr);
-                printf(file, "ID%p->ID%p [label=\"key ident\"]\n", node, node->ident);
+                fprintf(file, "ID%p->ID%p [label=\"expr\"]\n", node, node->first_expr);
+                fprintf(file, "ID%p->ID%p [label=\"key ident\"]\n", node, node->ident);
             } else {
                 fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "ADJUSTED EXPR EXPR", node->id);
                 print_expr_node(node->first_expr, file);
                 print_expr_node(node->second_expr, file);
-                printf(file, "ID%p->ID%p [label=\"expr\"]\n", node, node->first_expr);
-                printf(file, "ID%p->ID%p [label=\"key expr\"]\n", node, node->second_expr);
+                fprintf(file, "ID%p->ID%p [label=\"expr\"]\n", node, node->first_expr);
+                fprintf(file, "ID%p->ID%p [label=\"key expr\"]\n", node, node->second_expr);
             }
             break;
         default:

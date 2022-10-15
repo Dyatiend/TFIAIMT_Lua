@@ -308,8 +308,8 @@ struct field_node* create_field_node(char* ID, struct expr_node* expr_value, str
     struct field_node* result = (struct field_node*)malloc(sizeof(struct field_node));
     * result = field_node_default;
     result->ident = ID;
-    result->key = expr_value;
-    result->value = expr_key;
+    result->key = expr_key;
+    result->value = expr_value;
     return result;
 }
 
@@ -371,7 +371,7 @@ struct var_node* create_id_var_node(char* id) {
 struct var_node* add_expr_to_var_node(struct var_node* var, struct expr_node* expr) {
     struct var_item_node* item = (struct var_item_node*)malloc(sizeof(struct var_item_node));
     * item = var_item_node_default;
-    item->type = EXPR;
+    item->type = __VAR;
     item->second_expr = expr;
     var->last->next = item;
     var->last = item;
@@ -381,7 +381,7 @@ struct var_node* add_expr_to_var_node(struct var_node* var, struct expr_node* ex
 struct var_node* add_id_to_var_node(struct var_node* var, char* id) {
     struct var_item_node* item = (struct var_item_node*)malloc(sizeof(struct var_item_node));
     * item = var_item_node_default;
-    item->type = _IDENT;
+    item->type = __VAR;
     item->ident = id;
     item->is_map_key = true;
     var->last->next = item;
@@ -392,66 +392,54 @@ struct var_node* add_id_to_var_node(struct var_node* var, char* id) {
 struct var_node* create_function_with_expr_var_node(struct expr_node* function_call, struct expr_node* expr) {
     struct var_node* result = (struct var_node*)malloc(sizeof(struct var_node));
     * result = var_node_default;
-    struct var_item_node* item1 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
-    * item1 = var_item_node_default;
-    item1->type = __FUNCTION_CALL;
-    item1->first_expr = function_call;
-    struct var_item_node* item2 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
-    * item2 = var_item_node_default;
-    item2->type = EXPR;
-    item2->second_expr = expr;
-    result->first = item1;
-    result->last = item2;
+    struct var_item_node* item = (struct var_item_node*)malloc(sizeof(struct var_item_node));
+    * item = var_item_node_default;
+    item->type = __FUNCTION_CALL;
+    item->first_expr = function_call;
+    item->second_expr = expr;
+    result->first = item;
+    result->last = item;
     return result;
 }
 
 struct var_node* create_function_with_id_var_node(struct expr_node* function_call, char* id) {
     struct var_node* result = (struct var_node*)malloc(sizeof(struct var_node));
     * result = var_node_default;
-    struct var_item_node* item1 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
-    * item1 = var_item_node_default;
-    item1->type = __FUNCTION_CALL;
-    item1->first_expr = function_call;
-    struct var_item_node* item2 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
-    * item2 = var_item_node_default;
-    item2->type = _IDENT;
-    item2->ident = id;
-    item2->is_map_key = true;
-    result->first = item1;
-    result->last = item2;
+    struct var_item_node* item = (struct var_item_node*)malloc(sizeof(struct var_item_node));
+    * item = var_item_node_default;
+    item->type = __FUNCTION_CALL;
+    item->first_expr = function_call;
+    item->ident = id;
+    item->is_map_key = true;
+    result->first = item;
+    result->last = item;
     return result;
 }
 
 struct var_node* create_expr_with_expr_var_node(struct expr_node* expr1, struct expr_node* expr2) {
     struct var_node* result = (struct var_node*)malloc(sizeof(struct var_node));
     * result = var_node_default;
-    struct var_item_node* item1 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
-    * item1 = var_item_node_default;
-    item1->type = ADJUSTED_EXPR;
-    item1->first_expr = expr1;
-    struct var_item_node* item2 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
-    * item2 = var_item_node_default;
-    item2->type = EXPR;
-    item2->second_expr = expr2;
-    result->first = item1;
-    result->last = item2;
+    struct var_item_node* item = (struct var_item_node*)malloc(sizeof(struct var_item_node));
+    * item = var_item_node_default;
+    item->type = ADJUSTED_EXPR;
+    item->first_expr = expr1;
+    item->second_expr = expr2;
+    result->first = item;
+    result->last = item;
     return result;
 }
 
 struct var_node* create_expr_with_id_var_node(struct expr_node* expr, char* id) {
     struct var_node* result = (struct var_node*)malloc(sizeof(struct var_node));
     * result = var_node_default;
-    struct var_item_node* item1 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
-    * item1 = var_item_node_default;
-    item1->type = ADJUSTED_EXPR;
-    item1->first_expr = expr;
-    struct var_item_node* item2 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
-    * item2 = var_item_node_default;
-    item2->type = _IDENT;
-    item2->ident = id;
-    item2->is_map_key = true;
-    result->first = item1;
-    result->last = item2;
+    struct var_item_node* item = (struct var_item_node*)malloc(sizeof(struct var_item_node));
+    * item = var_item_node_default;
+    item->type = ADJUSTED_EXPR;
+    item->first_expr = expr;
+    item->ident = id;
+    item->is_map_key = true;
+    result->first = item;
+    result->last = item;
     return result;
 }
 

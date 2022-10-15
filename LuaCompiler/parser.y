@@ -19,43 +19,43 @@
     char * ident;
     char * string;
 
-    struct chunk_node * chunk_node;
+    struct chunk_node * _chunk_node;
 
-    struct stmt_node * stmt_node;
-    struct stmt_seq_node * stmt_seq_node;
+    struct stmt_node * _stmt_node;
+    struct stmt_seq_node * _stmt_seq_node;
 
-    struct expr_node * expr_node;
-    struct expr_seq_node * expr_seq_node;
+    struct expr_node * _expr_node;
+    struct expr_seq_node * _expr_seq_node;
 
-    struct ident_list_node * ident_list_node;
-    struct param_list_node * param_list_node;
+    struct ident_list_node * _ident_list_node;
+    struct param_list_node * _param_list_node;
 
-    struct field_node * field_node;
-    struct field_list_node * field_list_node;
+    struct field_node * _field_node;
+    struct field_list_node * _field_list_node;
 
-    struct var_node * var_node;
+    struct var_node * _var_node;
     
-    char * field_sep_node;
+    char * _field_sep_node;
 }
 
-%type<chunk_node> chunk;
-%type<stmt_seq_node> block;
-%type<stmt_seq_node> block_tmp;
-%type<stmt_node> stmt;
-%type<stmt_seq_node> elseif_seq;
-%type<stmt_node> ret_stmt;
-%type<expr_seq_node> var_list;
-%type<var_node> var;
-%type<expr_node> function_call;
-%type<ident_list_node> ident_list;
-%type<expr_seq_node> expr_seq;
-%type<expr_node> expr;
-%type<expr_seq_node> args;
-%type<param_list_node> param_list;
-%type<field_list_node> table_constructor;
-%type<field_node> field;
-%type<field_list_node> field_list;
-%type<field_sep_node> field_sep;
+%type<_chunk_node> chunk;
+%type<_stmt_seq_node> block;
+%type<_stmt_seq_node> block_tmp;
+%type<_stmt_node> stmt;
+%type<_stmt_seq_node> elseif_seq;
+%type<_stmt_node> ret_stmt;
+%type<_expr_seq_node> var_list;
+%type<_var_node> var;
+%type<_expr_node> function_call;
+%type<_ident_list_node> ident_list;
+%type<_expr_seq_node> expr_seq;
+%type<_expr_node> expr;
+%type<_expr_seq_node> args;
+%type<_param_list_node> param_list;
+%type<_field_list_node> table_constructor;
+%type<_field_node> field;
+%type<_field_list_node> field_list;
+%type<_field_sep_node> field_sep;
 
 // Reserved words
 %token AND BREAK DO ELSE ELSEIF END FALSE FOR FUNCTION IF IN LOCAL NIL NOT OR RETURN REPEAT THEN TRUE UNTIL WHILE
@@ -65,8 +65,8 @@
 %token<string> STRING
 %token<number> NUMBER
 %token<ident> IDENT
-%token<field_sep_node> ','
-%token<field_sep_node> ';'
+%token<_field_sep_node> ','
+%token<_field_sep_node> ';'
 
 // Operators
 %left OR
@@ -163,13 +163,13 @@ function_call:        IDENT args { $$ = create_function_call_expr_node($1, $2); 
                     ;
 
 // namelist ::= Name {',' Name}
-ident_list:           IDENT { create_ident_list_node($1); }
-                    | ident_list ',' IDENT { add_ident_to_ident_list_node($1, $3); }
+ident_list:           IDENT { $$ = create_ident_list_node($1); }
+                    | ident_list ',' IDENT { $$ = add_ident_to_ident_list_node($1, $3); }
                     ;
 
 // explist ::= exp {',' exp}
-expr_seq:             expr { create_expr_seq_node($1); }
-                    | expr_seq ',' expr { add_expr_to_expr_seq_node($1, $3); }
+expr_seq:             expr { $$ = create_expr_seq_node($1); }
+                    | expr_seq ',' expr { $$ = add_expr_to_expr_seq_node($1, $3); }
                     ;
 
 /*
@@ -248,15 +248,3 @@ field_sep:            ',' { $$ = $1; /*Возможно тут как-то по-
                     ;
 
 %%
-
-int main(int argc, char ** argv){
-    yyin = fopen(argv[1], "r");
-
-    FILE * tree = fopen("tree.dot", "w");
-
-    yyparse();
-
-    print_program(chunk_node, tree);
-
-    return 0;
-}
