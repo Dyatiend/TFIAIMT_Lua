@@ -1,10 +1,10 @@
 %{
     #include <stdio.h>
-    #include "tree_nodes.h"
     #include "print_tree.h"
+    #include "create_nodes.h"
 
     void yyerror(const char * message) {
-        fprintf(stderr, message);
+        fprintf(stderr, "%s", message);
     }
 
     int yylex();
@@ -256,7 +256,7 @@ int main(int argc, char ** argv){
 
     yyparse();
 
-    print_tree(chunk_node, tree);
+    print_program(chunk_node, tree);
 
     return 0;
 }

@@ -25,7 +25,7 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
             print_expr_node(node->function_call, file);
             fprintf(file, "ID%p->ID%p\n", node, node->function_call);
             break;
-        case BREAK:
+        case _BREAK:
             fprintf(file, "ID%p [label=\"BREAK id %d\"]\n", node, node->id);
             break;
         case DO_LOOP:
@@ -50,7 +50,7 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
             print_expr_node(node->condition_expr, file);
             fprintf(file, "ID%p->ID%p [label=\"CONDITION\"]\n", node, node->condition_expr);
             break;
-        case IF:
+        case _IF:
             fprintf(file, "ID%p [label=\"IF id %d\"]\n", node, node->id);
             print_expr_node(node->condition_expr, file);
             fprintf(file, "ID%p->ID%p [label=\"CONDITION\"]\n", node, node->condition_expr);
@@ -72,7 +72,7 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
             }
 
             break;
-        case FOR:
+        case _FOR:
             fprintf(file, "ID%p [label=\"FOR id %d\"]\n", node, node->id);
             fprintf(file, "ID%p [label=\"ident %s\"]\n", node->ident, node->ident);
             fprintf(file, "ID%p->ID%p [label=\"VAR\"]\n", node, node->ident);
@@ -148,7 +148,7 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
             }
 
             break;
-        case RETURN:
+        case _RETURN:
             fprintf(file, "ID%p [label=\"RETURN id %d\"]\n", node, node->id);
             break;
         default:
@@ -167,7 +167,7 @@ void print_stmt_seq_node(struct stmt_seq_node * node, void * parent, FILE * file
 
 void print_expr_node(struct expr_node * node, FILE * file) {
     switch (node->type) {
-        case NIL:
+        case _NIL:
             fprintf(file, "ID%p [label=\"NIL id %d\"]\n", node, node->id);
             
             break;
@@ -178,15 +178,15 @@ void print_expr_node(struct expr_node * node, FILE * file) {
                 fprintf(file, "ID%p [label=\"BOOL false id %d\"]\n", node, node->id);
             }
             break;
-        case NUMBER:
+        case _NUMBER:
             fprintf(file, "ID%p [label=\"NUMBER %f id %d\"]\n", node, node->number_value, node->id);
             
             break;
-        case STRING:
+        case _STRING:
             fprintf(file, "ID%p [label=\"STRING %s id %d\"]\n", node, node->string_value, node->id);
             
             break;
-        case VAR_ARG:
+        case _VAR_ARG:
             fprintf(file, "ID%p [label=\"VAR_ARG id %d\"]\n", node, node->id);
             
             break;
@@ -263,7 +263,7 @@ void print_expr_node(struct expr_node * node, FILE * file) {
             fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
             
             break;
-        case FLOOR_DIV:
+        case _FLOOR_DIV:
             fprintf(file, "ID%p [label=\"FLOOR_DIV id %d\"]\n", node, node->id);
             
             print_expr_node(node->first_operand, file);
@@ -323,7 +323,7 @@ void print_expr_node(struct expr_node * node, FILE * file) {
             fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
             
             break;
-        case CONCAT:
+        case _CONCAT:
             fprintf(file, "ID%p [label=\"CONCAT id %d\"]\n", node, node->id);
             
             print_expr_node(node->first_operand, file);
@@ -343,7 +343,7 @@ void print_expr_node(struct expr_node * node, FILE * file) {
             fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
             
             break;
-        case LE:
+        case _LE:
             fprintf(file, "ID%p [label=\"LE id %d\"]\n", node, node->id);
             
             print_expr_node(node->first_operand, file);
@@ -363,7 +363,7 @@ void print_expr_node(struct expr_node * node, FILE * file) {
             fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
             
             break;
-        case GE:
+        case _GE:
             fprintf(file, "ID%p [label=\"GE id %d\"]\n", node, node->id);
             
             print_expr_node(node->first_operand, file);
@@ -420,7 +420,7 @@ void print_expr_node(struct expr_node * node, FILE * file) {
             fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
             
             break;
-        case NOT:
+        case _NOT:
             fprintf(file, "ID%p [label=\"NOT id %d\"]\n", node, node->id);
             
             print_expr_node(node->first_operand, file);
@@ -457,7 +457,7 @@ void print_expr_seq_node(struct expr_seq_node * node, void * parent, FILE * file
 
 void print_var_item_node(struct var_item_node * node, FILE * file) {
     switch (node->type) {
-        case IDENT:
+        case _IDENT:
             if(node->is_map_key) {
                 fprintf(file, "ID%p [label=\"var_item type %s id %d\"]\n", node, "IDENT KEY", node->id);
                 fprintf(file, "ID%p [label=\"ident key %s\"]\n", node->ident, node->ident);

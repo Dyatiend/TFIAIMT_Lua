@@ -1,13 +1,15 @@
+#pragma once
+
 #include <stddef.h>
 #include <stdbool.h>
 
 enum expr_type {
     UNINITIALIZED,
-    NIL,
+    _NIL,
     BOOLEAN,
-    NUMBER,
-    STRING,
-    VAR_ARG,
+    _NUMBER,
+    _STRING,
+    _VAR_ARG,
     VAR,
     FUNCTION_CALL,
     ADJUST,
@@ -16,23 +18,23 @@ enum expr_type {
     MINUS,
     MUL,
     DIV,
-    FLOOR_DIV,
+    _FLOOR_DIV,
     POW,
     XOR,
     MOD,
     BIT_AND,
     BIT_OR,
-    CONCAT,
+    _CONCAT,
     LESS,
-    LE,
+    _LE,
     GREATER,
-    GE,
+    _GE,
     EQUAL,
     NOT_EQUAL,
     LOG_AND,
     LOG_OR,
     UNARY_MINUS,
-    NOT,
+    _NOT,
     LEN,
     BIT_NOT
 };
@@ -41,21 +43,21 @@ enum stmt_type {
     _UNINITIALIZED,
 	ASSIGNMENT,
     _FUNCTION_CALL,
-    BREAK,
+    _BREAK,
     DO_LOOP,
     WHILE_LOOP,
     REPEAT_LOOP,
-    IF,
-    FOR,
+    _IF,
+    _FOR,
     FOR_IN,
     FUNCTION_DEF,
     VAR_DEF,
-    RETURN,
+    _RETURN,
 };
 
 enum var_type {
     __UNINITIALIZED,
-    IDENT,
+    _IDENT,
     EXPR, //TODO __VAR заменил на EXPR. Для чего VAR был нужен??
     __FUNCTION_CALL,
     ADJUSTED_EXPR

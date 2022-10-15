@@ -3,7 +3,7 @@
 struct expr_node* create_nil_expr_node() {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     * result = expr_node_default;
-    result->type = NIL;
+    result->type = _NIL;
     return result;
 }
 
@@ -18,7 +18,7 @@ struct expr_node* create_bool_expr_node(bool val) {
 struct expr_node* create_number_expr_node(float val) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     * result = expr_node_default;
-    result->type = NUMBER;
+    result->type = _NUMBER;
     result->number_value = val;
     return result;
 }
@@ -26,7 +26,7 @@ struct expr_node* create_number_expr_node(float val) {
 struct expr_node* create_string_expr_node(char* val) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     * result = expr_node_default;
-    result->type = STRING;
+    result->type = _STRING;
     result->string_value = val; //TODO возможно нужно strcpy юзать???
     return result;
 }
@@ -34,7 +34,7 @@ struct expr_node* create_string_expr_node(char* val) {
 struct expr_node* create_var_arg_expr_node() {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     * result = expr_node_default;
-    result->type = VAR_ARG;
+    result->type = _VAR_ARG;
     return result;
 }
 
@@ -105,7 +105,7 @@ struct expr_seq_node* create_string_expr_seq_node(char* string) {
     * result = expr_seq_node_default;
     struct expr_node* expr_node_string = (struct expr_node*)malloc(sizeof(struct expr_node));
     * expr_node_string = expr_node_default;
-    expr_node_string->type = STRING;
+    expr_node_string->type = _STRING;
     expr_node_string->string_value = string;
     result->first = expr_node_string;
     result->last = expr_node_string;
@@ -146,7 +146,7 @@ struct stmt_node* create_function_call_stmt_node(struct expr_node* function_call
 struct stmt_node* create_break_stmt_node() {
     struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
     * result = stmt_node_default;
-    result->type = BREAK;
+    result->type = _BREAK;
     return result;
 }
 
@@ -170,7 +170,7 @@ struct stmt_node* create_cycle_stmt_node(enum stmt_type type_node, struct expr_n
 struct stmt_node* create_if_stmt_node(struct expr_node* expr, struct stmt_seq_node* block, struct stmt_seq_node* elseif_seq, struct stmt_seq_node* else_block) {
     struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
     * result = stmt_node_default;
-    result->type = IF;
+    result->type = _IF;
     result->condition_expr = expr;
     result->if_block = block;
     result->elseif_seq = elseif_seq;
@@ -181,7 +181,7 @@ struct stmt_node* create_if_stmt_node(struct expr_node* expr, struct stmt_seq_no
 struct stmt_node* create_for_stmt_node(char* ID, struct expr_node* initial_expr, struct expr_node* condition_expr, struct expr_node* step_expr, struct stmt_seq_node* block) {
     struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
     * result = stmt_node_default;
-    result->type = FOR;
+    result->type = _FOR;
     result->ident = ID; //TODO возможно нужно strcpy юзать???
     result->initial_value = initial_expr;
     result->condition_expr = condition_expr;
@@ -224,7 +224,7 @@ struct stmt_node* create_local_var_stmt_node(struct ident_list_node* ident_list,
 struct stmt_node* create_return_stmt_node(struct expr_seq_node* expr_seq ) {
     struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
     * result = stmt_node_default;
-    result->type = RETURN;
+    result->type = _RETURN;
     result->values = expr_seq;
     return result;
 }
@@ -328,7 +328,7 @@ struct var_node* create_id_var_node(char* id) {
     * result = var_node_default;
     struct var_item_node* item = (struct var_item_node*)malloc(sizeof(struct var_item_node));
     * item = var_item_node_default;
-    item->type = IDENT;
+    item->type = _IDENT;
     item->ident = id;
     result->first = item;
     result->last = item;
@@ -348,7 +348,7 @@ struct var_node* add_expr_to_var_node(struct var_node* var, struct expr_node* ex
 struct var_node* add_id_to_var_node(struct var_node* var, char* id) {
     struct var_item_node* item = (struct var_item_node*)malloc(sizeof(struct var_item_node));
     * item = var_item_node_default;
-    item->type = IDENT;
+    item->type = _IDENT;
     item->ident = id;
     item->is_map_key = true;
     var->last->next = item;
@@ -381,7 +381,7 @@ struct var_node* create_function_with_id_var_node(struct expr_node* function_cal
     item1->first_expr = function_call;
     struct var_item_node* item2 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
     * item2 = var_item_node_default;
-    item2->type = IDENT;
+    item2->type = _IDENT;
     item2->ident = id;
     item2->is_map_key = true;
     result->first = item1;
@@ -414,7 +414,7 @@ struct var_node* create_expr_with_id_var_node(struct expr_node* expr, char* id) 
     item1->first_expr = expr;
     struct var_item_node* item2 = (struct var_item_node*)malloc(sizeof(struct var_item_node));
     * item2 = var_item_node_default;
-    item2->type = IDENT;
+    item2->type = _IDENT;
     item2->ident = id;
     item2->is_map_key = true;
     result->first = item1;

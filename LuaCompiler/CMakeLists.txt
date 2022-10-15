@@ -3,4 +3,4 @@ project(LuaCompiler C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(LuaCompiler lex.yy.c)
+add_executable(LuaCompiler parser.tab.c)

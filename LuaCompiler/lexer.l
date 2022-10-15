@@ -78,8 +78,6 @@ nil             { return NIL; /*printf("Found NIL keyword.\n");*/ }
 function        { return FUNCTION; /*printf("Found FUNCTION keyword.\n");*/ }
 return          { return RETURN; /*printf("Found RETURN keyword.\n");*/ }
 
-goto            { return GOTO; /*printf("Found GOTO keyword.\n");*/ }
-
 local           { return LOCAL; /*printf("Found LOCAL keyword.\n");*/ }
 
 %{
@@ -100,8 +98,6 @@ local           { return LOCAL; /*printf("Found LOCAL keyword.\n");*/ }
 "&"             { return '&'; /*printf("Found BITWISE_AND operator.\n");*/ }
 "~"             { return '~'; /*printf("Found BITWISE_XOR or BITWISE_NOT operator.\n");*/ }
 "|"             { return '|'; /*printf("Found BITWISE_OR operator.\n");*/ }
-"<<"            { return BITWISE_LEFT_SHIFT; /*printf("Found BITWISE_LEFT_SHIFT operator.\n");*/ }
-">>"            { return BITWISE_RIGHT_SHIFT; /*printf("Found BITWISE_RIGHT_SHIFT operator.\n");*/ }
 
 "=="            { return EQL; /*printf("Found EQL operator.\n");*/ }
 "~="            { return NOT_EQL; /*printf("Found NOT_EQL operator.\n");*/ }
@@ -119,9 +115,7 @@ local           { return LOCAL; /*printf("Found LOCAL keyword.\n");*/ }
 "["             { return '['; /*printf("Found OPEN_SQUARE_BRACKET.\n");*/ }
 "]"             { return ']'; /*printf("Found CLOSE_SQUARE_BRACKET.\n");*/ }
 
-"::"            { return GOTO_TAG_MARK; /*printf("Found GOTO_TAG_MARK.\n");*/ }
 ";"             { return ';'; /*printf("Found SEMICOLON_FIELDSEP.\n");*/ }
-":"             { return COLON; /*printf("Found COLON operator.\n");*/ }
 ","             { return ','; /*printf("Found COMMA_FIELDSEP.\n");*/ }
 "."             { return '.'; /*printf("Found DOT operator.\n");*/ }
 ".."            { return CONCAT; /*printf("Found CONCAT operator.\n");*/ }
