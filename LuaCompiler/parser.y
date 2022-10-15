@@ -2,7 +2,6 @@
     #include <stdio.h>
     #include "tree_nodes.h"
     #include "print_tree.h"
-    #include "dot.h"
 
     void yyerror(const char * message) {
         fprintf(stderr, message);
@@ -253,6 +252,11 @@ field_sep:            ',' { $$ = $1; /*Возможно тут как-то по-
 int main(int argc, char ** argv){
     yyin = fopen(argv[1], "r");
 
+    FILE * tree = fopen("tree.dot", "w");
+
     yyparse();
+
+    print_tree(chunk_node, tree);
+
     return 0;
 }

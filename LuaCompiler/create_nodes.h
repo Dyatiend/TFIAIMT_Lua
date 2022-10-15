@@ -1,5 +1,5 @@
 #include "tree_nodes.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 //expr
 struct expr_node* create_nil_expr_node();
@@ -51,7 +51,7 @@ struct ident_list_node* create_ident_list_node(char* ID);
 struct ident_list_node* add_ident_to_ident_list_node(struct ident_list_node* list, char* ID);
 
 //param_list
-struct param_list_node* create_param_list_node(ident_list_node* ident_list, bool var_arg);
+struct param_list_node* create_param_list_node(struct ident_list_node* ident_list, bool var_arg);
 
 //var
 struct var_node* create_id_var_node(char* id);

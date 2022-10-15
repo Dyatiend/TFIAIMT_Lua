@@ -2794,7 +2794,6 @@ int calc_long_bracket_level(const char * str) {
 int main(int argc, char ** argv){
     yyin = fopen(argv[1], "r");
 
-    char * a = NULL
     yylex();
     return 0;
 }
