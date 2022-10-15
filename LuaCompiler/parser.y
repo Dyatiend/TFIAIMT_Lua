@@ -52,7 +52,7 @@
 %type<expr_node> expr;
 %type<expr_seq_node> args;
 %type<param_list_node> param_list;
-%type<expr_node> table_constructor;
+%type<field_list_node> table_constructor;
 %type<field_node> field;
 %type<field_list_node> field_list;
 %type<field_sep_node> field_sep;

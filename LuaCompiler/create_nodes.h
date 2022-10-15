@@ -10,7 +10,7 @@ struct expr_node* create_var_arg_expr_node();
 struct expr_node* create_var_expr_node(struct var_node* var);
 struct expr_node* create_function_call_expr_node(char* ID, struct expr_seq_node* args);
 struct expr_node* create_adjusting_expr_node(struct expr_node* expr);
-struct expr_node* create_table_constructor_expr_node(struct expr_node* table);
+struct expr_node* create_table_constructor_expr_node(struct field_list_node* table);
 struct expr_node* create_bin_expr_node(enum expr_type type_node, struct expr_node* first_operand, struct expr_node* second_operand);
 struct expr_node* create_unary_expr_Node(enum expr_type type_node, struct expr_node* operand);
 

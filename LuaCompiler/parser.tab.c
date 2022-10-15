@@ -1926,7 +1926,7 @@ yyreduce:
 
   case 51:
 #line 188 "parser.y"
-    { (yyval.expr_node) = create_table_constructor_expr_node((yyvsp[(1) - (1)].expr_node)); ;}
+    { (yyval.expr_node) = create_table_constructor_expr_node((yyvsp[(1) - (1)].field_list_node)); ;}
     break;
 
   case 52:
@@ -2056,7 +2056,7 @@ yyreduce:
 
   case 77:
 #line 217 "parser.y"
-    { (yyval.expr_seq_node) = create_table_constructor_expr_seq_node((yyvsp[(1) - (1)].expr_node)); ;}
+    { (yyval.expr_seq_node) = create_table_constructor_expr_seq_node((yyvsp[(1) - (1)].field_list_node)); ;}
     break;
 
   case 78:
@@ -2086,17 +2086,17 @@ yyreduce:
 
   case 83:
 #line 229 "parser.y"
-    { (yyval.expr_node) = NULL; ;}
+    { (yyval.field_list_node) = NULL; ;}
     break;
 
   case 84:
 #line 230 "parser.y"
-    { (yyval.expr_node) = (yyvsp[(2) - (3)].field_list_node); ;}
+    { (yyval.field_list_node) = (yyvsp[(2) - (3)].field_list_node); ;}
     break;
 
   case 85:
 #line 231 "parser.y"
-    { (yyval.expr_node) = (yyvsp[(2) - (4)].field_list_node); ;}
+    { (yyval.field_list_node) = (yyvsp[(2) - (4)].field_list_node); ;}
     break;
 
   case 86:

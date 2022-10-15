@@ -63,7 +63,7 @@ struct expr_node* create_adjusting_expr_node(struct expr_node* expr) {
     return result;
 }
 
-struct expr_node* create_table_constructor_expr_node(struct expr_node* table) {
+struct expr_node* create_table_constructor_expr_node(struct field_list_node* table) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     * result = expr_node_default;
     result->type = TABLE_CONSTRUCTOR;
