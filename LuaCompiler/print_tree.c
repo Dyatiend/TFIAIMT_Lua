@@ -168,68 +168,278 @@ void print_stmt_seq_node(struct stmt_seq_node * node, void * parent, FILE * file
 void print_expr_node(struct expr_node * node, FILE * file) {
     switch (node->type) {
         case NIL:
+            fprintf(file, "ID%p [label=\"NIL id %d\"]\n", node, node->id);
+            
             break;
         case BOOLEAN:
+            if(node->bool_value) {
+                fprintf(file, "ID%p [label=\"BOOL true id %d\"]\n", node, node->id);
+            } else {
+                fprintf(file, "ID%p [label=\"BOOL false id %d\"]\n", node, node->id);
+            }
             break;
         case NUMBER:
+            fprintf(file, "ID%p [label=\"NUMBER %f id %d\"]\n", node, node->number_value, node->id);
+            
             break;
         case STRING:
+            fprintf(file, "ID%p [label=\"STRING %s id %d\"]\n", node, node->string_value, node->id);
+            
             break;
         case VAR_ARG:
+            fprintf(file, "ID%p [label=\"VAR_ARG id %d\"]\n", node, node->id);
+            
             break;
         case VAR:
+            fprintf(file, "ID%p [label=\"VAR id %d\"]\n", node, node->id);
+            
+            print_var_node(node->var, node, file);
+
             break;
         case FUNCTION_CALL:
+            fprintf(file, "ID%p [label=\"FUNCTION CALL id %d\"]\n", node, node->id);
+            
+            fprintf(file, "ID%p [label=\"name %s\"]\n", node->ident, node->ident);
+            fprintf(file, "ID%p->ID%p [label=\"name\"]\n", node, node->ident);
+
+            fprintf(file, "ID%p [label=\"ARGS\"]\n", node->args);
+            fprintf(file, "ID%p->ID%p\n", node, node->args);
+            print_expr_seq_node(node->args, node->args, file);
+
             break;
         case ADJUST:
+            fprintf(file, "ID%p [label=\"ADJUST id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->adjusted_expr, file);
+            fprintf(file, "ID%p->ID%p\n", node, node->adjusted_expr);
+            
             break;
         case TABLE_CONSTRUCTOR:
+            fprintf(file, "ID%p [label=\"TABLE id %d\"]\n", node, node->id);
+            
+            print_field_list_node(node->table_constructor, node, file);
+            fprintf(file, "ID%p->ID%p\n", node, node->table_constructor);
+            
+
             break;
         case PLUS:
+            fprintf(file, "ID%p [label=\"PLUS id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
+
             break;
         case MINUS:
+            fprintf(file, "ID%p [label=\"MINUS id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case MUL:
+            fprintf(file, "ID%p [label=\"MUL id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case DIV:
+            fprintf(file, "ID%p [label=\"DIV id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case FLOOR_DIV:
+            fprintf(file, "ID%p [label=\"FLOOR_DIV id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case POW:
+            fprintf(file, "ID%p [label=\"POW id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case XOR:
+            fprintf(file, "ID%p [label=\"XOR id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case MOD:
+            fprintf(file, "ID%p [label=\"MOD id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case BIT_AND:
+            fprintf(file, "ID%p [label=\"BIT_AND id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case BIT_OR:
+            fprintf(file, "ID%p [label=\"BIT_OR id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case CONCAT:
+            fprintf(file, "ID%p [label=\"CONCAT id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case LESS:
+            fprintf(file, "ID%p [label=\"LESS id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case LE:
+            fprintf(file, "ID%p [label=\"LE id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case GREATER:
+            fprintf(file, "ID%p [label=\"GREATER id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case GE:
+            fprintf(file, "ID%p [label=\"GE id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case EQUAL:
+            fprintf(file, "ID%p [label=\"EQUAL id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case NOT_EQUAL:
+            fprintf(file, "ID%p [label=\"NOT_EQUAL id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case LOG_AND:
+            fprintf(file, "ID%p [label=\"LOG_AND id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case LOG_OR:
+            fprintf(file, "ID%p [label=\"LOG_OR id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
+            print_expr_node(node->second_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"SECOND\"]\n", node, node->second_operand);
+            
             break;
         case UNARY_MINUS:
+            fprintf(file, "ID%p [label=\"UNARY_MINUS id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
             break;
         case NOT:
+            fprintf(file, "ID%p [label=\"NOT id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
             break;
         case LEN:
+            fprintf(file, "ID%p [label=\"LEN id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
             break;
         case BIT_NOT:
+            fprintf(file, "ID%p [label=\"BIT_NOT id %d\"]\n", node, node->id);
+            
+            print_expr_node(node->first_operand, file);
+            fprintf(file, "ID%p->ID%p [label=\"FIRST\"]\n", node, node->first_operand);
+            
             break;
         default:
             break;
