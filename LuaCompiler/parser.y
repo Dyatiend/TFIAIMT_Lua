@@ -60,7 +60,12 @@
 %token AND BREAK DO ELSE ELSEIF END FALSE FOR FUNCTION IF IN LOCAL NIL NOT OR RETURN REPEAT THEN TRUE UNTIL WHILE
 
 // Literals
-%token EQL NOT_EQL LE GE FLOOR_DIV CONCAT VAR_ARG IDENT NUMBER STRING
+%token EQL NOT_EQL LE GE FLOOR_DIV CONCAT VAR_ARG
+%token<string> STRING
+%token<number> NUMBER
+%token<ident> IDENT
+%token<field_sep_node> ','
+%token<field_sep_node> ';'
 
 // Operators
 %left OR
@@ -120,10 +125,10 @@ stmt:                 var_list '=' expr_seq { $$ = create_assign_stmt_node($1, $
                     | IF expr THEN block elseif_seq END { $$ = create_if_stmt_node($2, $4, $5, NULL); }
                     | IF expr THEN block elseif_seq ELSE block END { $$ = create_if_stmt_node($2, $4, $5, $7); }
                     | FOR IDENT '=' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, NULL, $8); }
-                    | FOR IDENT '=' expr ',' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, $8, $9); }
+                    | FOR IDENT '=' expr ',' expr ',' expr DO block END { $$ = create_for_stmt_node($2, $4, $6, $8, $10); }
                     | FOR ident_list IN expr_seq DO block END { $$ = create_foreach_stmt_node($2, $4, $6); }
                     | FUNCTION IDENT '(' param_list ')' block END { $$ = create_function_def_stmt_node($2, $4, $6, false); }
-                    | LOCAL FUNCTION IDENT '(' param_list ')' block END { $$ = create_function_def_stmt_node($2, $4, $6, true); }
+                    | LOCAL FUNCTION IDENT '(' param_list ')' block END { $$ = create_function_def_stmt_node($3, $5, $7, true); }
                     | LOCAL ident_list { $$ = create_local_var_stmt_node($2, NULL); }
                     | LOCAL ident_list '=' expr_seq { $$ = create_local_var_stmt_node($2, $4); }
                     ;
@@ -237,8 +242,8 @@ field:                IDENT '=' expr { $$ = create_field_node($1, $3, NULL); }
                     ;
 
 // fieldsep ::= ',' | ';'
-field_sep:            ',' { $$ = $1; }
-                    | ';' { $$ = $1; }
+field_sep:            ',' { $$ = $1; /*Возможно тут как-то по-другому надо сделать иначе пришлось создать тип для ',' и ';'*/ }
+                    | ';' { $$ = $1; /*Возможно тут как-то по-другому надо сделать иначе пришлось создать тип для ',' и ';'*/ }
                     ;
 
 %%
