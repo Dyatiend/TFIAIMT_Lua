@@ -63,7 +63,6 @@ enum var_type {
     ADJUSTED_EXPR
 };
 
-unsigned int LAST_ID = 0;
 
 struct stmt_node {
     enum stmt_type type;
@@ -92,16 +91,12 @@ struct stmt_node {
     struct expr_node * step_expr; // Выражение в конце цикла for
 
     struct stmt_node * next;
-} stmt_node_default = {
-    _UNINITIALIZED, 0, false, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 struct stmt_seq_node {
     struct stmt_node * first;
     struct stmt_node * last;
-} stmt_seq_node_default = { NULL, NULL };
+};
 
 struct expr_node {
     enum expr_type type;
@@ -126,9 +121,6 @@ struct expr_node {
     struct var_node * var; // Переменная
 
     struct expr_node * next;
-} expr_node_default = {
-    UNINITIALIZED, 0, false, 0, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 struct var_item_node {
@@ -144,19 +136,17 @@ struct var_item_node {
     struct expr_node * second_expr; // expr в квадратных скобках
 
     struct var_item_node * next;
-} var_item_node_default = {
-    __UNINITIALIZED, 0, false, NULL, NULL, NULL, NULL
 };
 
 struct var_node {
     struct var_item_node * first;
     struct var_item_node * last;
-} var_node_default = { NULL, NULL };
+};
 
 struct expr_seq_node {
     struct expr_node * first;
     struct expr_node * last;
-} expr_seq_node_default = { NULL, NULL };
+};
 
 struct ident_node {
     unsigned int id;
@@ -164,17 +154,17 @@ struct ident_node {
     char * ident;
 
     struct ident_node * next;
-} ident_node_default = { 0, NULL, NULL };
+};
 
 struct ident_list_node {
     struct ident_node * first;
     struct ident_node * last;
-} ident_list_node_default = { NULL, NULL };
+};
 
 struct param_list_node {
     bool has_var_arg;
     struct ident_list_node * list;
-} param_list_node_default = { false, NULL };
+};
 
 struct field_node {
     unsigned int id;
@@ -184,12 +174,12 @@ struct field_node {
     struct expr_node * value;
 
     struct field_node * next;
-} field_node_default = { 0, NULL, NULL, NULL };
+};
 
 struct field_list_node {
     struct field_node * first;
     struct field_node * last;
-} field_list_node_default = { NULL, NULL };
+};
 
 struct chunk_node {
     struct stmt_seq_node* block;

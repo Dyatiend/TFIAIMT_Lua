@@ -1,5 +1,38 @@
 #include "create_nodes.h"
 
+unsigned int LAST_ID = 0;
+
+struct stmt_node stmt_node_default = {
+        _UNINITIALIZED, 0, false, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL
+};
+
+struct stmt_seq_node stmt_seq_node_default = { NULL, NULL };
+
+struct expr_node expr_node_default = {
+        UNINITIALIZED, 0, false, 0, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL
+};
+
+struct var_item_node var_item_node_default = {
+        __UNINITIALIZED, 0, false, NULL, NULL, NULL, NULL
+};
+
+struct var_node var_node_default = { NULL, NULL };
+
+struct expr_seq_node expr_seq_node_default = { NULL, NULL };
+
+struct ident_node ident_node_default = { 0, NULL, NULL };
+
+struct ident_list_node ident_list_node_default = { NULL, NULL };
+
+struct param_list_node param_list_node_default = { false, NULL };
+
+struct field_node field_node_default = { 0, NULL, NULL, NULL };
+
+struct field_list_node field_list_node_default = { NULL, NULL };
+
 struct expr_node* create_nil_expr_node() {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     * result = expr_node_default;

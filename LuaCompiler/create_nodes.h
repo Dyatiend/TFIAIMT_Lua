@@ -1,3 +1,5 @@
+#pragma once
+
 #include "tree_nodes.h"
 #include <stdlib.h>
 
