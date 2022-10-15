@@ -171,7 +171,7 @@ struct stmt_node* create_assign_stmt_node(struct expr_seq_node* var_list, struct
 struct stmt_node* create_function_call_stmt_node(struct expr_node* function_call) {
     struct stmt_node* result = (struct stmt_node*)malloc(sizeof(struct stmt_node));
     * result = stmt_node_default;
-    result->type = FUNCTION_CALL;
+    result->type = _FUNCTION_CALL;
     result->function_call = function_call;
     return result;
 }

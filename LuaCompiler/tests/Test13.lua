@@ -10,7 +10,7 @@ function dump(t,i)
 	for k in pairs(t) do
 		n=n+1 s[n]=k
 	end
-	table.sort(s)
+	sort(s)
 	for k,v in ipairs(s) do
 		print(i,v)
 		v=t[v]

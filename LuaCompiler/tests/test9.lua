@@ -7,7 +7,7 @@ function fib(n)
     sum.b = f1.b * f2.b
     sum.a = f1.a * f2.b + f2.a * f1.b
   -- Equality check is == like Python; ok for strs.
-    io.write('not over 40\n')  -- Defaults to stdout.
+    write('not over 40\n')  -- Defaults to stdout.
   else
     -- Variables are global by default.
     thisIsGlobal = 5  -- Camel case is common.
@@ -16,7 +16,7 @@ function fib(n)
       karlSum = karlSum + i
     end
     -- How to make a variable local:
-    local line = io.read()  -- Reads next stdin line.
+    local line = read()  -- Reads next stdin line.
 
     -- String concatenation uses the .. operator:
     print('Winter is coming, ' .. line)
