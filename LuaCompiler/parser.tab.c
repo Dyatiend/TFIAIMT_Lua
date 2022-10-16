@@ -1951,7 +1951,7 @@ yyreduce:
 
   case 56:
 #line 193 "parser.y"
-    { (yyval._expr_node) = create_bin_expr_node(FLOOR_DIV, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
+    { (yyval._expr_node) = create_bin_expr_node(_FLOOR_DIV, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
     break;
 
   case 57:
@@ -1981,7 +1981,7 @@ yyreduce:
 
   case 62:
 #line 199 "parser.y"
-    { (yyval._expr_node) = create_bin_expr_node(CONCAT, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
+    { (yyval._expr_node) = create_bin_expr_node(_CONCAT, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
     break;
 
   case 63:
@@ -1991,7 +1991,7 @@ yyreduce:
 
   case 64:
 #line 201 "parser.y"
-    { (yyval._expr_node) = create_bin_expr_node(LE, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
+    { (yyval._expr_node) = create_bin_expr_node(_LE, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
     break;
 
   case 65:
@@ -2001,7 +2001,7 @@ yyreduce:
 
   case 66:
 #line 203 "parser.y"
-    { (yyval._expr_node) = create_bin_expr_node(GE, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
+    { (yyval._expr_node) = create_bin_expr_node(_GE, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
     break;
 
   case 67:
@@ -2016,12 +2016,12 @@ yyreduce:
 
   case 69:
 #line 206 "parser.y"
-    { (yyval._expr_node) = create_bin_expr_node(AND, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
+    { (yyval._expr_node) = create_bin_expr_node(LOG_AND, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
     break;
 
   case 70:
 #line 207 "parser.y"
-    { (yyval._expr_node) = create_bin_expr_node(OR, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
+    { (yyval._expr_node) = create_bin_expr_node(LOG_OR, (yyvsp[(1) - (3)]._expr_node), (yyvsp[(3) - (3)]._expr_node)); ;}
     break;
 
   case 71:
@@ -2031,7 +2031,7 @@ yyreduce:
 
   case 72:
 #line 209 "parser.y"
-    { (yyval._expr_node) = create_unary_expr_Node(NOT, (yyvsp[(2) - (2)]._expr_node)); ;}
+    { (yyval._expr_node) = create_unary_expr_Node(_NOT, (yyvsp[(2) - (2)]._expr_node)); ;}
     break;
 
   case 73:

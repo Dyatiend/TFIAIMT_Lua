@@ -113,6 +113,9 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
             if(node->is_local) {
                 fprintf(file, "ID%p [label=\"LOCAL FUNC id %d\"]\n", node, node->id);
 
+                fprintf(file, "ID%p [label=\"name %s\"]\n", node->ident, node->ident);
+                fprintf(file, "ID%p->ID%p [label=\"name\"]\n", node, node->ident);
+
                 fprintf(file, "ID%p [label=\"PARAMS\"]\n", node->params);
                 fprintf(file, "ID%p->ID%p\n", node, node->params);
                 print_param_list_node(node->params, node->params, file);
@@ -123,6 +126,9 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
 
             } else {
                 fprintf(file, "ID%p [label=\"FUNC id %d\"]\n", node, node->id);
+
+                fprintf(file, "ID%p [label=\"name %s\"]\n", node->ident, node->ident);
+                fprintf(file, "ID%p->ID%p [label=\"name\"]\n", node, node->ident);
 
                 fprintf(file, "ID%p [label=\"PARAMS\"]\n", node->params);
                 fprintf(file, "ID%p->ID%p\n", node, node->params);
@@ -150,6 +156,13 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
             break;
         case _RETURN:
             fprintf(file, "ID%p [label=\"RETURN id %d\"]\n", node, node->id);
+
+            if(node->values != NULL) {
+                fprintf(file, "ID%p [label=\"VALUES\"]\n", node->values);
+                fprintf(file, "ID%p->ID%p\n", node, node->values);
+                print_expr_seq_node(node->values, node->values, file);
+            }
+
             break;
         default:
             break;
