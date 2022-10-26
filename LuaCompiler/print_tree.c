@@ -165,6 +165,14 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
 
             break;
         default:
+            // Типа elseif ))))
+            fprintf(file, "ID%p [label=\"ELSEIF id %d\"]\n", node, node->id);
+            print_expr_node(node->condition_expr, file);
+            fprintf(file, "ID%p->ID%p [label=\"CONDITION\"]\n", node, node->condition_expr);
+
+            fprintf(file, "ID%p [label=\"BLOCK\"]\n", node->if_block);
+            fprintf(file, "ID%p->ID%p\n", node, node->if_block);
+            print_stmt_seq_node(node->if_block, node->if_block, file);
             break;
 	}
 }
