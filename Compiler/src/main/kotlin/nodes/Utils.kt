@@ -2,6 +2,7 @@ package nodes
 
 import org.w3c.dom.Node
 import org.xml.sax.SAXException
+import java.io.File
 import java.io.IOException
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
@@ -377,6 +378,574 @@ object Utils {
             }
 
             return res
+        }
+    }
+
+    fun printProgram(rootNode : ChunkNode?, file : File) {
+        file.writeText("digraph G {\n")
+        file.writeText("ID"+rootNode+"%p [label=\"program\"]\n")
+
+        if (rootNode?.block != null) {
+            printStmtSeqNode(rootNode.block, rootNode, file)
+        }
+        file.writeText("}")
+    }
+
+    private fun printStmtSeqNode(node : StmtSeqNode?, parent : Any?, file : File) {
+        var current = node?.first
+        current?.let {
+            while (current != null) {
+                printStmtNode(current, file)
+                file.writeText("ID"+parent+"->ID"+current+"\n")
+                current = current!!.next
+            }
+        }
+    }
+
+    private fun printStmtNode(node : StmtNode?, file : File) {
+        when(node?.type) {
+            StmtType.UNINITIALIZED -> {
+                // Типа elseif ))))
+                file.writeText("ID"+node+" [label=\"ELSEIF id "+node.id+"\"]\n")
+                printExprNode(node.conditionExpr, file)
+                file.writeText("ID"+node+"->ID"+node.conditionExpr+" [label=\"CONDITION\"]\n")
+
+                file.writeText("ID"+node.ifBlock+" [label=\"BLOCK\"]\n")
+                file.writeText("ID"+node+"->ID"+node.ifBlock+"\n")
+                printStmtSeqNode(node.ifBlock, node.ifBlock, file)
+            }
+            StmtType.ASSIGNMENT -> {
+                file.writeText("ID"+node+" [label=\"ASSIGNMENT id "+node.id+"\"]\n")
+                file.writeText("ID"+node.varList+" [label=\"VARS\"]\n")
+                file.writeText("ID"+node.values+" [label=\"VALUES\"]\n")
+                file.writeText("ID"+node+"->ID"+node.varList+"\n")
+                file.writeText("ID"+node+"->ID"+node.values+"\n")
+                printExprSeqNode(node.varList, node.varList, file)
+                printExprSeqNode(node.values, node.values, file)
+            }
+            StmtType.FUNCTION_CALL -> {
+                file.writeText("ID"+node+" [label=\"_FUNCTION_CALL id "+node.id+"\"]\n")
+                printExprNode(node.functionCall, file)
+                file.writeText("ID"+node+"->ID"+node.functionCall+"\n")
+            }
+            StmtType.BREAK -> {
+                file.writeText("ID"+node+" [label=\"BREAK id "+node.id+"\"]\n")
+            }
+            StmtType.DO_LOOP -> {
+                file.writeText("ID"+node+" [label=\"DO_LOOP id "+node.id+"\"]\n")
+                file.writeText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
+                file.writeText("ID"+node+"->ID"+node.actionBlock+"\n")
+                printStmtSeqNode(node.actionBlock, node.actionBlock, file)
+            }
+            StmtType.WHILE_LOOP -> {
+                file.writeText("ID"+node+" [label=\"WHILE_LOOP id "+node.id+"\"]\n")
+                printExprNode(node.conditionExpr, file)
+                file.writeText("ID"+node+"->ID"+node.conditionExpr+" [label=\"CONDITION\"]\n")
+                file.writeText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
+                file.writeText("ID"+node+"->ID"+node.actionBlock+"\n")
+                printStmtSeqNode(node.actionBlock, node.actionBlock, file)
+            }
+            StmtType.REPEAT_LOOP -> {
+                file.writeText("ID"+node+" [label=\"REPEAT_LOOP id "+node.id+"\"]\n")
+                file.writeText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
+                file.writeText("ID"+node+"->ID"+node.actionBlock+"\n")
+                printStmtSeqNode(node.actionBlock, node.actionBlock, file)
+                printExprNode(node.conditionExpr, file)
+                file.writeText("ID"+node+"->ID"+node.conditionExpr+" [label=\"CONDITION\"]\n")
+            }
+            StmtType.IF -> {
+                file.writeText("ID"+node+" [label=\"IF id "+node.id+"\"]\n")
+                printExprNode(node.conditionExpr, file)
+                file.writeText("ID"+node+"->ID"+node.conditionExpr+" [label=\"CONDITION\"]\n")
+
+                file.writeText("ID"+node.ifBlock+" [label=\"IF BLOCK\"]\n")
+                file.writeText("ID"+node+"->ID"+node.ifBlock+"\n")
+                printStmtSeqNode(node.ifBlock, node.ifBlock, file)
+
+                if(node.elseifSeq != null && node.elseifSeq?.first != null) {
+                    file.writeText("ID"+node.elseifSeq+" [label=\"ELSEIF SEQ\"]\n")
+                    file.writeText("ID"+node.elseifSeq+" [label=\"ELSEIF SEQ\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.elseifSeq+"\n")
+                    printStmtSeqNode(node.elseifSeq, node.elseifSeq, file)
+                }
+
+                if(node.elseBlock != null) {
+                    file.writeText("ID"+node.elseBlock+" [label=\"ELSE BLOCK\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.elseBlock+"\n")
+                    printStmtSeqNode(node.elseBlock, node.elseBlock, file)
+                }
+            }
+            StmtType.FOR -> {
+                file.writeText("ID"+node+" [label=\"FOR id "+node.id+"\"]\n")
+                file.writeText("ID"+node.ident+" [label=\"ident "+node.ident+"\"]\n")
+                file.writeText("ID"+node+"->ID"+node.ident+" [label=\"VAR\"]\n")
+
+                printExprNode(node.initialValue, file)
+                file.writeText("ID"+node+"->ID"+node.initialValue+" [label=\"INIT VAL\"]\n")
+
+                printExprNode(node.conditionExpr, file)
+                file.writeText("ID"+node+"->ID"+node.conditionExpr+" [label=\"CONDITION\"]\n")
+
+                if(node.stepExpr != null) {
+                    printExprNode(node.stepExpr, file)
+                    file.writeText("ID"+node+"->ID"+node.stepExpr+" [label=\"STEP EXPR\"]\n")
+                }
+
+                file.writeText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
+                file.writeText("ID"+node+"->ID"+node.actionBlock+"\n")
+                printStmtSeqNode(node.actionBlock, node.actionBlock, file)
+            }
+            StmtType.FOREACH -> {
+                file.writeText("ID"+node+" [label=\"FOREACH id "+node.id+"\"]\n")
+
+                file.writeText("ID"+node.identList+" [label=\"IDENT LIST\"]\n")
+                file.writeText("ID"+node+"->ID"+node.identList+"\n")
+                printIdentListNode(node.identList, node.identList, file)
+
+                file.writeText("ID"+node.values+" [label=\"VALUES\"]\n")
+                file.writeText("ID"+node+"->ID"+node.values+"\n")
+                printExprSeqNode(node.values, node.values, file)
+
+                file.writeText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
+                file.writeText("ID"+node+"->ID"+node.actionBlock+"\n")
+                printStmtSeqNode(node.actionBlock, node.actionBlock, file)
+            }
+            StmtType.FUNCTION_DEF -> {
+                if(node.isLocal) {
+                    file.writeText("ID"+node+" [label=\"LOCAL FUNC id "+node.id+"\"]\n")
+
+                    file.writeText("ID"+node.ident+" [label=\"name "+node.ident+"\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.ident+" [label=\"name\"]\n")
+
+                    file.writeText("ID"+node.params+" [label=\"PARAMS\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.params+"\n")
+                    printParamListNode(node.params, node.params, file)
+
+                    file.writeText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.actionBlock+"\n")
+                    printStmtSeqNode(node.actionBlock, node.actionBlock, file)
+                } else {
+                    file.writeText("ID"+node+" [label=\"FUNC id "+node.id+"\"]\n")
+
+                    file.writeText("ID"+node.ident+" [label=\"name "+node.ident+"\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.ident+" [label=\"name\"]\n")
+
+                    file.writeText("ID"+node.params+" [label=\"PARAMS\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.params+"\n")
+                    printParamListNode(node.params, node.params, file)
+
+                    file.writeText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.actionBlock+"\n")
+                    printStmtSeqNode(node.actionBlock, node.actionBlock, file)
+                }
+
+            }
+            StmtType.VAR_DEF -> {
+                file.writeText("ID"+node+" [label=\"VAR DEF id "+node.id+"\"]\n")
+
+                file.writeText("ID"+node.identList+" [label=\"IDENT LIST\"]\n")
+                file.writeText("ID"+node+"->ID"+node.identList+"\n")
+                printIdentListNode(node.identList, node.identList, file)
+
+                if(node.values != null) {
+                    file.writeText("ID"+node.values+" [label=\"VALUES\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.values+"\n")
+                    printExprSeqNode(node.values, node.values, file)
+                }
+            }
+            StmtType.RETURN -> {
+                file.writeText("ID"+node+" [label=\"RETURN id "+node.id+"\"]\n")
+
+                if(node.values != null) {
+                    file.writeText("ID"+node.values+" [label=\"VALUES\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.values+"\n")
+                    printExprSeqNode(node.values, node.values, file)
+                }
+            }
+        }
+    }
+
+    private fun printExprSeqNode(node : ExprSeqNode?, parent : Any?, file : File) {
+        var current = node?.first
+        current.let {
+            while (current != null) {
+                printExprNode(current, file)
+                file.writeText("ID"+parent+"->ID"+current+"\n")
+                current = current!!.next
+            }
+        }
+    }
+
+    private fun printExprNode(node : ExprNode?, file : File) {
+        when(node?.type) {
+            ExprType.UNINITIALIZED -> {
+
+            }
+            ExprType.NIL -> {
+                file.writeText("ID"+node+" [label=\"NIL id "+node.id+"\"]\n")
+            }
+            ExprType.BOOLEAN -> {
+                if(node.boolValue) {
+                    file.writeText("ID"+node+" [label=\"BOOL true id "+node.id+"\"]\n")
+                } else {
+                    file.writeText("ID"+node+" [label=\"BOOL false id "+node.id+"\"]\n")
+                }
+            }
+            ExprType.NUMBER -> {
+                file.writeText("ID"+node+" [label=\"NUMBER "+node.numberValue+" id "+node.id+"\"]\n")
+            }
+            ExprType.STRING -> {
+                file.writeText("ID"+node+" [label=\"STRING "+node.stringValue+" id "+node.id+"\"]\n")
+            }
+            ExprType.VAR_ARG -> {
+                file.writeText("ID"+node+" [label=\"VAR_ARG id "+node.id+"\"]\n")
+            }
+            ExprType.VAR -> {
+                file.writeText("ID"+node+" [label=\"VAR id "+node.id+"\"]\n")
+
+                printVarNode(node.varNode, node, file)
+            }
+            ExprType.FUNCTION_CALL -> {
+                file.writeText("ID"+node+" [label=\"FUNCTION CALL id "+node.id+"\"]\n")
+
+                file.writeText("ID"+node.ident+" [label=\"name "+node.ident+"\"]\n")
+                file.writeText("ID"+node+"->ID"+node.ident+" [label=\"name\"]\n")
+
+                if(node.args != null) {
+                    file.writeText("ID"+node.args+" [label=\"ARGS\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.args+"\n")
+                    printExprSeqNode(node.args, node.args, file)
+                }
+            }
+            ExprType.ADJUST -> {
+                file.writeText("ID"+node+" [label=\"ADJUST id "+node.id+"\"]\n")
+
+                printExprNode(node?.adjustedExpr, file)
+                file.writeText("ID"+node+"->ID"+node.adjustedExpr+"\n")
+            }
+            ExprType.TABLE_CONSTRUCTOR -> {
+                file.writeText("ID"+node+" [label=\"TABLE id "+node.id+"\"]\n")
+
+                if(node.tableConstructor != null) {
+                    printFieldListNode(node.tableConstructor, node, file)
+                }
+            }
+            ExprType.PLUS -> {
+                file.writeText("ID"+node+" [label=\"PLUS id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.MINUS -> {
+                file.writeText("ID"+node+" [label=\"MINUS id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.MUL -> {
+                file.writeText("ID"+node+" [label=\"MUL id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.DIV -> {
+                file.writeText("ID"+node+" [label=\"DIV id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.FLOOR_DIV -> {
+                file.writeText("ID"+node+" [label=\"FLOOR_DIV id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.POW -> {
+                file.writeText("ID"+node+" [label=\"POW id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.XOR -> {
+                file.writeText("ID"+node+" [label=\"XOR id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.MOD -> {
+                file.writeText("ID"+node+" [label=\"MOD id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.BIT_AND -> {
+                file.writeText("ID"+node+" [label=\"BIT_AND id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.BIT_OR -> {
+                file.writeText("ID"+node+" [label=\"BIT_OR id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.CONCAT -> {
+                file.writeText("ID"+node+" [label=\"CONCAT id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.LESS -> {
+                file.writeText("ID"+node+" [label=\"LESS id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.LE -> {
+                file.writeText("ID"+node+" [label=\"LE id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.GREATER -> {
+                file.writeText("ID"+node+" [label=\"GREATER id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.GE -> {
+                file.writeText("ID"+node+" [label=\"GE id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.EQUAL -> {
+                file.writeText("ID"+node+" [label=\"EQUAL id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.NOT_EQUAL -> {
+                file.writeText("ID"+node+" [label=\"NOT_EQUAL id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.LOG_AND -> {
+                file.writeText("ID"+node+" [label=\"LOG_AND id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.LOG_OR -> {
+                file.writeText("ID"+node+" [label=\"LOG_OR id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+
+                printExprNode(node.secondOperand, file)
+                file.writeText("ID"+node+"->ID"+node.secondOperand+" [label=\"SECOND\"]\n")
+            }
+            ExprType.UNARY_MINUS -> {
+                file.writeText("ID"+node+" [label=\"UNARY_MINUS id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+            }
+            ExprType.NOT -> {
+                file.writeText("ID"+node+" [label=\"NOT id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+            }
+            ExprType.LEN -> {
+                file.writeText("ID"+node+" [label=\"LEN id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+            }
+            ExprType.BIT_NOT -> {
+                file.writeText("ID"+node+" [label=\"BIT_NOT id "+node.id+"\"]\n")
+
+                printExprNode(node.firstOperand, file)
+                file.writeText("ID"+node+"->ID"+node.firstOperand+" [label=\"FIRST\"]\n")
+            }
+        }
+    }
+
+    private fun printVarItemNode(node : VarItemNode?, file : File) {
+        when(node?.type) {
+            VarType.UNINITIALIZED -> {
+
+            }
+            VarType.IDENT -> {
+                file.writeText("ID"+node+" [label=\"var_item type IDENT id "+node.id+"\"]\n")
+                file.writeText("ID"+node.ident+" [label=\"ident "+node.ident+"\"]\n")
+                file.writeText("ID"+node+"->ID"+node.ident+"\n")
+            }
+            VarType.VAR -> {
+                if(node.isMapKey) {
+                    file.writeText("ID"+node+" [label=\"var_item type VAR KEY id "+node.id+"\"]\n")
+                    file.writeText("ID"+node.ident+" [label=\"ident key "+node.ident+"\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.ident+"\n")
+                } else {
+                    file.writeText("ID"+node+" [label=\"var_item type VAR EXPR id "+node.id+"\"]\n")
+                    printExprNode(node.secondExpr, file)
+                    file.writeText("ID"+node+"->ID"+node.secondExpr+"\n")
+                }
+            }
+            VarType.FUNCTION_CALL -> {
+                if(node.isMapKey) {
+                    file.writeText("ID"+node+" [label=\"var_item type FUNC CALL KEY id "+node.id+"\"]\n")
+                    printExprNode(node.firstExpr, file)
+                    file.writeText("ID"+node.ident+" [label=\"ident "+node.ident+"\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.firstExpr+" [label=\"fun call\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.ident+" [label=\"key ident\"]\n")
+                } else {
+                    file.writeText("ID"+node+" [label=\"var_item type FUNC CALL EXPR id "+node.id+"\"]\n")
+                    printExprNode(node.firstExpr, file)
+                    printExprNode(node.secondExpr, file)
+                    file.writeText("ID"+node+"->ID"+node.firstExpr+" [label=\"fun call\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.secondExpr+" [label=\"key expr\"]\n")
+                }
+            }
+            VarType.ADJUSTED_EXPR -> {
+                if(node.isMapKey) {
+                    file.writeText("ID"+node+" [label=\"var_item type ADJUSTED EXPR KEY id "+node.id+"\"]\n")
+                    printExprNode(node.firstExpr, file)
+                    file.writeText("ID"+node.ident+" [label=\"ident "+node.ident+"\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.firstExpr+" [label=\"expr\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.ident+" [label=\"key ident\"]\n")
+                } else {
+                    file.writeText("ID"+node+" [label=\"var_item type ADJUSTED EXPR EXPR id "+node.id+"\"]\n")
+                    printExprNode(node.firstExpr, file)
+                    printExprNode(node.secondExpr, file)
+                    file.writeText("ID"+node+"->ID"+node.firstExpr+" [label=\"expr\"]\n")
+                    file.writeText("ID"+node+"->ID"+node.secondExpr+" [label=\"key expr\"]\n")
+                }
+            }
+        }
+    }
+
+    private fun printVarNode(node : VarNode?, parent : Any?, file : File) {
+        var current = node?.first
+        current.let {
+            while (current != null) {
+                printVarItemNode(current, file)
+                file.writeText("ID"+parent+"->ID"+current+"\n")
+                current = current!!.next
+            }
+        }
+    }
+
+    private fun printIdentNode(node : IdentNode?, file : File) {
+        file.writeText("ID"+node+" [label=\"ident "+node?.ident+" id "+node?.id+"\"]\n")
+    }
+
+    private fun printIdentListNode(node : IdentListNode?, parent : Any?, file : File) {
+        var current = node?.first
+        current.let {
+            while (current != null) {
+                printIdentNode(current, file)
+                file.writeText("ID"+parent+"->ID"+current+"\n")
+                current = current!!.next
+            }
+        }
+    }
+
+    private fun printParamListNode(node : ParamListNode?, parent : Any?, file : File) {
+        printIdentListNode(node?.list, parent, file)
+        if(node!!.hasVarArg) {
+            file.writeText("ID"+node+" [label=\"var_arg\"]\n")
+            file.writeText("ID"+parent+"->ID"+node+"\n")
+        }
+    }
+
+    private fun printFieldNode(node : FieldNode?, file : File) {
+        if(node?.ident != null) {
+            file.writeText("ID"+node+" [label=\"field type IDENT id "+node.id+"\"]\n")
+            file.writeText("ID"+node.ident+" [label=\"ident "+node.ident+"\"]\n")
+            printExprNode(node.value, file)
+            file.writeText("ID"+node+"->ID"+node.ident+" [label=\"ident\"]\n")
+            file.writeText("ID"+node+"->ID"+node.ident+" [label=\"val\"]\n")
+        }
+        else if(node?.key != null) {
+            file.writeText("ID"+node+" [label=\"field type KEY id "+node.id+"\"]\n")
+            printExprNode(node.key, file)
+            printExprNode(node.value, file)
+            file.writeText("ID"+node+"->ID"+node.key+" [label=\"key\"]\n")
+            file.writeText("ID"+node+"->ID"+node.value+" [label=\"val\"]\n")
+        }
+        else {
+            file.writeText("ID"+node+" [label=\"field type EXPR id "+node?.id+"\"]\n")
+            printExprNode(node?.value, file)
+            file.writeText("ID"+node+"->ID"+node?.value+"\n")
+        }
+    }
+
+    private fun printFieldListNode(node : FieldListNode?, parent : Any?, file : File) {
+        var current = node?.first
+        current.let {
+            while (current != null) {
+                printFieldNode(current, file)
+                file.writeText("ID"+parent+"->ID"+current+"\n")
+                current = current!!.next
+            }
         }
     }
 }
