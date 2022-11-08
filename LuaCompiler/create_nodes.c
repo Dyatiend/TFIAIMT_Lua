@@ -50,12 +50,21 @@ struct expr_node* create_bool_expr_node(bool val) {
     return result;
 }
 
-struct expr_node* create_number_expr_node(float val) {
+struct expr_node* create_float_number_expr_node(double val) {
     struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
     * result = expr_node_default;
     result->id = LAST_ID++;
-    result->type = _NUMBER;
-    result->number_value = val;
+    result->type = _FLOAT_NUMBER;
+    result->float_number_value = val;
+    return result;
+}
+
+struct expr_node* create_int_number_expr_node(int val) {
+    struct expr_node* result = (struct expr_node*)malloc(sizeof(struct expr_node));
+    * result = expr_node_default;
+    result->id = LAST_ID++;
+    result->type = _INT_NUMBER;
+    result->int_number_value = val;
     return result;
 }
 

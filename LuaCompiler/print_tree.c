@@ -199,8 +199,12 @@ void print_expr_node(struct expr_node * node, FILE * file) {
                 fprintf(file, "ID%p [label=\"BOOL false id %d\"]\n", node, node->id);
             }
             break;
-        case _NUMBER:
-            fprintf(file, "ID%p [label=\"NUMBER %f id %d\"]\n", node, node->number_value, node->id);
+        case _FLOAT_NUMBER:
+            fprintf(file, "ID%p [label=\"FLOAT_NUMBER %f id %d\"]\n", node, node->float_number_value, node->id);
+
+            break;
+        case _INT_NUMBER:
+            fprintf(file, "ID%p [label=\"INT_NUMBER %d id %d\"]\n", node, node->int_number_value, node->id);
 
             break;
         case _STRING:

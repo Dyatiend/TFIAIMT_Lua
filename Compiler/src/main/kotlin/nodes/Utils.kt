@@ -161,8 +161,11 @@ object Utils {
             ExprType.BOOLEAN -> {
                 ExprNode.createBoolExprNode(node.attributes.getNamedItem("value").nodeValue == "true")
             }
-            ExprType.NUMBER -> {
-                ExprNode.createNumberExprNode(node.attributes.getNamedItem("value").nodeValue.toFloat())
+            ExprType.FLOAT_NUMBER -> {
+                ExprNode.createFloatNumberExprNode(node.attributes.getNamedItem("value").nodeValue.toDouble())
+            }
+            ExprType.INT_NUMBER -> {
+                ExprNode.createIntNumberExprNode(node.attributes.getNamedItem("value").nodeValue.toInt())
             }
             ExprType.STRING -> {
                 ExprNode.createStringExprNode(node.textContent)
@@ -593,8 +596,11 @@ object Utils {
                     file.appendText("ID"+node+" [label=\"BOOL false id "+node.id+"\"]\n")
                 }
             }
-            ExprType.NUMBER -> {
-                file.appendText("ID"+node+" [label=\"NUMBER "+node.numberValue+" id "+node.id+"\"]\n")
+            ExprType.FLOAT_NUMBER -> {
+                file.appendText("ID"+node+" [label=\"FLOAT_NUMBER "+node.floatNumberValue+" id "+node.id+"\"]\n")
+            }
+            ExprType.INT_NUMBER -> {
+                file.appendText("ID"+node+" [label=\"INT_NUMBER "+node.intNumberValue+" id "+node.id+"\"]\n")
             }
             ExprType.STRING -> {
                 file.appendText("ID"+node+" [label=\"STRING "+node.stringValue+" id "+node.id+"\"]\n")

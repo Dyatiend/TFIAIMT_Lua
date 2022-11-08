@@ -1,3 +1,3 @@
 public abstract class Function {
-    public abstract Value invoke(Object... args);
+    public abstract __VALUE__ invoke(Object... args);
 }

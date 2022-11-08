@@ -68,9 +68,10 @@
      CONCAT = 284,
      VAR_ARG = 285,
      STRING = 286,
-     NUMBER = 287,
-     IDENT = 288,
-     UNARY = 289
+     INT_NUMBER = 287,
+     FLOAT_NUMBER = 288,
+     IDENT = 289,
+     UNARY = 290
    };
 #endif
 /* Tokens.  */
@@ -103,9 +104,10 @@
 #define CONCAT 284
 #define VAR_ARG 285
 #define STRING 286
-#define NUMBER 287
-#define IDENT 288
-#define UNARY 289
+#define INT_NUMBER 287
+#define FLOAT_NUMBER 288
+#define IDENT 289
+#define UNARY 290
 
 
 
@@ -114,7 +116,8 @@
 typedef union YYSTYPE
 #line 17 "parser.y"
 {
-    double number;
+    int int_number;
+    double float_number;
     char * ident;
     char * string;
 
@@ -137,7 +140,7 @@ typedef union YYSTYPE
     char * _field_sep_node;
 }
 /* Line 1529 of yacc.c.  */
-#line 141 "parser.tab.h"
+#line 144 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

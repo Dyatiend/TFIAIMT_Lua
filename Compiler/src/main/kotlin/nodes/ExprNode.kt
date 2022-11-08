@@ -4,7 +4,8 @@ class ExprNode {
     var type = ExprType.UNINITIALIZED
     var id = 0
     var boolValue = false // Значение бул
-    var numberValue = 0.0 // Число
+    var floatNumberValue = 0.0 // Число
+    var intNumberValue = 0 // Число
     var stringValue = "" // Строка
 
     // Вызов функции
@@ -33,11 +34,19 @@ class ExprNode {
             return result
         }
 
-        fun createNumberExprNode(value: Float): ExprNode {
+        fun createFloatNumberExprNode(value: Double): ExprNode {
             val result = ExprNode()
             result.id = Utils.lastId
-            result.type = ExprType.NUMBER
-            result.numberValue = value.toDouble()
+            result.type = ExprType.FLOAT_NUMBER
+            result.floatNumberValue = value
+            return result
+        }
+
+        fun createIntNumberExprNode(value: Int): ExprNode {
+            val result = ExprNode()
+            result.id = Utils.lastId
+            result.type = ExprType.INT_NUMBER
+            result.intNumberValue = value
             return result
         }
 

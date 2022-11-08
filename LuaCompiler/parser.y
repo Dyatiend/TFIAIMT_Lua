@@ -15,7 +15,8 @@
 %}
 
 %union {
-    double number;
+    int int_number;
+    double float_number;
     char * ident;
     char * string;
 
@@ -63,7 +64,8 @@
 // Literals
 %token EQL NOT_EQL LE GE FLOOR_DIV CONCAT VAR_ARG
 %token<string> STRING
-%token<number> NUMBER
+%token<int_number> INT_NUMBER
+%token<float_number> FLOAT_NUMBER
 %token<ident> IDENT
 %token<_field_sep_node> ','
 %token<_field_sep_node> ';'
@@ -179,7 +181,8 @@ exp ::=  nil | false | true | Numeral | LiteralString | '...' | functiondef |
 expr:                 NIL { $$ = create_nil_expr_node(); } // TODO возможно нужно че-то другое делать??
                     | FALSE { $$ = create_bool_expr_node(false); }
                     | TRUE { $$ = create_bool_expr_node(true); }
-                    | NUMBER { $$ = create_number_expr_node($1); }
+                    | INT_NUMBER { $$ = create_int_number_expr_node($1); }
+                    | FLOAT_NUMBER { $$ = create_float_number_expr_node($1); }
                     | STRING { $$ = create_string_expr_node($1); }
                     | VAR_ARG { $$ = create_var_arg_expr_node(); }
                     | var { $$ = create_var_expr_node($1); }

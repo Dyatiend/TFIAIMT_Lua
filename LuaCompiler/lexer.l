@@ -35,7 +35,7 @@ VAR_CHARS [a-zA-Z0-9_]
     };
 
     int int_number;
-    float float_number;
+    double float_number;
 
     char tmp1[100];
     char tmp2[100];
@@ -128,14 +128,14 @@ local           { return LOCAL; /*printf("Found LOCAL keyword.\n");*/ }
 
 {DIGIT}+ {
     // printf("Found INT_DECIMAL_NUMBER <%d>.\n", atoi(yytext));
-    yylval.number = atof(yytext); //TODO возможно надо поменять
-    return NUMBER;
+    yylval.int_number = atoi(yytext);
+    return INT_NUMBER;
 }
 
 {DIGIT}+("."{DIGIT}*)?{EXPONENT}? {
     // printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
-    yylval.number = atof(yytext);
-    return NUMBER;
+    yylval.float_number = atof(yytext);
+    return FLOAT_NUMBER;
 }
 
 {DIGIT}+("."{DIGIT}*)?[eE][+-]? {
@@ -145,8 +145,8 @@ local           { return LOCAL; /*printf("Found LOCAL keyword.\n");*/ }
 
 {DIGIT}*"."{DIGIT}+{EXPONENT}? {
     // printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
-    yylval.number = atof(yytext);
-    return NUMBER;
+    yylval.float_number = atof(yytext);
+    return FLOAT_NUMBER;
 }
 
 {DIGIT}*"."{DIGIT}+[eE][+-]? {
@@ -156,15 +156,15 @@ local           { return LOCAL; /*printf("Found LOCAL keyword.\n");*/ }
 0[xX]{HEX_DIGIT}+ {
     sscanf(yytext, "%x", &int_number);
     // printf("Found INT_HEXADECIMAL_NUMBER <%d>.\n", int_number);
-    yylval.number = (double) int_number; //TODO возможно надо поменять
-    return NUMBER;
+    yylval.int_number = int_number;
+    return INT_NUMBER;
 }
 
 0[xX]{HEX_DIGIT}+("."{HEX_DIGIT}*)?{HEX_EXPONENT}? {
     sscanf(yytext, "%a", &float_number);
     // printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
-    yylval.number = float_number;
-    return NUMBER;
+    yylval.float_number = float_number;
+    return FLOAT_NUMBER;
 }
 
 0[xX]{HEX_DIGIT}+("."{HEX_DIGIT}*)?[pP][+-]? {
@@ -174,8 +174,8 @@ local           { return LOCAL; /*printf("Found LOCAL keyword.\n");*/ }
 0[xX]{HEX_DIGIT}*"."{HEX_DIGIT}+{HEX_EXPONENT}? {
     sscanf(yytext, "%a", &float_number);
     // printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
-    yylval.number = float_number;
-    return NUMBER;
+    yylval.float_number = float_number;
+    return FLOAT_NUMBER;
 }
 
 0[xX]{HEX_DIGIT}*"."{HEX_DIGIT}+[pP][+-]? {

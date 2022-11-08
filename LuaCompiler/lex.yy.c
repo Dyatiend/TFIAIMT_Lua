@@ -957,7 +957,7 @@ YY_DECL
     };
 
     int int_number;
-    float float_number;
+    double float_number;
 
     char tmp1[100];
     char tmp2[100];
@@ -1319,8 +1319,8 @@ YY_RULE_SETUP
 #line 130 "lexer.l"
 {
     // printf("Found INT_DECIMAL_NUMBER <%d>.\n", atoi(yytext));
-    yylval.number = atof(yytext); //TODO возможно надо поменять
-    return NUMBER;
+    yylval.int_number = atoi(yytext);
+    return INT_NUMBER;
 }
 	YY_BREAK
 case 52:
@@ -1328,8 +1328,8 @@ YY_RULE_SETUP
 #line 136 "lexer.l"
 {
     // printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
-    yylval.number = atof(yytext);
-    return NUMBER;
+    yylval.float_number = atof(yytext);
+    return FLOAT_NUMBER;
 }
 	YY_BREAK
 case 53:
@@ -1345,8 +1345,8 @@ YY_RULE_SETUP
 #line 147 "lexer.l"
 {
     // printf("Found FLOAT_DECIMAL_NUMBER <%f>.\n", atof(yytext));
-    yylval.number = atof(yytext);
-    return NUMBER;
+    yylval.float_number = atof(yytext);
+    return FLOAT_NUMBER;
 }
 	YY_BREAK
 case 55:
@@ -1362,8 +1362,8 @@ YY_RULE_SETUP
 {
     sscanf(yytext, "%x", &int_number);
     // printf("Found INT_HEXADECIMAL_NUMBER <%d>.\n", int_number);
-    yylval.number = (double) int_number; //TODO возможно надо поменять
-    return NUMBER;
+    yylval.int_number = int_number;
+    return INT_NUMBER;
 }
 	YY_BREAK
 case 57:
@@ -1372,8 +1372,8 @@ YY_RULE_SETUP
 {
     sscanf(yytext, "%a", &float_number);
     // printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
-    yylval.number = float_number;
-    return NUMBER;
+    yylval.float_number = float_number;
+    return FLOAT_NUMBER;
 }
 	YY_BREAK
 case 58:
@@ -1389,8 +1389,8 @@ YY_RULE_SETUP
 {
     sscanf(yytext, "%a", &float_number);
     // printf("Found FLOAT_HEXADECIMAL_NUMBER <%f>.\n", float_number);
-    yylval.number = float_number;
-    return NUMBER;
+    yylval.float_number = float_number;
+    return FLOAT_NUMBER;
 }
 	YY_BREAK
 case 60:

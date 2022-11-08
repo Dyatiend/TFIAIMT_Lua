@@ -7,7 +7,8 @@ enum expr_type {
     UNINITIALIZED,
     _NIL,
     BOOLEAN,
-    _NUMBER,
+    _INT_NUMBER,
+    _FLOAT_NUMBER,
     _STRING,
     _VAR_ARG,
     VAR,
@@ -104,7 +105,8 @@ struct expr_node {
     unsigned int id;
 
     bool bool_value; // Значение бул
-    double number_value; // Число
+    double float_number_value; // Число
+    int int_number_value; // Число
     char * string_value; // Строка
 
     // Вызов функции

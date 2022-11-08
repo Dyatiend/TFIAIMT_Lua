@@ -6,7 +6,8 @@
 //expr
 struct expr_node* create_nil_expr_node();
 struct expr_node* create_bool_expr_node(bool val);
-struct expr_node* create_number_expr_node(float val);
+struct expr_node* create_float_number_expr_node(double val);
+struct expr_node* create_int_number_expr_node(int val);
 struct expr_node* create_string_expr_node(char* val);
 struct expr_node* create_var_arg_expr_node();
 struct expr_node* create_var_expr_node(struct var_node* var);
