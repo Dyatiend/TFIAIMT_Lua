@@ -3,6 +3,7 @@ import com.google.common.collect.Table
 import nodes.*
 import org.checkerframework.checker.units.qual.K
 
+import kotlin.jvm.functions.FunctionN
 private var constantID = 0
     get() = ++field
 
@@ -66,9 +67,28 @@ data class Constant(
 }
 
 private fun MutableMap<Constant, Int>.push(constant: Constant): Int {
+    if (this.containsKey(constant)) {
+        return this[constant]!!
+    }
     val id = constantID
     this[constant] = id
     return id
+}
+
+private fun MutableMap<Constant, Int>.pushFieldRef(className: String, fieldName: String, type: String): Int {
+    val name = this.push(Constant.utf8(fieldName))
+    val typeId = this.push(Constant.utf8(type))
+    val nameAndType = this.push(Constant.nameAndType(name, typeId))
+    val _class = this.push(Constant._class(this.push(Constant.utf8(className))))
+    return this.push(Constant.fieldRef(_class, nameAndType))
+}
+
+private fun MutableMap<Constant, Int>.pushMethRef(className: String, fieldName: String, type: String): Int {
+    val name = this.push(Constant.utf8(fieldName))
+    val typeId = this.push(Constant.utf8(type))
+    val nameAndType = this.push(Constant.nameAndType(name, typeId))
+    val _class = this.push(Constant._class(this.push(Constant.utf8(className))))
+    return this.push(Constant.methodRef(_class, nameAndType))
 }
 
 var constantsTable: MutableMap<Constant, Int> = HashMap()
@@ -76,6 +96,7 @@ var localVarsTable: Table<Int, String, Int> = HashBasedTable.create()
 
 var classProgramId: Int = 0
 var valueClassId: Int = 0
+var functionClassId: Int = 0
 var objectClassId: Int = 0
 
 fun fillTables(program: ChunkNode) {
