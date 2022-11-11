@@ -1,72 +1,314 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import com.google.common.collect.Table;
+
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class __VALUE__ {
-    private static final int NIL = 0;
-    private static final int INTEGER = 1;
-    private static final int FLOAT = 2;
-    private static final int BOOLEAN = 3;
-    private static final int STRING = 4;
-    private static final int TABLE = 5;
-    private static final int VARARG = 6;
-    private static final int FUNC = 7;
 
-    public int __iVal;
-    public boolean __bVal;
-    public double __fVal;
-    public String __sVal;
-    public ArrayList<__VALUE__> __aVal;
+    public enum __TYPE__ {
+        NIL,
+        INTEGER,
+        FLOAT,
+        BOOL,
+        STRING,
+        TABLE,
+        SEQ,
+        FUNC;
 
-    public int __type = -1;
+        @Override
+        public String toString() {
+            switch (this) {
+                case NIL ->  { return "Nil"; }
+                case INTEGER -> { return "Int"; }
+                case FLOAT -> { return "Float"; }
+                case BOOL -> { return "Bool"; }
+                case STRING -> { return "String"; }
+                case TABLE -> { return "Table"; }
+                case SEQ -> { return "Seq"; }
+                case FUNC -> { return "Func"; }
+            }
+            return null;
+        }
+    }
+
+    public int __intVal;
+    public boolean __boolVal;
+    public double __floatVal;
+    public String __stringVal;
+    public HashMap<__VALUE__, __VALUE__> __tableVal;
+    public List<__VALUE__> __seqVal;
+    public __FUN__ __funVal;
+
+    public HashMap<__VALUE__, __VALUE__> __metatable = null;
+
+    public __TYPE__ __type;
 
     public __VALUE__() {
-        __type = NIL;
+        __type = __TYPE__.NIL;
     }
 
     public __VALUE__(int value) {
-        this.__iVal = value;
-        this.__type = INTEGER;
+        this.__intVal = value;
+        this.__type = __TYPE__.INTEGER;
     }
 
     public __VALUE__(boolean value) {
-        this.__bVal = value;
-        this.__type = BOOLEAN;
+        this.__boolVal = value;
+        this.__type = __TYPE__.BOOL;
     }
 
     public __VALUE__(double value) {
-        this.__fVal = value;
-        this.__type = FLOAT;
+        this.__floatVal = value;
+        this.__type = __TYPE__.FLOAT;
     }
 
     public __VALUE__(String value) {
-        this.__sVal = value;
-        this.__type = STRING;
+        this.__stringVal = value;
+        this.__type = __TYPE__.STRING;
     }
 
-    public __VALUE__(ArrayList<__VALUE__> value) {
-        this.__aVal = new ArrayList<>();
-        this.__aVal = value;
-        this.__type = TABLE;
+    public __VALUE__(HashMap<__VALUE__, __VALUE__> value) {
+        this.__tableVal = new HashMap<>(value);
+        this.__type = __TYPE__.TABLE;
     }
+
+    public __VALUE__(__FUN__ value) {
+        __funVal = value;
+        __type = __TYPE__.FUNC;
+    }
+
+    public __VALUE__(List<__VALUE__> value) {
+        __seqVal = new ArrayList<>(value);
+        __type = __TYPE__.SEQ;
+    }
+
+    // +++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     public __VALUE__ __add__(__VALUE__ o) {
-        if (this.__type == INTEGER && o.__type == INTEGER) {
-            return new __VALUE__(this.__iVal + o.__iVal);
-        }
 
-        if (this.__type == INTEGER && o.__type == FLOAT) {
-            return new __VALUE__(this.__iVal + o.__fVal);
-        }
+        switch (__type) {
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__intVal + o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__intVal + o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__intVal + Integer.parseInt(o.__stringVal));
+                        }
+                        catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__intVal + Double.parseDouble(o.__stringVal));
+                            }
+                            catch (NumberFormatException ignored) {
 
-        if (this.__type == FLOAT && o.__type == INTEGER) {
-            return new __VALUE__(this.__fVal + o.__iVal);
-        }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            if(res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        return __add__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__floatVal + o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__floatVal + o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__floatVal + Integer.parseInt(o.__stringVal));
+                        }
+                        catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__floatVal + Double.parseDouble(o.__stringVal));
+                            }
+                            catch (NumberFormatException ignored) {
 
-        if (this.__type == FLOAT && o.__type == FLOAT) {
-            return new __VALUE__(this.__fVal + o.__fVal);
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            if(res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        return __add__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) + o.__intVal);
+                        }
+                        catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) + o.__intVal);
+                            }
+                            catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case FLOAT -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) + o.__floatVal);
+                        }
+                        catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) + o.__floatVal);
+                            }
+                            catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) + Integer.parseInt(o.__stringVal));
+                        }
+                        catch (NumberFormatException e0) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) + Integer.parseInt(o.__stringVal));
+                            }
+                            catch (NumberFormatException e1) {
+                                try {
+                                    return new __VALUE__(Integer.parseInt(__stringVal) + Double.parseDouble(o.__stringVal));
+                                }
+                                catch (NumberFormatException e2) {
+                                    try {
+                                        return new __VALUE__(Double.parseDouble(__stringVal) + Double.parseDouble(o.__stringVal));
+                                    }
+                                    catch (NumberFormatException ignored) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            if(res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        return __add__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                // TODO
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__add__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__add__(o.__seqVal.get(0));
+                    }
+                }
+            }
         }
 
         throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
+
+
+
+//        if (this.__type == __TYPE__.INTEGER && o.__type == __TYPE__.INTEGER) {
+//            return new __VALUE__(this.__iVal + o.__iVal);
+//        }
+//
+//        if (this.__type == __TYPE__.INTEGER && o.__type == __TYPE__.FLOAT) {
+//            return new __VALUE__(this.__iVal + o.__fVal);
+//        }
+//
+//        if (this.__type == __TYPE__.FLOAT && o.__type == __TYPE__.INTEGER) {
+//            return new __VALUE__(this.__fVal + o.__iVal);
+//        }
+//
+//        if (this.__type == __TYPE__.FLOAT && o.__type == __TYPE__.FLOAT) {
+//            return new __VALUE__(this.__fVal + o.__fVal);
+//        }
+//
+//        if (__type == __TYPE__.STRING && o.__type == __TYPE__.STRING) {
+//            try {
+//                return new __VALUE__(Integer.parseInt(__sVal) + Integer.parseInt(o.__sVal));
+//            }
+//            catch (NumberFormatException e) {
+//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
+//            }
+//        }
+//
+//        if (__type == __TYPE__.STRING && o.__type == __TYPE__.INTEGER) {
+//            try {
+//                return new __VALUE__(Integer.parseInt(__sVal) + o.__iVal);
+//            }
+//            catch (NumberFormatException e) {
+//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
+//            }
+//        }
+//
+//        if (__type == __TYPE__.STRING && o.__type == __TYPE__.FLOAT) {
+//            try {
+//                return new __VALUE__(Integer.parseInt(__sVal) + o.__fVal);
+//            }
+//            catch (NumberFormatException e) {
+//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
+//            }
+//        }
+//
+//        if (__type == __TYPE__.INTEGER && o.__type == __TYPE__.STRING) {
+//            try {
+//                return new __VALUE__(__iVal + Integer.parseInt(o.__sVal));
+//            }
+//            catch (NumberFormatException e) {
+//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
+//            }
+//        }
+//
+//        if (__type == __TYPE__.FLOAT && o.__type == __TYPE__.STRING) {
+//            try {
+//                return new __VALUE__(__fVal + Integer.parseInt(o.__sVal));
+//            }
+//            catch (NumberFormatException e) {
+//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
+//            }
+//        }
+//
+//
+//                Table
+//
+//                VarArg
+//
+//        throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __sub__(__VALUE__ o) {
@@ -304,6 +546,9 @@ public class __VALUE__ {
     public __VALUE__ __eql__(__VALUE__ o) {
         if (this.__type == NIL && o.__type == NIL) return new __VALUE__(true);
         if (this.__type == NIL || o.__type == NIL) return new __VALUE__(false);
+        if (__type == FUNC || o.__type == FUNC) return new __VALUE__(
+                __type == o.__type || __fun == o.__fun
+        );
 
         if (this.__type == INTEGER && o.__type == INTEGER) {
             return new __VALUE__(this.__iVal == o.__iVal);
@@ -336,7 +581,7 @@ public class __VALUE__ {
 
     public __VALUE__ __not_eql__(__VALUE__ o) {
         try {
-            return new __VALUE__(__eql__(o).__bVal);
+            return new __VALUE__(!__eql__(o).__bVal);
         } catch(UnsupportedOperationException e) {
             throw new UnsupportedOperationException("Error: attempt to compare a " + this.__type + " with a " + o.__type);
         }
@@ -559,6 +804,15 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to get length of a " + this.__type + " value");
+    }
+
+    public __VALUE__ __invoke__(__VALUE__... args) {
+        if(__type == __TYPE__.FUNC) {
+            return __funVal.invoke(args);
+        }
+        else {
+            throw new UnsupportedOperationException("Error: attempt to invoke of a " + this.__type + " value");
+        }
     }
 
     public String toString() {
