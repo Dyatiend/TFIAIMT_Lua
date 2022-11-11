@@ -1,5 +1,6 @@
 import com.google.common.collect.Table;
 
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -88,6 +89,40 @@ public class __VALUE__ {
     public __VALUE__ __add__(__VALUE__ o) {
 
         switch (__type) {
+            case NIL -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
+                        __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                        if(res.__type == __TYPE__.SEQ)
+                            return res.__seqVal.get(0);
+                        else
+                            return res;
+                    }
+                }
+            }
+            case BOOL -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
+                        __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                        if(res.__type == __TYPE__.SEQ)
+                            return res.__seqVal.get(0);
+                        else
+                            return res;
+                    }
+                }
+            }
+            case FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
+                        __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                        if(res.__type == __TYPE__.SEQ)
+                            return res.__seqVal.get(0);
+                        else
+                            return res;
+                    }
+                }
+            }
+
             case INTEGER -> {
                 switch (o.__type) {
                     case INTEGER -> {
@@ -224,7 +259,33 @@ public class __VALUE__ {
                 }
             }
             case TABLE -> {
-                // TODO
+                switch (o.__type) {
+                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            if(res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            if(res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                        else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            if(res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
             }
             case SEQ -> {
                 switch (o.__type) {
