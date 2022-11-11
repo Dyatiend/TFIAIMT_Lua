@@ -1,537 +1,595 @@
 digraph G {
-IDChunkNode5383967b [label="program"]
-IDStmtNode2ac273d3 [label="ASSIGNMENT id 3"]
-IDExprSeqNode71423665 [label="VARS"]
-IDExprSeqNode20398b7c [label="VALUES"]
-IDStmtNode2ac273d3->IDExprSeqNode71423665
-IDStmtNode2ac273d3->IDExprSeqNode20398b7c
-IDExprNode6fc6f14e [label="VAR id 1"]
-IDVarItemNode56235b8e [label="var_item type IDENT id 0"]
-ID0 [label="ident delta"]
-IDVarItemNode56235b8e->ID0
-IDExprNode6fc6f14e->IDVarItemNode56235b8e
-IDExprSeqNode71423665->IDExprNode6fc6f14e
-IDExprNode3632be31 [label="FLOAT_NUMBER 1.0E-6 id 2"]
-IDExprSeqNode20398b7c->IDExprNode3632be31
-IDChunkNode5383967b->IDStmtNode2ac273d3
-IDStmtNode2286778 [label="FUNC id 107"]
-ID107 [label="name bisect"]
-IDStmtNode2286778->ID107 [label="name"]
-IDParamListNode4e9ba398 [label="PARAMS"]
-IDStmtNode2286778->IDParamListNode4e9ba398
-IDIdentNode6d7b4f4c [label="ident f id 4"]
-IDParamListNode4e9ba398->IDIdentNode6d7b4f4c
-IDIdentNode527740a2 [label="ident a id 5"]
-IDParamListNode4e9ba398->IDIdentNode527740a2
-IDIdentNode13a5fe33 [label="ident b id 6"]
-IDParamListNode4e9ba398->IDIdentNode13a5fe33
-IDIdentNode3108bc [label="ident fa id 7"]
-IDParamListNode4e9ba398->IDIdentNode3108bc
-IDIdentNode370736d9 [label="ident fb id 8"]
-IDParamListNode4e9ba398->IDIdentNode370736d9
-IDStmtSeqNode5f9d02cb [label="BLOCK"]
-IDStmtNode2286778->IDStmtSeqNode5f9d02cb
-IDStmtNode63753b6d [label="VAR DEF id 18"]
-IDIdentListNode6b09bb57 [label="IDENT LIST"]
-IDStmtNode63753b6d->IDIdentListNode6b09bb57
-IDIdentNode6536e911 [label="ident c id 9"]
-IDIdentListNode6b09bb57->IDIdentNode6536e911
-IDExprSeqNode520a3426 [label="VALUES"]
-IDStmtNode63753b6d->IDExprSeqNode520a3426
-IDExprNode18eed359 [label="DIV id 17"]
-IDExprNode3e9b1010 [label="ADJUST id 15"]
-IDExprNode6c3708b3 [label="PLUS id 14"]
-IDExprNode6f1fba17 [label="VAR id 11"]
-IDVarItemNode185d8b6 [label="var_item type IDENT id 10"]
-ID10 [label="ident a"]
-IDVarItemNode185d8b6->ID10
-IDExprNode6f1fba17->IDVarItemNode185d8b6
-IDExprNode6c3708b3->IDExprNode6f1fba17 [label="FIRST"]
-IDExprNode67784306 [label="VAR id 13"]
-IDVarItemNode335eadca [label="var_item type IDENT id 12"]
-ID12 [label="ident b"]
-IDVarItemNode335eadca->ID12
-IDExprNode67784306->IDVarItemNode335eadca
-IDExprNode6c3708b3->IDExprNode67784306 [label="SECOND"]
-IDExprNode3e9b1010->IDExprNode6c3708b3
-IDExprNode18eed359->IDExprNode3e9b1010 [label="FIRST"]
-IDExprNode210366b4 [label="INT_NUMBER 2 id 16"]
-IDExprNode18eed359->IDExprNode210366b4 [label="SECOND"]
-IDExprSeqNode520a3426->IDExprNode18eed359
-IDStmtSeqNode5f9d02cb->IDStmtNode63753b6d
-IDStmtNodeeec5a4a [label="_FUNCTION_CALL id 32"]
-IDExprNode2b2948e2 [label="FUNCTION CALL id 31"]
-ID31 [label="name write"]
-IDExprNode2b2948e2->ID31 [label="name"]
-IDExprSeqNode6ddf90b0 [label="ARGS"]
-IDExprNode2b2948e2->IDExprSeqNode6ddf90b0
-IDExprNode57536d79 [label="VAR id 20"]
-IDVarItemNode3b0143d3 [label="var_item type IDENT id 19"]
-ID19 [label="ident n"]
-IDVarItemNode3b0143d3->ID19
+IDChunkNode60c6f5b [label="program"]
+IDStmtNode2038ae61 [label="ASSIGNMENT id 168"]
+IDExprSeqNode3c0f93f1 [label="VARS"]
+IDExprSeqNode31dc339b [label="VALUES"]
+IDStmtNode2038ae61->IDExprSeqNode3c0f93f1
+IDStmtNode2038ae61->IDExprSeqNode31dc339b
+IDExprNode544fe44c [label="VAR id 167"]
+IDVarItemNode31610302 [label="var_item type IDENT id 166"]
+ID166 [label="ident i"]
+IDVarItemNode31610302->ID166
+IDExprNode544fe44c->IDVarItemNode31610302
+IDExprSeqNode3c0f93f1->IDExprNode544fe44c
+IDExprNode71318ec4 [label="INT_NUMBER 2 id 0"]
+IDExprSeqNode31dc339b->IDExprNode71318ec4
+IDChunkNode60c6f5b->IDStmtNode2038ae61
+IDStmtNode21213b92 [label="WHILE_LOOP id 53"]
+IDExprNodea67c67e [label="VAR id 2"]
+IDVarItemNode3327bd23 [label="var_item type IDENT id 1"]
+ID1 [label="ident n"]
+IDVarItemNode3327bd23->ID1
+IDExprNodea67c67e->IDVarItemNode3327bd23
+IDStmtNode21213b92->IDExprNodea67c67e [label="CONDITION"]
+IDStmtSeqNode4e1d422d [label="BLOCK"]
+IDStmtNode21213b92->IDStmtSeqNode4e1d422d
+IDStmtNode66480dd7 [label="IF id 52"]
+IDExprNode52a86356 [label="GREATER id 15"]
+IDExprNode5ce81285 [label="VAR id 9"]
+IDVarItemNode78c03f1f [label="var_item type IDENT id 3"]
+ID3 [label="ident list"]
+IDVarItemNode78c03f1f->ID3
+IDExprNode5ce81285->IDVarItemNode78c03f1f
+IDVarItemNode5ec0a365 [label="var_item type VAR EXPR id 4"]
+IDExprNode4fe3c938 [label="MINUS id 8"]
+IDExprNode5383967b [label="VAR id 6"]
+IDVarItemNode2ac273d3 [label="var_item type IDENT id 5"]
+ID5 [label="ident i"]
+IDVarItemNode2ac273d3->ID5
+IDExprNode5383967b->IDVarItemNode2ac273d3
+IDExprNode4fe3c938->IDExprNode5383967b [label="FIRST"]
+IDExprNode71423665 [label="INT_NUMBER 1 id 7"]
+IDExprNode4fe3c938->IDExprNode71423665 [label="SECOND"]
+IDVarItemNode5ec0a365->IDExprNode4fe3c938
+IDExprNode5ce81285->IDVarItemNode5ec0a365
+IDExprNode52a86356->IDExprNode5ce81285 [label="FIRST"]
+IDExprNode20398b7c [label="VAR id 14"]
+IDVarItemNode6fc6f14e [label="var_item type IDENT id 10"]
+ID10 [label="ident list"]
+IDVarItemNode6fc6f14e->ID10
+IDExprNode20398b7c->IDVarItemNode6fc6f14e
+IDVarItemNode56235b8e [label="var_item type VAR EXPR id 11"]
+IDExprNode3632be31 [label="VAR id 13"]
+IDVarItemNode5abca1e0 [label="var_item type IDENT id 12"]
+ID12 [label="ident i"]
+IDVarItemNode5abca1e0->ID12
+IDExprNode3632be31->IDVarItemNode5abca1e0
+IDVarItemNode56235b8e->IDExprNode3632be31
+IDExprNode20398b7c->IDVarItemNode56235b8e
+IDExprNode52a86356->IDExprNode20398b7c [label="SECOND"]
+IDStmtNode66480dd7->IDExprNode52a86356 [label="CONDITION"]
+IDStmtSeqNode2286778 [label="IF BLOCK"]
+IDStmtNode66480dd7->IDStmtSeqNode2286778
+IDStmtNode4e9ba398 [label="ASSIGNMENT id 25"]
+IDExprSeqNode6d7b4f4c [label="VARS"]
+IDExprSeqNode527740a2 [label="VALUES"]
+IDStmtNode4e9ba398->IDExprSeqNode6d7b4f4c
+IDStmtNode4e9ba398->IDExprSeqNode527740a2
+IDExprNode13a5fe33 [label="VAR id 17"]
+IDVarItemNode3108bc [label="var_item type IDENT id 16"]
+ID16 [label="ident tmp"]
+IDVarItemNode3108bc->ID16
+IDExprNode13a5fe33->IDVarItemNode3108bc
+IDExprSeqNode6d7b4f4c->IDExprNode13a5fe33
+IDExprNode370736d9 [label="VAR id 24"]
+IDVarItemNode5f9d02cb [label="var_item type IDENT id 18"]
+ID18 [label="ident list"]
+IDVarItemNode5f9d02cb->ID18
+IDExprNode370736d9->IDVarItemNode5f9d02cb
+IDVarItemNode63753b6d [label="var_item type VAR EXPR id 19"]
+IDExprNode6b09bb57 [label="MINUS id 23"]
+IDExprNode6536e911 [label="VAR id 21"]
+IDVarItemNode520a3426 [label="var_item type IDENT id 20"]
+ID20 [label="ident i"]
+IDVarItemNode520a3426->ID20
+IDExprNode6536e911->IDVarItemNode520a3426
+IDExprNode6b09bb57->IDExprNode6536e911 [label="FIRST"]
+IDExprNode18eed359 [label="INT_NUMBER 1 id 22"]
+IDExprNode6b09bb57->IDExprNode18eed359 [label="SECOND"]
+IDVarItemNode63753b6d->IDExprNode6b09bb57
+IDExprNode370736d9->IDVarItemNode63753b6d
+IDExprSeqNode527740a2->IDExprNode370736d9
+IDStmtSeqNode2286778->IDStmtNode4e9ba398
+IDStmtNode3e9b1010 [label="ASSIGNMENT id 38"]
+IDExprSeqNode6c3708b3 [label="VARS"]
+IDExprSeqNode6f1fba17 [label="VALUES"]
+IDStmtNode3e9b1010->IDExprSeqNode6c3708b3
+IDStmtNode3e9b1010->IDExprSeqNode6f1fba17
+IDExprNode185d8b6 [label="VAR id 32"]
+IDVarItemNode67784306 [label="var_item type IDENT id 26"]
+ID26 [label="ident list"]
+IDVarItemNode67784306->ID26
+IDExprNode185d8b6->IDVarItemNode67784306
+IDVarItemNode335eadca [label="var_item type VAR EXPR id 27"]
+IDExprNode210366b4 [label="MINUS id 31"]
+IDExprNodeeec5a4a [label="VAR id 29"]
+IDVarItemNode2b2948e2 [label="var_item type IDENT id 28"]
+ID28 [label="ident i"]
+IDVarItemNode2b2948e2->ID28
+IDExprNodeeec5a4a->IDVarItemNode2b2948e2
+IDExprNode210366b4->IDExprNodeeec5a4a [label="FIRST"]
+IDExprNode6ddf90b0 [label="INT_NUMBER 1 id 30"]
+IDExprNode210366b4->IDExprNode6ddf90b0 [label="SECOND"]
+IDVarItemNode335eadca->IDExprNode210366b4
+IDExprNode185d8b6->IDVarItemNode335eadca
+IDExprSeqNode6c3708b3->IDExprNode185d8b6
+IDExprNode57536d79 [label="VAR id 37"]
+IDVarItemNode3b0143d3 [label="var_item type IDENT id 33"]
+ID33 [label="ident list"]
+IDVarItemNode3b0143d3->ID33
 IDExprNode57536d79->IDVarItemNode3b0143d3
-IDExprSeqNode6ddf90b0->IDExprNode57536d79
-IDExprNode5a8e6209 [label="STRING  c= id 21"]
-IDExprSeqNode6ddf90b0->IDExprNode5a8e6209
-IDExprNode4b4523f8 [label="VAR id 23"]
-IDVarItemNode731a74c [label="var_item type IDENT id 22"]
-ID22 [label="ident c"]
-IDVarItemNode731a74c->ID22
+IDVarItemNode5a8e6209 [label="var_item type VAR EXPR id 34"]
+IDExprNode4b4523f8 [label="VAR id 36"]
+IDVarItemNode731a74c [label="var_item type IDENT id 35"]
+ID35 [label="ident i"]
+IDVarItemNode731a74c->ID35
 IDExprNode4b4523f8->IDVarItemNode731a74c
-IDExprSeqNode6ddf90b0->IDExprNode4b4523f8
-IDExprNode369f73a2 [label="STRING  a= id 24"]
-IDExprSeqNode6ddf90b0->IDExprNode369f73a2
-IDExprNode1f28c152 [label="VAR id 26"]
-IDVarItemNode7d907bac [label="var_item type IDENT id 25"]
-ID25 [label="ident a"]
-IDVarItemNode7d907bac->ID25
-IDExprNode1f28c152->IDVarItemNode7d907bac
-IDExprSeqNode6ddf90b0->IDExprNode1f28c152
-IDExprNode7791a895 [label="STRING  b= id 27"]
-IDExprSeqNode6ddf90b0->IDExprNode7791a895
-IDExprNode3a5ed7a6 [label="VAR id 29"]
-IDVarItemNode6325a3ee [label="var_item type IDENT id 28"]
-ID28 [label="ident b"]
-IDVarItemNode6325a3ee->ID28
-IDExprNode3a5ed7a6->IDVarItemNode6325a3ee
-IDExprSeqNode6ddf90b0->IDExprNode3a5ed7a6
-IDExprNode1d16f93d [label="STRING 
- id 30"]
-IDExprSeqNode6ddf90b0->IDExprNode1d16f93d
-IDStmtNodeeec5a4a->IDExprNode2b2948e2
-IDStmtSeqNode5f9d02cb->IDStmtNodeeec5a4a
-IDStmtNode67b92f0a [label="IF id 62"]
-IDExprNode2b9627bc [label="LOG_OR id 53"]
-IDExprNode65e2dbf3 [label="LOG_OR id 43"]
-IDExprNode4f970963 [label="EQUAL id 37"]
-IDExprNode61f8bee4 [label="VAR id 34"]
-IDVarItemNode7b49cea0 [label="var_item type IDENT id 33"]
-ID33 [label="ident c"]
-IDVarItemNode7b49cea0->ID33
-IDExprNode61f8bee4->IDVarItemNode7b49cea0
-IDExprNode4f970963->IDExprNode61f8bee4 [label="FIRST"]
-IDExprNode887af79 [label="VAR id 36"]
-IDVarItemNode7fac631b [label="var_item type IDENT id 35"]
-ID35 [label="ident a"]
-IDVarItemNode7fac631b->ID35
+IDVarItemNode5a8e6209->IDExprNode4b4523f8
+IDExprNode57536d79->IDVarItemNode5a8e6209
+IDExprSeqNode6f1fba17->IDExprNode57536d79
+IDStmtSeqNode2286778->IDStmtNode3e9b1010
+IDStmtNode369f73a2 [label="ASSIGNMENT id 46"]
+IDExprSeqNode1f28c152 [label="VARS"]
+IDExprSeqNode7d907bac [label="VALUES"]
+IDStmtNode369f73a2->IDExprSeqNode1f28c152
+IDStmtNode369f73a2->IDExprSeqNode7d907bac
+IDExprNode7791a895 [label="VAR id 43"]
+IDVarItemNode3a5ed7a6 [label="var_item type IDENT id 39"]
+ID39 [label="ident list"]
+IDVarItemNode3a5ed7a6->ID39
+IDExprNode7791a895->IDVarItemNode3a5ed7a6
+IDVarItemNode6325a3ee [label="var_item type VAR EXPR id 40"]
+IDExprNode1d16f93d [label="VAR id 42"]
+IDVarItemNode67b92f0a [label="var_item type IDENT id 41"]
+ID41 [label="ident i"]
+IDVarItemNode67b92f0a->ID41
+IDExprNode1d16f93d->IDVarItemNode67b92f0a
+IDVarItemNode6325a3ee->IDExprNode1d16f93d
+IDExprNode7791a895->IDVarItemNode6325a3ee
+IDExprSeqNode1f28c152->IDExprNode7791a895
+IDExprNode2b9627bc [label="VAR id 45"]
+IDVarItemNode65e2dbf3 [label="var_item type IDENT id 44"]
+ID44 [label="ident tmp"]
+IDVarItemNode65e2dbf3->ID44
+IDExprNode2b9627bc->IDVarItemNode65e2dbf3
+IDExprSeqNode7d907bac->IDExprNode2b9627bc
+IDStmtSeqNode2286778->IDStmtNode369f73a2
+IDStmtNode4f970963 [label="ASSIGNMENT id 51"]
+IDExprSeqNode61f8bee4 [label="VARS"]
+IDExprSeqNode7b49cea0 [label="VALUES"]
+IDStmtNode4f970963->IDExprSeqNode61f8bee4
+IDStmtNode4f970963->IDExprSeqNode7b49cea0
+IDExprNode887af79 [label="VAR id 48"]
+IDVarItemNode7fac631b [label="var_item type IDENT id 47"]
+ID47 [label="ident nn"]
+IDVarItemNode7fac631b->ID47
 IDExprNode887af79->IDVarItemNode7fac631b
-IDExprNode4f970963->IDExprNode887af79 [label="SECOND"]
-IDExprNode65e2dbf3->IDExprNode4f970963 [label="FIRST"]
-IDExprNode5b87ed94 [label="EQUAL id 42"]
-IDExprNode6e0e048a [label="VAR id 39"]
-IDVarItemNode5bc79255 [label="var_item type IDENT id 38"]
-ID38 [label="ident c"]
-IDVarItemNode5bc79255->ID38
-IDExprNode6e0e048a->IDVarItemNode5bc79255
-IDExprNode5b87ed94->IDExprNode6e0e048a [label="FIRST"]
-IDExprNode47ef968d [label="VAR id 41"]
-IDVarItemNode23e028a9 [label="var_item type IDENT id 40"]
-ID40 [label="ident b"]
-IDVarItemNode23e028a9->ID40
-IDExprNode47ef968d->IDVarItemNode23e028a9
-IDExprNode5b87ed94->IDExprNode47ef968d [label="SECOND"]
-IDExprNode65e2dbf3->IDExprNode5b87ed94 [label="SECOND"]
-IDExprNode2b9627bc->IDExprNode65e2dbf3 [label="FIRST"]
-IDExprNode3dd4520b [label="LESS id 52"]
-IDExprNode5ae63ade [label="FUNCTION CALL id 49"]
-ID49 [label="name abs"]
-IDExprNode5ae63ade->ID49 [label="name"]
-IDExprSeqNode610694f1 [label="ARGS"]
-IDExprNode5ae63ade->IDExprSeqNode610694f1
-IDExprNode43814d18 [label="MINUS id 48"]
-IDExprNode5c5a1b69 [label="VAR id 45"]
-IDVarItemNode3701eaf6 [label="var_item type IDENT id 44"]
-ID44 [label="ident a"]
-IDVarItemNode3701eaf6->ID44
-IDExprNode5c5a1b69->IDVarItemNode3701eaf6
-IDExprNode43814d18->IDExprNode5c5a1b69 [label="FIRST"]
-IDExprNode627551fb [label="VAR id 47"]
-IDVarItemNode2b552920 [label="var_item type IDENT id 46"]
-ID46 [label="ident b"]
-IDVarItemNode2b552920->ID46
-IDExprNode627551fb->IDVarItemNode2b552920
-IDExprNode43814d18->IDExprNode627551fb [label="SECOND"]
-IDExprSeqNode610694f1->IDExprNode43814d18
-IDExprNode3dd4520b->IDExprNode5ae63ade [label="FIRST"]
-IDExprNode2758fe70 [label="VAR id 51"]
-IDVarItemNode1f36e637 [label="var_item type IDENT id 50"]
-ID50 [label="ident delta"]
-IDVarItemNode1f36e637->ID50
-IDExprNode2758fe70->IDVarItemNode1f36e637
-IDExprNode3dd4520b->IDExprNode2758fe70 [label="SECOND"]
-IDExprNode2b9627bc->IDExprNode3dd4520b [label="SECOND"]
-IDStmtNode67b92f0a->IDExprNode2b9627bc [label="CONDITION"]
-IDStmtSeqNode578486a3 [label="IF BLOCK"]
-IDStmtNode67b92f0a->IDStmtSeqNode578486a3
-IDStmtNode551aa95a [label="RETURN id 61"]
-IDExprSeqNode35d176f7 [label="VALUES"]
-IDStmtNode551aa95a->IDExprSeqNode35d176f7
-IDExprNode1dfe2924 [label="VAR id 55"]
-IDVarItemNode6ebc05a6 [label="var_item type IDENT id 54"]
-ID54 [label="ident c"]
-IDVarItemNode6ebc05a6->ID54
+IDExprSeqNode61f8bee4->IDExprNode887af79
+IDExprNode5b87ed94 [label="VAR id 50"]
+IDVarItemNode6e0e048a [label="var_item type IDENT id 49"]
+ID49 [label="ident i"]
+IDVarItemNode6e0e048a->ID49
+IDExprNode5b87ed94->IDVarItemNode6e0e048a
+IDExprSeqNode7b49cea0->IDExprNode5b87ed94
+IDStmtSeqNode2286778->IDStmtNode4f970963
+IDStmtSeqNode4e1d422d->IDStmtNode66480dd7
+IDStmtNode5bc79255 [label="ASSIGNMENT id 175"]
+IDExprSeqNode47ef968d [label="VARS"]
+IDExprSeqNode23e028a9 [label="VALUES"]
+IDStmtNode5bc79255->IDExprSeqNode47ef968d
+IDStmtNode5bc79255->IDExprSeqNode23e028a9
+IDExprNode3dd4520b [label="VAR id 170"]
+IDVarItemNode5ae63ade [label="var_item type IDENT id 169"]
+ID169 [label="ident i"]
+IDVarItemNode5ae63ade->ID169
+IDExprNode3dd4520b->IDVarItemNode5ae63ade
+IDExprSeqNode47ef968d->IDExprNode3dd4520b
+IDExprNode610694f1 [label="PLUS id 174"]
+IDExprNode43814d18 [label="VAR id 172"]
+IDVarItemNode5c5a1b69 [label="var_item type IDENT id 171"]
+ID171 [label="ident i"]
+IDVarItemNode5c5a1b69->ID171
+IDExprNode43814d18->IDVarItemNode5c5a1b69
+IDExprNode610694f1->IDExprNode43814d18 [label="FIRST"]
+IDExprNode3701eaf6 [label="INT_NUMBER 1 id 173"]
+IDExprNode610694f1->IDExprNode3701eaf6 [label="SECOND"]
+IDExprSeqNode23e028a9->IDExprNode610694f1
+IDStmtSeqNode4e1d422d->IDStmtNode5bc79255
+IDChunkNode60c6f5b->IDStmtNode21213b92
+IDStmtNode627551fb [label="ASSIGNMENT id 178"]
+IDExprSeqNode2b552920 [label="VARS"]
+IDExprSeqNode2758fe70 [label="VALUES"]
+IDStmtNode627551fb->IDExprSeqNode2b552920
+IDStmtNode627551fb->IDExprSeqNode2758fe70
+IDExprNode1f36e637 [label="VAR id 177"]
+IDVarItemNode578486a3 [label="var_item type IDENT id 176"]
+ID176 [label="ident i"]
+IDVarItemNode578486a3->ID176
+IDExprNode1f36e637->IDVarItemNode578486a3
+IDExprSeqNode2b552920->IDExprNode1f36e637
+IDExprNode551aa95a [label="INT_NUMBER 0 id 54"]
+IDExprSeqNode2758fe70->IDExprNode551aa95a
+IDChunkNode60c6f5b->IDStmtNode627551fb
+IDStmtNode35d176f7 [label="WHILE_LOOP id 108"]
+IDExprNode1dfe2924 [label="VAR id 56"]
+IDVarItemNode6ebc05a6 [label="var_item type IDENT id 55"]
+ID55 [label="ident n"]
+IDVarItemNode6ebc05a6->ID55
 IDExprNode1dfe2924->IDVarItemNode6ebc05a6
-IDExprSeqNode35d176f7->IDExprNode1dfe2924
-IDExprNode6e6c3152 [label="MINUS id 60"]
-IDExprNode50b494a6 [label="VAR id 57"]
-IDVarItemNode3cef309d [label="var_item type IDENT id 56"]
-ID56 [label="ident b"]
-IDVarItemNode3cef309d->ID56
-IDExprNode50b494a6->IDVarItemNode3cef309d
-IDExprNode6e6c3152->IDExprNode50b494a6 [label="FIRST"]
-IDExprNode32709393 [label="VAR id 59"]
+IDStmtNode35d176f7->IDExprNode1dfe2924 [label="CONDITION"]
+IDStmtSeqNode6e6c3152 [label="BLOCK"]
+IDStmtNode35d176f7->IDStmtSeqNode6e6c3152
+IDStmtNode50b494a6 [label="IF id 107"]
+IDExprNode3cef309d [label="GREATER id 70"]
+IDExprNode32709393 [label="VAR id 64"]
 IDVarItemNode3d99d22e [label="var_item type IDENT id 58"]
-ID58 [label="ident a"]
+ID58 [label="ident list"]
 IDVarItemNode3d99d22e->ID58
 IDExprNode32709393->IDVarItemNode3d99d22e
-IDExprNode6e6c3152->IDExprNode32709393 [label="SECOND"]
-IDExprSeqNode35d176f7->IDExprNode6e6c3152
-IDStmtSeqNode578486a3->IDStmtNode551aa95a
-IDStmtSeqNode5f9d02cb->IDStmtNode67b92f0a
-IDStmtNode49fc609f [label="ASSIGNMENT id 69"]
-IDExprSeqNodecd2dae5 [label="VARS"]
-IDExprSeqNode3a883ce7 [label="VALUES"]
-IDStmtNode49fc609f->IDExprSeqNodecd2dae5
-IDStmtNode49fc609f->IDExprSeqNode3a883ce7
-IDExprNode4973813a [label="VAR id 64"]
-IDVarItemNode6321e813 [label="var_item type IDENT id 63"]
-ID63 [label="ident n"]
-IDVarItemNode6321e813->ID63
-IDExprNode4973813a->IDVarItemNode6321e813
-IDExprSeqNodecd2dae5->IDExprNode4973813a
-IDExprNode79be0360 [label="PLUS id 68"]
-IDExprNode22a67b4 [label="VAR id 66"]
-IDVarItemNode57855c9a [label="var_item type IDENT id 65"]
-ID65 [label="ident n"]
-IDVarItemNode57855c9a->ID65
-IDExprNode22a67b4->IDVarItemNode57855c9a
-IDExprNode79be0360->IDExprNode22a67b4 [label="FIRST"]
-IDExprNode3b084709 [label="INT_NUMBER 1 id 67"]
-IDExprNode79be0360->IDExprNode3b084709 [label="SECOND"]
-IDExprSeqNode3a883ce7->IDExprNode79be0360
-IDStmtSeqNode5f9d02cb->IDStmtNode49fc609f
-IDStmtNode3224f60b [label="VAR DEF id 74"]
-IDIdentListNode63e2203c [label="IDENT LIST"]
-IDStmtNode3224f60b->IDIdentListNode63e2203c
-IDIdentNode1efed156 [label="ident fc id 70"]
-IDIdentListNode63e2203c->IDIdentNode1efed156
-IDExprSeqNode6737fd8f [label="VALUES"]
-IDStmtNode3224f60b->IDExprSeqNode6737fd8f
-IDExprNode72b6cbcc [label="FUNCTION CALL id 73"]
-ID73 [label="name f"]
-IDExprNode72b6cbcc->ID73 [label="name"]
-IDExprSeqNodea7e666 [label="ARGS"]
-IDExprNode72b6cbcc->IDExprSeqNodea7e666
-IDExprNode68bbe345 [label="VAR id 72"]
-IDVarItemNode30b8a058 [label="var_item type IDENT id 71"]
-ID71 [label="ident c"]
-IDVarItemNode30b8a058->ID71
-IDExprNode68bbe345->IDVarItemNode30b8a058
-IDExprSeqNodea7e666->IDExprNode68bbe345
-IDExprSeqNode6737fd8f->IDExprNode72b6cbcc
-IDStmtSeqNode5f9d02cb->IDStmtNode3224f60b
-IDStmtNode7494e528 [label="IF id 106"]
-IDExprNode4bbfb90a [label="LESS id 81"]
-IDExprNode7c29daf3 [label="MUL id 79"]
+IDVarItemNode49fc609f [label="var_item type VAR EXPR id 59"]
+IDExprNodecd2dae5 [label="MINUS id 63"]
+IDExprNode3a883ce7 [label="VAR id 61"]
+IDVarItemNode4973813a [label="var_item type IDENT id 60"]
+ID60 [label="ident i"]
+IDVarItemNode4973813a->ID60
+IDExprNode3a883ce7->IDVarItemNode4973813a
+IDExprNodecd2dae5->IDExprNode3a883ce7 [label="FIRST"]
+IDExprNode6321e813 [label="INT_NUMBER 1 id 62"]
+IDExprNodecd2dae5->IDExprNode6321e813 [label="SECOND"]
+IDVarItemNode49fc609f->IDExprNodecd2dae5
+IDExprNode32709393->IDVarItemNode49fc609f
+IDExprNode3cef309d->IDExprNode32709393 [label="FIRST"]
+IDExprNode79be0360 [label="VAR id 69"]
+IDVarItemNode22a67b4 [label="var_item type IDENT id 65"]
+ID65 [label="ident list"]
+IDVarItemNode22a67b4->ID65
+IDExprNode79be0360->IDVarItemNode22a67b4
+IDVarItemNode57855c9a [label="var_item type VAR EXPR id 66"]
+IDExprNode3b084709 [label="VAR id 68"]
+IDVarItemNode3224f60b [label="var_item type IDENT id 67"]
+ID67 [label="ident i"]
+IDVarItemNode3224f60b->ID67
+IDExprNode3b084709->IDVarItemNode3224f60b
+IDVarItemNode57855c9a->IDExprNode3b084709
+IDExprNode79be0360->IDVarItemNode57855c9a
+IDExprNode3cef309d->IDExprNode79be0360 [label="SECOND"]
+IDStmtNode50b494a6->IDExprNode3cef309d [label="CONDITION"]
+IDStmtSeqNode63e2203c [label="IF BLOCK"]
+IDStmtNode50b494a6->IDStmtSeqNode63e2203c
+IDStmtNode1efed156 [label="ASSIGNMENT id 80"]
+IDExprSeqNode6737fd8f [label="VARS"]
+IDExprSeqNode72b6cbcc [label="VALUES"]
+IDStmtNode1efed156->IDExprSeqNode6737fd8f
+IDStmtNode1efed156->IDExprSeqNode72b6cbcc
+IDExprNodea7e666 [label="VAR id 72"]
+IDVarItemNode68bbe345 [label="var_item type IDENT id 71"]
+ID71 [label="ident tmp"]
+IDVarItemNode68bbe345->ID71
+IDExprNodea7e666->IDVarItemNode68bbe345
+IDExprSeqNode6737fd8f->IDExprNodea7e666
+IDExprNode30b8a058 [label="VAR id 79"]
+IDVarItemNode7494e528 [label="var_item type IDENT id 73"]
+ID73 [label="ident list"]
+IDVarItemNode7494e528->ID73
+IDExprNode30b8a058->IDVarItemNode7494e528
+IDVarItemNode4bbfb90a [label="var_item type VAR EXPR id 74"]
+IDExprNode7c29daf3 [label="MINUS id 78"]
 IDExprNode9660f4e [label="VAR id 76"]
 IDVarItemNode5a8806ef [label="var_item type IDENT id 75"]
-ID75 [label="ident fa"]
+ID75 [label="ident i"]
 IDVarItemNode5a8806ef->ID75
 IDExprNode9660f4e->IDVarItemNode5a8806ef
 IDExprNode7c29daf3->IDExprNode9660f4e [label="FIRST"]
-IDExprNode6c49835d [label="VAR id 78"]
-IDVarItemNode5e853265 [label="var_item type IDENT id 77"]
-ID77 [label="ident fc"]
-IDVarItemNode5e853265->ID77
-IDExprNode6c49835d->IDVarItemNode5e853265
+IDExprNode6c49835d [label="INT_NUMBER 1 id 77"]
 IDExprNode7c29daf3->IDExprNode6c49835d [label="SECOND"]
-IDExprNode4bbfb90a->IDExprNode7c29daf3 [label="FIRST"]
-IDExprNode67205a84 [label="INT_NUMBER 0 id 80"]
-IDExprNode4bbfb90a->IDExprNode67205a84 [label="SECOND"]
-IDStmtNode7494e528->IDExprNode4bbfb90a [label="CONDITION"]
-IDStmtSeqNode7d0587f1 [label="IF BLOCK"]
-IDStmtNode7494e528->IDStmtSeqNode7d0587f1
-IDStmtNode5d76b067 [label="RETURN id 93"]
-IDExprSeqNode2a17b7b6 [label="VALUES"]
-IDStmtNode5d76b067->IDExprSeqNode2a17b7b6
-IDExprNode4f063c0a [label="FUNCTION CALL id 92"]
-ID92 [label="name bisect"]
-IDExprNode4f063c0a->ID92 [label="name"]
-IDExprSeqNode1e6d1014 [label="ARGS"]
-IDExprNode4f063c0a->IDExprSeqNode1e6d1014
-IDExprNode76707e36 [label="VAR id 83"]
-IDVarItemNode614ddd49 [label="var_item type IDENT id 82"]
-ID82 [label="ident f"]
-IDVarItemNode614ddd49->ID82
+IDVarItemNode4bbfb90a->IDExprNode7c29daf3
+IDExprNode30b8a058->IDVarItemNode4bbfb90a
+IDExprSeqNode72b6cbcc->IDExprNode30b8a058
+IDStmtSeqNode63e2203c->IDStmtNode1efed156
+IDStmtNode5e853265 [label="ASSIGNMENT id 93"]
+IDExprSeqNode67205a84 [label="VARS"]
+IDExprSeqNode7d0587f1 [label="VALUES"]
+IDStmtNode5e853265->IDExprSeqNode67205a84
+IDStmtNode5e853265->IDExprSeqNode7d0587f1
+IDExprNode5d76b067 [label="VAR id 87"]
+IDVarItemNode2a17b7b6 [label="var_item type IDENT id 81"]
+ID81 [label="ident list"]
+IDVarItemNode2a17b7b6->ID81
+IDExprNode5d76b067->IDVarItemNode2a17b7b6
+IDVarItemNode4f063c0a [label="var_item type VAR EXPR id 82"]
+IDExprNode1e6d1014 [label="MINUS id 86"]
+IDExprNode76707e36 [label="VAR id 84"]
+IDVarItemNode614ddd49 [label="var_item type IDENT id 83"]
+ID83 [label="ident i"]
+IDVarItemNode614ddd49->ID83
 IDExprNode76707e36->IDVarItemNode614ddd49
-IDExprSeqNode1e6d1014->IDExprNode76707e36
-IDExprNode1f554b06 [label="VAR id 85"]
-IDVarItemNode694e1548 [label="var_item type IDENT id 84"]
-ID84 [label="ident a"]
-IDVarItemNode694e1548->ID84
-IDExprNode1f554b06->IDVarItemNode694e1548
-IDExprSeqNode1e6d1014->IDExprNode1f554b06
-IDExprNode1c3a4799 [label="VAR id 87"]
-IDVarItemNode131276c2 [label="var_item type IDENT id 86"]
-ID86 [label="ident c"]
-IDVarItemNode131276c2->ID86
-IDExprNode1c3a4799->IDVarItemNode131276c2
-IDExprSeqNode1e6d1014->IDExprNode1c3a4799
-IDExprNode26aa12dd [label="VAR id 89"]
-IDVarItemNode3fd7a715 [label="var_item type IDENT id 88"]
-ID88 [label="ident fa"]
-IDVarItemNode3fd7a715->ID88
+IDExprNode1e6d1014->IDExprNode76707e36 [label="FIRST"]
+IDExprNode1f554b06 [label="INT_NUMBER 1 id 85"]
+IDExprNode1e6d1014->IDExprNode1f554b06 [label="SECOND"]
+IDVarItemNode4f063c0a->IDExprNode1e6d1014
+IDExprNode5d76b067->IDVarItemNode4f063c0a
+IDExprSeqNode67205a84->IDExprNode5d76b067
+IDExprNode694e1548 [label="VAR id 92"]
+IDVarItemNode1c3a4799 [label="var_item type IDENT id 88"]
+ID88 [label="ident list"]
+IDVarItemNode1c3a4799->ID88
+IDExprNode694e1548->IDVarItemNode1c3a4799
+IDVarItemNode131276c2 [label="var_item type VAR EXPR id 89"]
+IDExprNode26aa12dd [label="VAR id 91"]
+IDVarItemNode3fd7a715 [label="var_item type IDENT id 90"]
+ID90 [label="ident i"]
+IDVarItemNode3fd7a715->ID90
 IDExprNode26aa12dd->IDVarItemNode3fd7a715
-IDExprSeqNode1e6d1014->IDExprNode26aa12dd
-IDExprNode711f39f9 [label="VAR id 91"]
-IDVarItemNode71bbf57e [label="var_item type IDENT id 90"]
-ID90 [label="ident fc"]
-IDVarItemNode71bbf57e->ID90
-IDExprNode711f39f9->IDVarItemNode71bbf57e
-IDExprSeqNode1e6d1014->IDExprNode711f39f9
-IDExprSeqNode2a17b7b6->IDExprNode4f063c0a
-IDStmtSeqNode7d0587f1->IDStmtNode5d76b067
-IDStmtSeqNode7f13d6e [label="ELSE BLOCK"]
-IDStmtNode7494e528->IDStmtSeqNode7f13d6e
-IDStmtNode51cdd8a [label="RETURN id 105"]
-IDExprSeqNoded44fc21 [label="VALUES"]
-IDStmtNode51cdd8a->IDExprSeqNoded44fc21
-IDExprNode23faf8f2 [label="FUNCTION CALL id 104"]
-ID104 [label="name bisect"]
-IDExprNode23faf8f2->ID104 [label="name"]
-IDExprSeqNode2d6eabae [label="ARGS"]
-IDExprNode23faf8f2->IDExprSeqNode2d6eabae
-IDExprNode4e7dc304 [label="VAR id 95"]
-IDVarItemNode64729b1e [label="var_item type IDENT id 94"]
-ID94 [label="ident f"]
-IDVarItemNode64729b1e->ID94
-IDExprNode4e7dc304->IDVarItemNode64729b1e
-IDExprSeqNode2d6eabae->IDExprNode4e7dc304
-IDExprNode10bbd20a [label="VAR id 97"]
-IDVarItemNode48503868 [label="var_item type IDENT id 96"]
-ID96 [label="ident c"]
-IDVarItemNode48503868->ID96
-IDExprNode10bbd20a->IDVarItemNode48503868
-IDExprSeqNode2d6eabae->IDExprNode10bbd20a
-IDExprNode6895a785 [label="VAR id 99"]
-IDVarItemNode184f6be2 [label="var_item type IDENT id 98"]
-ID98 [label="ident b"]
-IDVarItemNode184f6be2->ID98
-IDExprNode6895a785->IDVarItemNode184f6be2
-IDExprSeqNode2d6eabae->IDExprNode6895a785
-IDExprNode56aac163 [label="VAR id 101"]
-IDVarItemNode1f7030a6 [label="var_item type IDENT id 100"]
-ID100 [label="ident fc"]
-IDVarItemNode1f7030a6->ID100
+IDVarItemNode131276c2->IDExprNode26aa12dd
+IDExprNode694e1548->IDVarItemNode131276c2
+IDExprSeqNode7d0587f1->IDExprNode694e1548
+IDStmtSeqNode63e2203c->IDStmtNode5e853265
+IDStmtNode711f39f9 [label="ASSIGNMENT id 101"]
+IDExprSeqNode71bbf57e [label="VARS"]
+IDExprSeqNode7f13d6e [label="VALUES"]
+IDStmtNode711f39f9->IDExprSeqNode71bbf57e
+IDStmtNode711f39f9->IDExprSeqNode7f13d6e
+IDExprNode51cdd8a [label="VAR id 98"]
+IDVarItemNoded44fc21 [label="var_item type IDENT id 94"]
+ID94 [label="ident list"]
+IDVarItemNoded44fc21->ID94
+IDExprNode51cdd8a->IDVarItemNoded44fc21
+IDVarItemNode23faf8f2 [label="var_item type VAR EXPR id 95"]
+IDExprNode2d6eabae [label="VAR id 97"]
+IDVarItemNode4e7dc304 [label="var_item type IDENT id 96"]
+ID96 [label="ident i"]
+IDVarItemNode4e7dc304->ID96
+IDExprNode2d6eabae->IDVarItemNode4e7dc304
+IDVarItemNode23faf8f2->IDExprNode2d6eabae
+IDExprNode51cdd8a->IDVarItemNode23faf8f2
+IDExprSeqNode71bbf57e->IDExprNode51cdd8a
+IDExprNode64729b1e [label="VAR id 100"]
+IDVarItemNode10bbd20a [label="var_item type IDENT id 99"]
+ID99 [label="ident tmp"]
+IDVarItemNode10bbd20a->ID99
+IDExprNode64729b1e->IDVarItemNode10bbd20a
+IDExprSeqNode7f13d6e->IDExprNode64729b1e
+IDStmtSeqNode63e2203c->IDStmtNode711f39f9
+IDStmtNode48503868 [label="ASSIGNMENT id 106"]
+IDExprSeqNode6895a785 [label="VARS"]
+IDExprSeqNode184f6be2 [label="VALUES"]
+IDStmtNode48503868->IDExprSeqNode6895a785
+IDStmtNode48503868->IDExprSeqNode184f6be2
+IDExprNode56aac163 [label="VAR id 103"]
+IDVarItemNode1f7030a6 [label="var_item type IDENT id 102"]
+ID102 [label="ident nn"]
+IDVarItemNode1f7030a6->ID102
 IDExprNode56aac163->IDVarItemNode1f7030a6
-IDExprSeqNode2d6eabae->IDExprNode56aac163
-IDExprNode5a1c0542 [label="VAR id 103"]
-IDVarItemNode396f6598 [label="var_item type IDENT id 102"]
-ID102 [label="ident fb"]
-IDVarItemNode396f6598->ID102
+IDExprSeqNode6895a785->IDExprNode56aac163
+IDExprNode5a1c0542 [label="VAR id 105"]
+IDVarItemNode396f6598 [label="var_item type IDENT id 104"]
+ID104 [label="ident i"]
+IDVarItemNode396f6598->ID104
 IDExprNode5a1c0542->IDVarItemNode396f6598
-IDExprSeqNode2d6eabae->IDExprNode5a1c0542
-IDExprSeqNoded44fc21->IDExprNode23faf8f2
-IDStmtSeqNode7f13d6e->IDStmtNode51cdd8a
-IDStmtSeqNode5f9d02cb->IDStmtNode7494e528
-IDChunkNode5383967b->IDStmtNode2286778
-IDStmtNode394e1a0f [label="FUNC id 144"]
-ID144 [label="name solve"]
-IDStmtNode394e1a0f->ID144 [label="name"]
-IDParamListNode27a5f880 [label="PARAMS"]
-IDStmtNode394e1a0f->IDParamListNode27a5f880
-IDIdentNode1d29cf23 [label="ident f id 108"]
-IDParamListNode27a5f880->IDIdentNode1d29cf23
-IDIdentNode5f282abb [label="ident a id 109"]
-IDParamListNode27a5f880->IDIdentNode5f282abb
-IDIdentNode167fdd33 [label="ident b id 110"]
-IDParamListNode27a5f880->IDIdentNode167fdd33
-IDStmtSeqNode1e965684 [label="BLOCK"]
-IDStmtNode394e1a0f->IDStmtSeqNode1e965684
-IDStmtNode4d95d2a2 [label="ASSIGNMENT id 114"]
-IDExprSeqNode53f65459 [label="VARS"]
-IDExprSeqNode3b088d51 [label="VALUES"]
-IDStmtNode4d95d2a2->IDExprSeqNode53f65459
-IDStmtNode4d95d2a2->IDExprSeqNode3b088d51
-IDExprNode1786dec2 [label="VAR id 112"]
-IDVarItemNode74650e52 [label="var_item type IDENT id 111"]
-ID111 [label="ident n"]
-IDVarItemNode74650e52->ID111
-IDExprNode1786dec2->IDVarItemNode74650e52
-IDExprSeqNode53f65459->IDExprNode1786dec2
-IDExprNode15d0c81b [label="INT_NUMBER 0 id 113"]
-IDExprSeqNode3b088d51->IDExprNode15d0c81b
-IDStmtSeqNode1e965684->IDStmtNode4d95d2a2
-IDStmtNode6acdbdf5 [label="VAR DEF id 130"]
-IDIdentListNode4b1c1ea0 [label="IDENT LIST"]
-IDStmtNode6acdbdf5->IDIdentListNode4b1c1ea0
-IDIdentNode17579e0f [label="ident z id 115"]
-IDIdentListNode4b1c1ea0->IDIdentNode17579e0f
-IDIdentNode4d41cee [label="ident e id 116"]
-IDIdentListNode4b1c1ea0->IDIdentNode4d41cee
-IDExprSeqNode3712b94 [label="VALUES"]
-IDStmtNode6acdbdf5->IDExprSeqNode3712b94
-IDExprNode2833cc44 [label="FUNCTION CALL id 129"]
-ID129 [label="name bisect"]
-IDExprNode2833cc44->ID129 [label="name"]
-IDExprSeqNode33f88ab [label="ARGS"]
-IDExprNode2833cc44->IDExprSeqNode33f88ab
-IDExprNode27a8c74e [label="VAR id 118"]
-IDVarItemNode2d8f65a4 [label="var_item type IDENT id 117"]
-ID117 [label="ident f"]
-IDVarItemNode2d8f65a4->ID117
-IDExprNode27a8c74e->IDVarItemNode2d8f65a4
-IDExprSeqNode33f88ab->IDExprNode27a8c74e
-IDExprNode1b68ddbd [label="VAR id 120"]
-IDVarItemNode646d64ab [label="var_item type IDENT id 119"]
-ID119 [label="ident a"]
-IDVarItemNode646d64ab->ID119
+IDExprSeqNode184f6be2->IDExprNode5a1c0542
+IDStmtSeqNode63e2203c->IDStmtNode48503868
+IDStmtSeqNode6e6c3152->IDStmtNode50b494a6
+IDStmtNode394e1a0f [label="ASSIGNMENT id 184"]
+IDExprSeqNode27a5f880 [label="VARS"]
+IDExprSeqNode1d29cf23 [label="VALUES"]
+IDStmtNode394e1a0f->IDExprSeqNode27a5f880
+IDStmtNode394e1a0f->IDExprSeqNode1d29cf23
+IDExprNode5f282abb [label="VAR id 180"]
+IDVarItemNode167fdd33 [label="var_item type IDENT id 179"]
+ID179 [label="ident i"]
+IDVarItemNode167fdd33->ID179
+IDExprNode5f282abb->IDVarItemNode167fdd33
+IDExprSeqNode27a5f880->IDExprNode5f282abb
+IDExprNode1e965684 [label="PLUS id 183"]
+IDExprNode4d95d2a2 [label="VAR id 182"]
+IDVarItemNode53f65459 [label="var_item type IDENT id 181"]
+ID181 [label="ident i"]
+IDVarItemNode53f65459->ID181
+IDExprNode4d95d2a2->IDVarItemNode53f65459
+IDExprNode1e965684->IDExprNode4d95d2a2 [label="FIRST"]
+IDExprNode3b088d51 [label="INT_NUMBER 4 id 57"]
+IDExprNode1e965684->IDExprNode3b088d51 [label="SECOND"]
+IDExprSeqNode1d29cf23->IDExprNode1e965684
+IDStmtSeqNode6e6c3152->IDStmtNode394e1a0f
+IDChunkNode60c6f5b->IDStmtNode35d176f7
+IDStmtNode1786dec2 [label="ASSIGNMENT id 187"]
+IDExprSeqNode74650e52 [label="VARS"]
+IDExprSeqNode15d0c81b [label="VALUES"]
+IDStmtNode1786dec2->IDExprSeqNode74650e52
+IDStmtNode1786dec2->IDExprSeqNode15d0c81b
+IDExprNode6acdbdf5 [label="VAR id 186"]
+IDVarItemNode4b1c1ea0 [label="var_item type IDENT id 185"]
+ID185 [label="ident i"]
+IDVarItemNode4b1c1ea0->ID185
+IDExprNode6acdbdf5->IDVarItemNode4b1c1ea0
+IDExprSeqNode74650e52->IDExprNode6acdbdf5
+IDExprNode17579e0f [label="INT_NUMBER 0 id 109"]
+IDExprSeqNode15d0c81b->IDExprNode17579e0f
+IDChunkNode60c6f5b->IDStmtNode1786dec2
+IDStmtNode4d41cee [label="WHILE_LOOP id 165"]
+IDExprNode3712b94 [label="VAR id 111"]
+IDVarItemNode2833cc44 [label="var_item type IDENT id 110"]
+ID110 [label="ident n"]
+IDVarItemNode2833cc44->ID110
+IDExprNode3712b94->IDVarItemNode2833cc44
+IDStmtNode4d41cee->IDExprNode3712b94 [label="CONDITION"]
+IDStmtSeqNode33f88ab [label="BLOCK"]
+IDStmtNode4d41cee->IDStmtSeqNode33f88ab
+IDStmtNode27a8c74e [label="IF id 164"]
+IDExprNode2d8f65a4 [label="GREATER id 127"]
+IDExprNode1b68ddbd [label="VAR id 121"]
+IDVarItemNode646d64ab [label="var_item type IDENT id 115"]
+ID115 [label="ident list"]
+IDVarItemNode646d64ab->ID115
 IDExprNode1b68ddbd->IDVarItemNode646d64ab
-IDExprSeqNode33f88ab->IDExprNode1b68ddbd
-IDExprNode59e5ddf [label="VAR id 122"]
-IDVarItemNode536aaa8d [label="var_item type IDENT id 121"]
-ID121 [label="ident b"]
-IDVarItemNode536aaa8d->ID121
-IDExprNode59e5ddf->IDVarItemNode536aaa8d
-IDExprSeqNode33f88ab->IDExprNode59e5ddf
-IDExprNodee320068 [label="FUNCTION CALL id 125"]
-ID125 [label="name f"]
-IDExprNodee320068->ID125 [label="name"]
-IDExprSeqNode1f57539 [label="ARGS"]
-IDExprNodee320068->IDExprSeqNode1f57539
-IDExprNode76f2b07d [label="VAR id 124"]
-IDVarItemNode704a52ec [label="var_item type IDENT id 123"]
-ID123 [label="ident a"]
-IDVarItemNode704a52ec->ID123
-IDExprNode76f2b07d->IDVarItemNode704a52ec
-IDExprSeqNode1f57539->IDExprNode76f2b07d
-IDExprSeqNode33f88ab->IDExprNodee320068
-IDExprNode6ee52dcd [label="FUNCTION CALL id 128"]
-ID128 [label="name f"]
-IDExprNode6ee52dcd->ID128 [label="name"]
-IDExprSeqNode4493d195 [label="ARGS"]
-IDExprNode6ee52dcd->IDExprSeqNode4493d195
-IDExprNode2781e022 [label="VAR id 127"]
-IDVarItemNode57e1b0c [label="var_item type IDENT id 126"]
-ID126 [label="ident b"]
-IDVarItemNode57e1b0c->ID126
+IDVarItemNode59e5ddf [label="var_item type VAR EXPR id 116"]
+IDExprNode536aaa8d [label="MINUS id 120"]
+IDExprNodee320068 [label="VAR id 118"]
+IDVarItemNode1f57539 [label="var_item type IDENT id 117"]
+ID117 [label="ident i"]
+IDVarItemNode1f57539->ID117
+IDExprNodee320068->IDVarItemNode1f57539
+IDExprNode536aaa8d->IDExprNodee320068 [label="FIRST"]
+IDExprNode76f2b07d [label="INT_NUMBER 1 id 119"]
+IDExprNode536aaa8d->IDExprNode76f2b07d [label="SECOND"]
+IDVarItemNode59e5ddf->IDExprNode536aaa8d
+IDExprNode1b68ddbd->IDVarItemNode59e5ddf
+IDExprNode2d8f65a4->IDExprNode1b68ddbd [label="FIRST"]
+IDExprNode704a52ec [label="VAR id 126"]
+IDVarItemNode6ee52dcd [label="var_item type IDENT id 122"]
+ID122 [label="ident list"]
+IDVarItemNode6ee52dcd->ID122
+IDExprNode704a52ec->IDVarItemNode6ee52dcd
+IDVarItemNode4493d195 [label="var_item type VAR EXPR id 123"]
+IDExprNode2781e022 [label="VAR id 125"]
+IDVarItemNode57e1b0c [label="var_item type IDENT id 124"]
+ID124 [label="ident i"]
+IDVarItemNode57e1b0c->ID124
 IDExprNode2781e022->IDVarItemNode57e1b0c
-IDExprSeqNode4493d195->IDExprNode2781e022
-IDExprSeqNode33f88ab->IDExprNode6ee52dcd
-IDExprSeqNode3712b94->IDExprNode2833cc44
-IDStmtSeqNode1e965684->IDStmtNode6acdbdf5
-IDStmtNode4232c52b [label="_FUNCTION_CALL id 143"]
-IDExprNode1877ab81 [label="FUNCTION CALL id 142"]
-ID142 [label="name write"]
-IDExprNode1877ab81->ID142 [label="name"]
-IDExprSeqNode305fd85d [label="ARGS"]
-IDExprNode1877ab81->IDExprSeqNode305fd85d
-IDExprNode458c1321 [label="FUNCTION CALL id 141"]
-ID141 [label="name format"]
-IDExprNode458c1321->ID141 [label="name"]
-IDExprSeqNode11438d26 [label="ARGS"]
-IDExprNode458c1321->IDExprSeqNode11438d26
-IDExprNode34cd072c [label="STRING after %d steps, root is %.17g with error %.1e, f=%.1e
- id 131"]
-IDExprSeqNode11438d26->IDExprNode34cd072c
-IDExprNode7a1ebcd8 [label="VAR id 133"]
-IDVarItemNode5faeada1 [label="var_item type IDENT id 132"]
-ID132 [label="ident n"]
-IDVarItemNode5faeada1->ID132
+IDVarItemNode4493d195->IDExprNode2781e022
+IDExprNode704a52ec->IDVarItemNode4493d195
+IDExprNode2d8f65a4->IDExprNode704a52ec [label="SECOND"]
+IDStmtNode27a8c74e->IDExprNode2d8f65a4 [label="CONDITION"]
+IDStmtSeqNode4232c52b [label="IF BLOCK"]
+IDStmtNode27a8c74e->IDStmtSeqNode4232c52b
+IDStmtNode1877ab81 [label="ASSIGNMENT id 137"]
+IDExprSeqNode305fd85d [label="VARS"]
+IDExprSeqNode458c1321 [label="VALUES"]
+IDStmtNode1877ab81->IDExprSeqNode305fd85d
+IDStmtNode1877ab81->IDExprSeqNode458c1321
+IDExprNode11438d26 [label="VAR id 129"]
+IDVarItemNode34cd072c [label="var_item type IDENT id 128"]
+ID128 [label="ident tmp"]
+IDVarItemNode34cd072c->ID128
+IDExprNode11438d26->IDVarItemNode34cd072c
+IDExprSeqNode305fd85d->IDExprNode11438d26
+IDExprNode7a1ebcd8 [label="VAR id 136"]
+IDVarItemNode5faeada1 [label="var_item type IDENT id 130"]
+ID130 [label="ident list"]
+IDVarItemNode5faeada1->ID130
 IDExprNode7a1ebcd8->IDVarItemNode5faeada1
-IDExprSeqNode11438d26->IDExprNode7a1ebcd8
-IDExprNode528931cf [label="VAR id 135"]
-IDVarItemNodeea1a8d5 [label="var_item type IDENT id 134"]
-ID134 [label="ident z"]
-IDVarItemNodeea1a8d5->ID134
-IDExprNode528931cf->IDVarItemNodeea1a8d5
-IDExprSeqNode11438d26->IDExprNode528931cf
-IDExprNode1563da5 [label="VAR id 137"]
-IDVarItemNode2bbf4b8b [label="var_item type IDENT id 136"]
-ID136 [label="ident e"]
-IDVarItemNode2bbf4b8b->ID136
+IDVarItemNode528931cf [label="var_item type VAR EXPR id 131"]
+IDExprNodeea1a8d5 [label="MINUS id 135"]
+IDExprNode1563da5 [label="VAR id 133"]
+IDVarItemNode2bbf4b8b [label="var_item type IDENT id 132"]
+ID132 [label="ident i"]
+IDVarItemNode2bbf4b8b->ID132
 IDExprNode1563da5->IDVarItemNode2bbf4b8b
-IDExprSeqNode11438d26->IDExprNode1563da5
-IDExprNode30a3107a [label="FUNCTION CALL id 140"]
-ID140 [label="name f"]
-IDExprNode30a3107a->ID140 [label="name"]
-IDExprSeqNode33c7e1bb [label="ARGS"]
-IDExprNode30a3107a->IDExprSeqNode33c7e1bb
-IDExprNode34c4973 [label="VAR id 139"]
-IDVarItemNode52feb982 [label="var_item type IDENT id 138"]
-ID138 [label="ident z"]
-IDVarItemNode52feb982->ID138
-IDExprNode34c4973->IDVarItemNode52feb982
-IDExprSeqNode33c7e1bb->IDExprNode34c4973
-IDExprSeqNode11438d26->IDExprNode30a3107a
-IDExprSeqNode305fd85d->IDExprNode458c1321
-IDStmtNode4232c52b->IDExprNode1877ab81
-IDStmtSeqNode1e965684->IDStmtNode4232c52b
-IDChunkNode5383967b->IDStmtNode394e1a0f
-IDStmtNode7a765367 [label="FUNC id 160"]
-ID160 [label="name f"]
-IDStmtNode7a765367->ID160 [label="name"]
-IDParamListNode76b0bfab [label="PARAMS"]
-IDStmtNode7a765367->IDParamListNode76b0bfab
-IDIdentNode17d677df [label="ident x id 145"]
-IDParamListNode76b0bfab->IDIdentNode17d677df
-IDStmtSeqNode3043fe0e [label="BLOCK"]
-IDStmtNode7a765367->IDStmtSeqNode3043fe0e
-IDStmtNode78e67e0a [label="RETURN id 159"]
-IDExprSeqNodebd8db5a [label="VALUES"]
-IDStmtNode78e67e0a->IDExprSeqNodebd8db5a
-IDExprNode2f943d71 [label="MINUS id 158"]
-IDExprNode80503 [label="MINUS id 156"]
-IDExprNode4b553d26 [label="MUL id 153"]
-IDExprNode69a3d1d [label="MUL id 150"]
-IDExprNode86be70a [label="VAR id 147"]
-IDVarItemNode480bdb19 [label="var_item type IDENT id 146"]
-ID146 [label="ident x"]
-IDVarItemNode480bdb19->ID146
+IDExprNodeea1a8d5->IDExprNode1563da5 [label="FIRST"]
+IDExprNode30a3107a [label="INT_NUMBER 1 id 134"]
+IDExprNodeea1a8d5->IDExprNode30a3107a [label="SECOND"]
+IDVarItemNode528931cf->IDExprNodeea1a8d5
+IDExprNode7a1ebcd8->IDVarItemNode528931cf
+IDExprSeqNode458c1321->IDExprNode7a1ebcd8
+IDStmtSeqNode4232c52b->IDStmtNode1877ab81
+IDStmtNode33c7e1bb [label="ASSIGNMENT id 150"]
+IDExprSeqNode34c4973 [label="VARS"]
+IDExprSeqNode52feb982 [label="VALUES"]
+IDStmtNode33c7e1bb->IDExprSeqNode34c4973
+IDStmtNode33c7e1bb->IDExprSeqNode52feb982
+IDExprNode7a765367 [label="VAR id 144"]
+IDVarItemNode76b0bfab [label="var_item type IDENT id 138"]
+ID138 [label="ident list"]
+IDVarItemNode76b0bfab->ID138
+IDExprNode7a765367->IDVarItemNode76b0bfab
+IDVarItemNode17d677df [label="var_item type VAR EXPR id 139"]
+IDExprNode3043fe0e [label="MINUS id 143"]
+IDExprNode78e67e0a [label="VAR id 141"]
+IDVarItemNodebd8db5a [label="var_item type IDENT id 140"]
+ID140 [label="ident i"]
+IDVarItemNodebd8db5a->ID140
+IDExprNode78e67e0a->IDVarItemNodebd8db5a
+IDExprNode3043fe0e->IDExprNode78e67e0a [label="FIRST"]
+IDExprNode2f943d71 [label="INT_NUMBER 1 id 142"]
+IDExprNode3043fe0e->IDExprNode2f943d71 [label="SECOND"]
+IDVarItemNode17d677df->IDExprNode3043fe0e
+IDExprNode7a765367->IDVarItemNode17d677df
+IDExprSeqNode34c4973->IDExprNode7a765367
+IDExprNode80503 [label="VAR id 149"]
+IDVarItemNode4b553d26 [label="var_item type IDENT id 145"]
+ID145 [label="ident list"]
+IDVarItemNode4b553d26->ID145
+IDExprNode80503->IDVarItemNode4b553d26
+IDVarItemNode69a3d1d [label="var_item type VAR EXPR id 146"]
+IDExprNode86be70a [label="VAR id 148"]
+IDVarItemNode480bdb19 [label="var_item type IDENT id 147"]
+ID147 [label="ident i"]
+IDVarItemNode480bdb19->ID147
 IDExprNode86be70a->IDVarItemNode480bdb19
-IDExprNode69a3d1d->IDExprNode86be70a [label="FIRST"]
-IDExprNode2a556333 [label="VAR id 149"]
-IDVarItemNode7d70d1b1 [label="var_item type IDENT id 148"]
-ID148 [label="ident x"]
-IDVarItemNode7d70d1b1->ID148
-IDExprNode2a556333->IDVarItemNode7d70d1b1
-IDExprNode69a3d1d->IDExprNode2a556333 [label="SECOND"]
-IDExprNode4b553d26->IDExprNode69a3d1d [label="FIRST"]
-IDExprNode2a742aa2 [label="VAR id 152"]
-IDVarItemNode3cb1ffe6 [label="var_item type IDENT id 151"]
-ID151 [label="ident x"]
-IDVarItemNode3cb1ffe6->ID151
-IDExprNode2a742aa2->IDVarItemNode3cb1ffe6
-IDExprNode4b553d26->IDExprNode2a742aa2 [label="SECOND"]
-IDExprNode80503->IDExprNode4b553d26 [label="FIRST"]
-IDExprNode3dfc5fb8 [label="VAR id 155"]
-IDVarItemNode467aecef [label="var_item type IDENT id 154"]
-ID154 [label="ident x"]
-IDVarItemNode467aecef->ID154
-IDExprNode3dfc5fb8->IDVarItemNode467aecef
-IDExprNode80503->IDExprNode3dfc5fb8 [label="SECOND"]
-IDExprNode2f943d71->IDExprNode80503 [label="FIRST"]
-IDExprNode4d50efb8 [label="INT_NUMBER 1 id 157"]
-IDExprNode2f943d71->IDExprNode4d50efb8 [label="SECOND"]
-IDExprSeqNodebd8db5a->IDExprNode2f943d71
-IDStmtSeqNode3043fe0e->IDStmtNode78e67e0a
-IDChunkNode5383967b->IDStmtNode7a765367
-IDStmtNode7e2d773b [label="_FUNCTION_CALL id 166"]
-IDExprNode2173f6d9 [label="FUNCTION CALL id 165"]
-ID165 [label="name solve"]
-IDExprNode2173f6d9->ID165 [label="name"]
-IDExprSeqNode307f6b8c [label="ARGS"]
-IDExprNode2173f6d9->IDExprSeqNode307f6b8c
-IDExprNode7a187f14 [label="VAR id 162"]
-IDVarItemNode6f195bc3 [label="var_item type IDENT id 161"]
-ID161 [label="ident f"]
-IDVarItemNode6f195bc3->ID161
-IDExprNode7a187f14->IDVarItemNode6f195bc3
-IDExprSeqNode307f6b8c->IDExprNode7a187f14
-IDExprNode51e2adc7 [label="INT_NUMBER 1 id 163"]
-IDExprSeqNode307f6b8c->IDExprNode51e2adc7
-IDExprNode1a8a8f7c [label="INT_NUMBER 2 id 164"]
-IDExprSeqNode307f6b8c->IDExprNode1a8a8f7c
-IDStmtNode7e2d773b->IDExprNode2173f6d9
-IDChunkNode5383967b->IDStmtNode7e2d773b
+IDVarItemNode69a3d1d->IDExprNode86be70a
+IDExprNode80503->IDVarItemNode69a3d1d
+IDExprSeqNode52feb982->IDExprNode80503
+IDStmtSeqNode4232c52b->IDStmtNode33c7e1bb
+IDStmtNode2a556333 [label="ASSIGNMENT id 158"]
+IDExprSeqNode7d70d1b1 [label="VARS"]
+IDExprSeqNode2a742aa2 [label="VALUES"]
+IDStmtNode2a556333->IDExprSeqNode7d70d1b1
+IDStmtNode2a556333->IDExprSeqNode2a742aa2
+IDExprNode3cb1ffe6 [label="VAR id 155"]
+IDVarItemNode3dfc5fb8 [label="var_item type IDENT id 151"]
+ID151 [label="ident list"]
+IDVarItemNode3dfc5fb8->ID151
+IDExprNode3cb1ffe6->IDVarItemNode3dfc5fb8
+IDVarItemNode467aecef [label="var_item type VAR EXPR id 152"]
+IDExprNode4d50efb8 [label="VAR id 154"]
+IDVarItemNode7e2d773b [label="var_item type IDENT id 153"]
+ID153 [label="ident i"]
+IDVarItemNode7e2d773b->ID153
+IDExprNode4d50efb8->IDVarItemNode7e2d773b
+IDVarItemNode467aecef->IDExprNode4d50efb8
+IDExprNode3cb1ffe6->IDVarItemNode467aecef
+IDExprSeqNode7d70d1b1->IDExprNode3cb1ffe6
+IDExprNode2173f6d9 [label="VAR id 157"]
+IDVarItemNode307f6b8c [label="var_item type IDENT id 156"]
+ID156 [label="ident tmp"]
+IDVarItemNode307f6b8c->ID156
+IDExprNode2173f6d9->IDVarItemNode307f6b8c
+IDExprSeqNode2a742aa2->IDExprNode2173f6d9
+IDStmtSeqNode4232c52b->IDStmtNode2a556333
+IDStmtNode7a187f14 [label="ASSIGNMENT id 163"]
+IDExprSeqNode6f195bc3 [label="VARS"]
+IDExprSeqNode51e2adc7 [label="VALUES"]
+IDStmtNode7a187f14->IDExprSeqNode6f195bc3
+IDStmtNode7a187f14->IDExprSeqNode51e2adc7
+IDExprNode1a8a8f7c [label="VAR id 160"]
+IDVarItemNode2353b3e6 [label="var_item type IDENT id 159"]
+ID159 [label="ident nn"]
+IDVarItemNode2353b3e6->ID159
+IDExprNode1a8a8f7c->IDVarItemNode2353b3e6
+IDExprSeqNode6f195bc3->IDExprNode1a8a8f7c
+IDExprNode631330c [label="VAR id 162"]
+IDVarItemNode42f93a98 [label="var_item type IDENT id 161"]
+ID161 [label="ident i"]
+IDVarItemNode42f93a98->ID161
+IDExprNode631330c->IDVarItemNode42f93a98
+IDExprSeqNode51e2adc7->IDExprNode631330c
+IDStmtSeqNode4232c52b->IDStmtNode7a187f14
+IDStmtSeqNode33f88ab->IDStmtNode27a8c74e
+IDStmtNodec46bcd4 [label="ASSIGNMENT id 193"]
+IDExprSeqNode3234e239 [label="VARS"]
+IDExprSeqNode3d921e20 [label="VALUES"]
+IDStmtNodec46bcd4->IDExprSeqNode3234e239
+IDStmtNodec46bcd4->IDExprSeqNode3d921e20
+IDExprNode36b4cef0 [label="VAR id 189"]
+IDVarItemNodefad74ee [label="var_item type IDENT id 188"]
+ID188 [label="ident i"]
+IDVarItemNodefad74ee->ID188
+IDExprNode36b4cef0->IDVarItemNodefad74ee
+IDExprSeqNode3234e239->IDExprNode36b4cef0
+IDExprNode1a1d6a08 [label="PLUS id 192"]
+IDExprNode37d31475 [label="VAR id 191"]
+IDVarItemNode27808f31 [label="var_item type IDENT id 190"]
+ID190 [label="ident i"]
+IDVarItemNode27808f31->ID190
+IDExprNode37d31475->IDVarItemNode27808f31
+IDExprNode1a1d6a08->IDExprNode37d31475 [label="FIRST"]
+IDExprNode436e852b [label="PLUS id 114"]
+IDExprNode32d2fa64 [label="INT_NUMBER 4 id 112"]
+IDExprNode436e852b->IDExprNode32d2fa64 [label="FIRST"]
+IDExprNode1d8d30f7 [label="INT_NUMBER 4 id 113"]
+IDExprNode436e852b->IDExprNode1d8d30f7 [label="SECOND"]
+IDExprNode1a1d6a08->IDExprNode436e852b [label="SECOND"]
+IDExprSeqNode3d921e20->IDExprNode1a1d6a08
+IDStmtSeqNode33f88ab->IDStmtNodec46bcd4
+IDChunkNode60c6f5b->IDStmtNode4d41cee
 }
