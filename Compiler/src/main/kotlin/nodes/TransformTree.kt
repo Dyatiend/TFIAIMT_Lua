@@ -27,7 +27,6 @@ object TransformTree {
                 transform(node.ifBlock)
             }
             StmtType.ASSIGNMENT -> {
-                //TODO Походу не надо делать)))))
 //                transform(node.varList)
 //                transform(node.values)
             }

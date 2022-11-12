@@ -1,11 +1,24 @@
 package nodes
 
+import org.checkerframework.common.returnsreceiver.qual.This
+import javax.swing.TransferHandler
+
 class ExprSeqNode(var first: ExprNode) {
     var last: ExprNode = first
 
     fun addExpr(expr: ExprNode) {
         last.next = expr
         last = expr
+    }
+
+    fun length() : Int {
+        var result = 0
+        var current: ExprNode? = this.first
+        while (current != null) {
+            result++
+            current = current.next
+        }
+        return result
     }
 
     fun addVar(varNode: VarNode?) {

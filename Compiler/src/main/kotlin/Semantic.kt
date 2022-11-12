@@ -145,7 +145,16 @@ private fun fillTables(stmtNode: StmtNode) {
             TODO()
         }
         StmtType.FUNCTION_CALL -> {
-
+            if(stmtNode.functionCall?.ident?.compareTo("print") == 0) {
+                constantsTable.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
+            }
+            else if(stmtNode.functionCall?.ident?.compareTo("read") == 0) {
+                constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
+            }
+            else {
+                constantsTable.pushMethRef("__VALUE__", "__invoke__",
+                    functionDescription(stmtNode.functionCall?.args?.length()?:0))
+            }
         }
         StmtType.BREAK -> {
 
@@ -199,40 +208,71 @@ private fun fillTables(exprSeqNode: ExprSeqNode) {
 
 private fun fillTables(exprNode: ExprNode) {
     when (exprNode.type) {
-        ExprType.UNINITIALIZED -> TODO()
-        ExprType.NIL -> TODO()
-        ExprType.BOOLEAN -> TODO()
-        ExprType.FLOAT_NUMBER -> TODO()
-        ExprType.INT_NUMBER -> TODO()
-        ExprType.STRING -> TODO()
-        ExprType.VAR_ARG -> TODO()
+        ExprType.NIL -> {
+            constantsTable.pushMethRef("__VALUE__", "<init>", "()V")
+        }
+        ExprType.BOOLEAN -> {
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(Z)V")
+        }
+        ExprType.FLOAT_NUMBER -> {
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(F)V")
+        }
+        ExprType.INT_NUMBER -> {
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(I)V")
+        }
+        ExprType.STRING -> {
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
+        }
+        ExprType.VAR_ARG -> {
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava.util.List;)V")
+        }
         ExprType.VAR -> TODO()
-        ExprType.FUNCTION_CALL -> TODO()
-        ExprType.ADJUST -> TODO()
-        ExprType.TABLE_CONSTRUCTOR -> TODO()
-        ExprType.PLUS -> TODO()
-        ExprType.MINUS -> TODO()
-        ExprType.MUL -> TODO()
-        ExprType.DIV -> TODO()
-        ExprType.FLOOR_DIV -> TODO()
-        ExprType.POW -> TODO()
-        ExprType.XOR -> TODO()
-        ExprType.MOD -> TODO()
-        ExprType.BIT_AND -> TODO()
-        ExprType.BIT_OR -> TODO()
-        ExprType.CONCAT -> TODO()
-        ExprType.LESS -> TODO()
-        ExprType.LE -> TODO()
-        ExprType.GREATER -> TODO()
-        ExprType.GE -> TODO()
-        ExprType.EQUAL -> TODO()
-        ExprType.NOT_EQUAL -> TODO()
-        ExprType.LOG_AND -> TODO()
-        ExprType.LOG_OR -> TODO()
-        ExprType.UNARY_MINUS -> TODO()
-        ExprType.NOT -> TODO()
-        ExprType.LEN -> TODO()
-        ExprType.BIT_NOT -> TODO()
+        ExprType.FUNCTION_CALL -> {
+            if(exprNode.ident == "print") {
+                constantsTable.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
+            }
+            else if(exprNode.ident == "read") {
+                constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
+            }
+            else {
+                constantsTable.pushMethRef("__VALUE__", "__invoke__",
+                    functionDescription(exprNode.args?.length()?:0))
+            }
+
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V")
+        }
+        ExprType.TABLE_CONSTRUCTOR -> {
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava.util.HashMap;)V")
+        }
+        ExprType.PLUS,
+        ExprType.MINUS,
+        ExprType.MUL ,
+        ExprType.DIV,
+        ExprType.FLOOR_DIV,
+        ExprType.POW,
+        ExprType.XOR,
+        ExprType.MOD,
+        ExprType.BIT_AND,
+        ExprType.BIT_OR,
+        ExprType.CONCAT,
+        ExprType.LESS,
+        ExprType.LE,
+        ExprType.GREATER,
+        ExprType.GE,
+        ExprType.EQUAL,
+        ExprType.NOT_EQUAL,
+        ExprType.LOG_AND,
+        ExprType.LOG_OR -> {
+            constantsTable.pushMethRef("__VALUE__", exprNode.type.getMethod(), "(L__VALUE__;)L__VALUE__;")
+        }
+        ExprType.UNARY_MINUS,
+        ExprType.NOT,
+        ExprType.LEN,
+        ExprType.BIT_NOT,
+        ExprType.ADJUST -> {
+            constantsTable.pushMethRef("__VALUE__", exprNode.type.getMethod(), "()L__VALUE__;")
+        }
+        else -> {}
     }
 }
 
@@ -277,4 +317,14 @@ private fun fillTables(fieldListNode: FieldListNode) {
         fillTables(current)
         current = current.next
     }
+}
+
+
+private fun functionDescription(countParams : Int) : String {
+    var result = "("
+    for(i in 0 until countParams) {
+        result += "L__VALUE__;"
+    }
+    result += ")L__VALUE__;";
+    return result
 }
