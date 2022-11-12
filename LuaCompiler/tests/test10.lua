@@ -8,6 +8,7 @@ function bisect(f,a,b,fa,fb)
  write(n," c=",c," a=",a," b=",b,"\n")
  if c==a or c==b or abs(a-b)<delta then return c,b-a end
  n=n+1
+ fc = 12313
  local fc=f(c)
  if fa*fc<0 then return bisect(f,a,c,fa,fc) else return bisect(f,c,b,fc,fb) end
 end

@@ -1,10 +1,15 @@
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import nodes.*
-import org.checkerframework.checker.units.qual.K
+import java.io.File
 
-import kotlin.jvm.functions.FunctionN
 private var constantID = 0
+    get() = ++field
+
+private var localVarID = 0
+    get() = ++field
+
+private var funID = 0
     get() = ++field
 
 enum class ConstantType {
@@ -98,6 +103,7 @@ var classProgramId: Int = 0
 var valueClassId: Int = 0
 var functionClassId: Int = 0
 var objectClassId: Int = 0
+var programStmtId: Int = 0
 
 fun fillTables(program: ChunkNode) {
     constantsTable.push(Constant.utf8("CODE"))
@@ -111,6 +117,11 @@ fun fillTables(program: ChunkNode) {
             constantsTable.push(Constant.utf8("__VALUE__"))
         )
     )
+    functionClassId = constantsTable.push(
+        Constant._class(
+            constantsTable.push(Constant.utf8("__FUN__"))
+        )
+    )
     objectClassId = constantsTable.push(
         Constant._class(
             constantsTable.push(Constant.utf8("Ljava/lang/Object;"))
@@ -118,31 +129,39 @@ fun fillTables(program: ChunkNode) {
     )
     constantsTable.push(Constant.utf8("main"))
     constantsTable.push(Constant.utf8("([Ljava/lang/String;)V"))
+    constantsTable.pushMethRef("__PROGRAM__", "main", "([Ljava/lang/String;)V")
 
+    localVarsTable.put(program.block.first?.id, "args", localVarID)
+
+    program.block.first?.let {
+        programStmtId = it.id
+    }
 
     fillTables(program.block)
-}
 
-private var currentStmtSeqId: Int = 0
+    constantsTable.pushMethRef("__PROGRAM__", "<init>", "()V")
+    constantsTable.pushMethRef("java/lang/Object", "<init>", "()V")
+}
 
 private fun fillTables(stmtSeqNode: StmtSeqNode) {
     var current = stmtSeqNode.first
     current?.let {
-        currentStmtSeqId = it.id
         while (current != null) {
-            fillTables(current!!)
+            fillTables(current!!, it.id)
             current = current!!.next
         }
     }
 }
 
-private fun fillTables(stmtNode: StmtNode) {
+private fun fillTables(stmtNode: StmtNode, ownerId: Int) {
     when (stmtNode.type) {
         StmtType.UNINITIALIZED -> { // elseif
-            fillTables(stmtNode.elseifSeq!!)
+            fillTables(stmtNode.ifBlock!!)
+            fillTables(stmtNode.conditionExpr!!)
         }
         StmtType.ASSIGNMENT -> {
-            TODO()
+            fillTables(stmtNode.varList!!)
+            fillTables(stmtNode.values!!)
         }
         StmtType.FUNCTION_CALL -> {
             if(stmtNode.functionCall?.ident?.compareTo("print") == 0) {
@@ -152,49 +171,67 @@ private fun fillTables(stmtNode: StmtNode) {
                 constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
             }
             else {
-                constantsTable.pushMethRef("__VALUE__", "__invoke__",
-                    functionDescription(stmtNode.functionCall?.args?.length()?:0))
+                constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
+                constantsTable.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
             }
         }
-        StmtType.BREAK -> {
-
-        }
-        StmtType.DO_LOOP -> {
-
+        StmtType.DO_LOOP -> { // Not loop))))
+            fillTables(stmtNode.actionBlock!!)
         }
         StmtType.WHILE_LOOP -> {
-
+            fillTables(stmtNode.conditionExpr!!)
+            fillTables(stmtNode.actionBlock!!)
         }
         StmtType.REPEAT_LOOP -> {
-
+            fillTables(stmtNode.conditionExpr!!)
+            fillTables(stmtNode.actionBlock!!)
         }
         StmtType.IF -> {
-
-        }
-        StmtType.FOR -> {
-
-        }
-        StmtType.FOREACH -> {
-
+            fillTables(stmtNode.conditionExpr!!)
+            fillTables(stmtNode.ifBlock!!)
+            if(stmtNode.elseifSeq != null && stmtNode.elseifSeq?.first != null) {
+                fillTables(stmtNode.elseifSeq!!)
+            }
+            if(stmtNode.elseBlock != null) {
+                fillTables(stmtNode.elseBlock!!)
+            }
         }
         StmtType.FUNCTION_DEF -> {
+            // TODO? нужны вложенные классы или  нет ?????
+            constantsTable.push(Constant._class(constantsTable.push(Constant.utf8(
+                "__${stmtNode.ident}__$funID"
+            ))))
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V")
 
+            stmtNode.actionBlock!!.first?.let {
+                fillTables(stmtNode.params!!, it.id)
+            }
+            fillTables(stmtNode.actionBlock!!)
         }
+        StmtType.FOR -> {
+            constantsTable.push(Constant.utf8(stmtNode.ident))
+            stmtNode.actionBlock!!.first?.let {
+                localVarsTable.put(it.id, stmtNode.ident, localVarID)
+            }
+            fillTables(stmtNode.initialValue!!)
+            fillTables(stmtNode.conditionExpr!!)
+            stmtNode.stepExpr?.let {
+                fillTables(it)
+            }
+            fillTables(stmtNode.actionBlock!!)
+        }
+        // TODO: FOREACH?????????????
         StmtType.VAR_DEF -> {
-            var current = stmtNode.identList?.first
-            while (current != null) {
-                val id = constantsTable.push(Constant.fieldRef(classProgramId,
-                    constantsTable.push(Constant.nameAndType(
-                        constantsTable.push(Constant.utf8(current.ident!!)),
-                        valueClassId
-                    ))))
-                localVarsTable.put(currentStmtSeqId, current.ident, id)
-                current = current.next
+            fillTables(stmtNode.identList!!, ownerId)
+
+            stmtNode.values?.let {
+                fillTables(it)
             }
         }
         StmtType.RETURN -> {
             fillTables(stmtNode.values!!)
         }
+        else -> {}
     }
 }
 
@@ -212,37 +249,47 @@ private fun fillTables(exprNode: ExprNode) {
             constantsTable.pushMethRef("__VALUE__", "<init>", "()V")
         }
         ExprType.BOOLEAN -> {
+            constantsTable.push(Constant.integer(if(exprNode.boolValue) 1 else 0))
             constantsTable.pushMethRef("__VALUE__", "<init>", "(Z)V")
         }
         ExprType.FLOAT_NUMBER -> {
+            constantsTable.push(Constant.float(exprNode.floatNumberValue.toFloat()))
             constantsTable.pushMethRef("__VALUE__", "<init>", "(F)V")
         }
         ExprType.INT_NUMBER -> {
+            constantsTable.push(Constant.integer(exprNode.intNumberValue))
             constantsTable.pushMethRef("__VALUE__", "<init>", "(I)V")
         }
         ExprType.STRING -> {
             constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
         }
         ExprType.VAR_ARG -> {
-            constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava.util.List;)V")
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V")
         }
-        ExprType.VAR -> TODO()
+        ExprType.VAR -> {
+            fillTables(exprNode.varNode!!)
+        }
         ExprType.FUNCTION_CALL -> {
-            if(exprNode.ident == "print") {
-                constantsTable.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
-            }
-            else if(exprNode.ident == "read") {
-                constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
-            }
-            else {
-                constantsTable.pushMethRef("__VALUE__", "__invoke__",
-                    functionDescription(exprNode.args?.length()?:0))
+            when (exprNode.ident) {
+                "print" -> {
+                    constantsTable.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
+                }
+                "read" -> {
+                    constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
+                }
+                else -> {
+                    constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
+                    constantsTable.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
+                }
             }
 
             constantsTable.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V")
         }
         ExprType.TABLE_CONSTRUCTOR -> {
-            constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava.util.HashMap;)V")
+            constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava/util/HashMap;)V")
+            exprNode.tableConstructor?.let {
+                fillTables(it)
+            }
         }
         ExprType.PLUS,
         ExprType.MINUS,
@@ -277,7 +324,41 @@ private fun fillTables(exprNode: ExprNode) {
 }
 
 private fun fillTables(varItemNode: VarItemNode) {
-
+    when (varItemNode.type) {
+        VarType.IDENT -> {
+            constantsTable.push(Constant.utf8(varItemNode.ident))
+            if (!localVarsTable.containsColumn(varItemNode.ident)) {
+                constantsTable.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
+                localVarsTable.put(programStmtId, varItemNode.ident, localVarID)
+            }
+        }
+        VarType.VAR -> {
+            if (varItemNode.isMapKey) {
+                constantsTable.push(Constant.utf8(varItemNode.ident))
+            } else {
+                fillTables(varItemNode.secondExpr!!)
+            }
+        }
+        VarType.FUNCTION_CALL -> {
+            if (varItemNode.isMapKey) {
+                constantsTable.push(Constant.utf8(varItemNode.ident))
+                fillTables(varItemNode.firstExpr!!)
+            } else {
+                fillTables(varItemNode.firstExpr!!)
+                fillTables(varItemNode.secondExpr!!)
+            }
+        }
+        VarType.ADJUSTED_EXPR -> {
+            if (varItemNode.isMapKey) {
+                constantsTable.push(Constant.utf8(varItemNode.ident))
+                fillTables(varItemNode.firstExpr!!)
+            } else {
+                fillTables(varItemNode.firstExpr!!)
+                fillTables(varItemNode.secondExpr!!)
+            }
+        }
+        VarType.UNINITIALIZED -> { }
+    }
 }
 
 private fun fillTables(varNode: VarNode) {
@@ -288,27 +369,37 @@ private fun fillTables(varNode: VarNode) {
     }
 }
 
-private fun fillTables(identNode: IdentNode) {
-
+private fun fillTables(identNode: IdentNode, parentStmtId: Int) {
+    constantsTable.push(Constant.utf8(identNode.ident!!))
+    localVarsTable.put(parentStmtId, identNode.ident, localVarID)
 }
 
-private fun fillTables(identListNode: IdentListNode) {
+private fun fillTables(identListNode: IdentListNode, parentStmtId: Int) {
     var current: IdentNode? = identListNode.first
     while (current != null) {
-        fillTables(current)
+        fillTables(current, parentStmtId)
         current = current.next
     }
 }
 
-private fun fillTables(paramListNode: ParamListNode) {
-    fillTables(paramListNode.list)
+private fun fillTables(paramListNode: ParamListNode, parentStmtId: Int) {
+    fillTables(paramListNode.list, parentStmtId)
     if (paramListNode.hasVarArg) {
-        TODO()
+        constantsTable.push(Constant.utf8("..."))
+        localVarsTable.put(parentStmtId, "...", localVarID)
     }
 }
 
 private fun fillTables(fieldNode: FieldNode) {
-
+    fieldNode.ident?.let {
+        constantsTable.push(Constant.utf8(it))
+    }
+    fieldNode.key?.let {
+        fillTables(it)
+    }
+    fieldNode.value?.let {
+        fillTables(it)
+    }
 }
 
 private fun fillTables(fieldListNode: FieldListNode) {
@@ -319,12 +410,52 @@ private fun fillTables(fieldListNode: FieldListNode) {
     }
 }
 
+fun MutableMap<Constant, Int>.toCSV() {
+    val file = File("constants.csv")
+    file.writeText("ID,Type,Value\n")
 
-private fun functionDescription(countParams : Int) : String {
-    var result = "("
-    for(i in 0 until countParams) {
-        result += "L__VALUE__;"
+    this.forEach {
+        val key = it.key
+        val value = it.value
+
+        when (key.type) {
+            ConstantType.CONSTANT_Utf8 -> {
+                file.appendText("${value},${key.type},${key.stringVal}\n")
+            }
+            ConstantType.CONSTANT_Integer -> {
+                file.appendText("${value},${key.type},${key.intVal}\n")
+            }
+            ConstantType.CONSTANT_Float -> {
+                file.appendText("${value},${key.type},${key.floatVal}\n")
+            }
+            ConstantType.CONSTANT_String -> {
+                file.appendText("${value},${key.type},${key.utf8Id}\n")
+            }
+            ConstantType.CONSTANT_NameAndType -> {
+                file.appendText("${value},${key.type},${key.nameId};${key.typeId}\n")
+            }
+            ConstantType.CONSTANT_Class -> {
+                file.appendText("${value},${key.type},${key.classNameId}\n")
+            }
+            ConstantType.CONSTANT_Fieldref -> {
+                file.appendText("${value},${key.type},${key.classId};${key.nameAndTypeId}\n")
+            }
+            ConstantType.CONSTANT_Methodref -> {
+                file.appendText("${value},${key.type},${key.classId};${key.nameAndTypeId}\n")
+            }
+        }
     }
-    result += ")L__VALUE__;";
-    return result
+}
+
+fun Table<Int, String, Int>.toCSV() {
+    val file = File("locals.csv")
+    file.writeText("ID,Name,Owner\n")
+
+    this.cellSet().forEach {
+        val col = it.columnKey
+        val row = it.rowKey
+        val value = it.value
+
+        file.appendText("$value, $col, $row\n")
+    }
 }

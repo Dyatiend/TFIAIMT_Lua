@@ -1,15 +1,13 @@
-import nodes.ChunkNode
-import nodes.FieldNode
-import nodes.TransformTree
 import nodes.Utils
-import org.w3c.dom.Node
 import java.io.File
-import javax.xml.parsers.DocumentBuilderFactory
 
 fun main(args: Array<String>) {
-    val rootNode = Utils.fromXML("../LuaCompiler/cmake-build-debug/xml.xml")
+    val rootNode = Utils.fromXML("../LuaCompiler/cmake-build-debug/xml.xml")!!
 
-    TransformTree.transform(rootNode)
+    fillTables(rootNode)
+
+    constantsTable.toCSV()
+    localVarsTable.toCSV()
 
     val file = File("tree.dot")
     file.writeText("")
