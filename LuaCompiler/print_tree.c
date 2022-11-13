@@ -118,7 +118,9 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
 
                 fprintf(file, "ID%p [label=\"PARAMS\"]\n", node->params);
                 fprintf(file, "ID%p->ID%p\n", node, node->params);
-                print_param_list_node(node->params, node->params, file);
+                if(node->params->list != NULL) {
+                    print_param_list_node(node->params, node->params, file);
+                }
 
                 fprintf(file, "ID%p [label=\"BLOCK\"]\n", node->action_block);
                 fprintf(file, "ID%p->ID%p\n", node, node->action_block);
@@ -132,7 +134,9 @@ void print_stmt_node(struct stmt_node * node, FILE * file) {
 
                 fprintf(file, "ID%p [label=\"PARAMS\"]\n", node->params);
                 fprintf(file, "ID%p->ID%p\n", node, node->params);
-                print_param_list_node(node->params, node->params, file);
+                if(node->params->list != NULL) {
+                    print_param_list_node(node->params, node->params, file);
+                }
 
                 fprintf(file, "ID%p [label=\"BLOCK\"]\n", node->action_block);
                 fprintf(file, "ID%p->ID%p\n", node, node->action_block);

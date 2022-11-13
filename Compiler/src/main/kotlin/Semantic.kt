@@ -143,10 +143,14 @@ fun fillTables(program: ChunkNode) {
     constantsTable.pushMethRef("java/lang/Object", "<init>", "()V")
 }
 
+var currentStmtSeqId = 0
+
 private fun fillTables(stmtSeqNode: StmtSeqNode) {
     var current = stmtSeqNode.first
     current?.let {
+        //currentStmtSeqId = it.id
         while (current != null) {
+            currentStmtSeqId = it.id
             fillTables(current!!, it.id)
             current = current!!.next
         }
@@ -164,15 +168,26 @@ private fun fillTables(stmtNode: StmtNode, ownerId: Int) {
             fillTables(stmtNode.values!!)
         }
         StmtType.FUNCTION_CALL -> {
-            if(stmtNode.functionCall?.ident?.compareTo("print") == 0) {
-                constantsTable.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
+            when {
+                stmtNode.functionCall?.ident?.compareTo("print") == 0 -> {
+                    constantsTable.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
+                }
+                stmtNode.functionCall?.ident?.compareTo("read") == 0 -> {
+                    constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
+                }
+                else -> {
+                    constantsTable.push(Constant.utf8(stmtNode.functionCall!!.ident))
+                    if (!localVarsTable.contains(ownerId, stmtNode.functionCall!!.ident)) {
+                        constantsTable.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
+                        localVarsTable.put(programStmtId, stmtNode.functionCall!!.ident, localVarID)
+                    }
+
+                    // constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
+                    constantsTable.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
+                }
             }
-            else if(stmtNode.functionCall?.ident?.compareTo("read") == 0) {
-                constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
-            }
-            else {
-                constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
-                constantsTable.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
+            stmtNode.functionCall!!.args?.let {
+                fillTables(it)
             }
         }
         StmtType.DO_LOOP -> { // Not loop))))
@@ -202,6 +217,13 @@ private fun fillTables(stmtNode: StmtNode, ownerId: Int) {
                 "__${stmtNode.ident}__$funID"
             ))))
             constantsTable.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V")
+
+            if(stmtNode.isLocal) {
+                localVarsTable.put(ownerId, stmtNode.ident, localVarID)
+            } else {
+                constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
+                localVarsTable.put(programStmtId, stmtNode.ident, localVarID)
+            }
 
             stmtNode.actionBlock!!.first?.let {
                 fillTables(stmtNode.params!!, it.id)
@@ -267,7 +289,7 @@ private fun fillTables(exprNode: ExprNode) {
             constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V")
         }
         ExprType.VAR -> {
-            fillTables(exprNode.varNode!!)
+            fillTables(exprNode.varNode!!, currentStmtSeqId)
         }
         ExprType.FUNCTION_CALL -> {
             when (exprNode.ident) {
@@ -278,12 +300,19 @@ private fun fillTables(exprNode: ExprNode) {
                     constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
                 }
                 else -> {
-                    constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
+                    constantsTable.push(Constant.utf8(exprNode.ident))
+                    if (!localVarsTable.contains(currentStmtSeqId, exprNode.ident)) {
+                        constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
+                        localVarsTable.put(programStmtId, exprNode.ident, localVarID)
+                    }
+
+                    // constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
                     constantsTable.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
                 }
             }
-
-            constantsTable.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V")
+            exprNode.args?.let {
+                fillTables(it)
+            }
         }
         ExprType.TABLE_CONSTRUCTOR -> {
             constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava/util/HashMap;)V")
@@ -323,11 +352,11 @@ private fun fillTables(exprNode: ExprNode) {
     }
 }
 
-private fun fillTables(varItemNode: VarItemNode) {
+private fun fillTables(varItemNode: VarItemNode, ownerId: Int) {
     when (varItemNode.type) {
         VarType.IDENT -> {
             constantsTable.push(Constant.utf8(varItemNode.ident))
-            if (!localVarsTable.containsColumn(varItemNode.ident)) {
+            if (!localVarsTable.contains(ownerId, varItemNode.ident)) {
                 constantsTable.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
                 localVarsTable.put(programStmtId, varItemNode.ident, localVarID)
             }
@@ -361,10 +390,10 @@ private fun fillTables(varItemNode: VarItemNode) {
     }
 }
 
-private fun fillTables(varNode: VarNode) {
+private fun fillTables(varNode: VarNode, ownerId: Int) {
     var current: VarItemNode? = varNode.first
     while (current != null) {
-        fillTables(current)
+        fillTables(current, ownerId)
         current = current.next
     }
 }
@@ -383,11 +412,14 @@ private fun fillTables(identListNode: IdentListNode, parentStmtId: Int) {
 }
 
 private fun fillTables(paramListNode: ParamListNode, parentStmtId: Int) {
-    fillTables(paramListNode.list, parentStmtId)
-    if (paramListNode.hasVarArg) {
-        constantsTable.push(Constant.utf8("..."))
-        localVarsTable.put(parentStmtId, "...", localVarID)
+    paramListNode.list?.let {
+        fillTables(it, parentStmtId)
+        if (paramListNode.hasVarArg) {
+            constantsTable.push(Constant.utf8("..."))
+            localVarsTable.put(parentStmtId, "...", localVarID)
+        }
     }
+
 }
 
 private fun fillTables(fieldNode: FieldNode) {

@@ -129,7 +129,9 @@ void stmt_node_to_xml(struct stmt_node * node, FILE * file) {
 
             fprintf(file, "<name ident=\"%s\"/>", node->ident);
             fprintf(file, "<params>");
-            param_list_node_to_xml(node->params, node->params, file);
+            if(node->params->list != NULL) {
+                param_list_node_to_xml(node->params, node->params, file);
+            }
             fprintf(file, "</params>");
             fprintf(file, "<block>");
             stmt_seq_node_to_xml(node->action_block, node->action_block, file);

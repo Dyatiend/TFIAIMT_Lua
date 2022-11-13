@@ -110,7 +110,10 @@ object Utils {
                 val isLocal = node.attributes.getNamedItem("is_local").nodeValue == "true"
                 StmtNode.createFunctionDefStmtNode(
                     node.firstChild.attributes.getNamedItem("ident").nodeValue,
-                    buildParamListNode(node.childNodes.item(1).firstChild),
+                    if(node.childNodes.item(1).childNodes.length != 0)
+                        buildParamListNode(node.childNodes.item(1).firstChild)
+                    else
+                        ParamListNode(null, false),
                     buildStmtSeqNode(node.lastChild.firstChild),
                     isLocal
                 )
@@ -522,7 +525,9 @@ object Utils {
 
                     file.appendText("ID"+node.params+" [label=\"PARAMS\"]\n")
                     file.appendText("ID"+node+"->ID"+node.params+"\n")
-                    printParamListNode(node.params, node.params, file)
+                    if (node.params?.list != null) {
+                        printParamListNode(node.params, node.params, file)
+                    }
 
                     file.appendText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
                     file.appendText("ID"+node+"->ID"+node.actionBlock+"\n")
@@ -535,7 +540,9 @@ object Utils {
 
                     file.appendText("ID"+node.params+" [label=\"PARAMS\"]\n")
                     file.appendText("ID"+node+"->ID"+node.params+"\n")
-                    printParamListNode(node.params, node.params, file)
+                    if (node.params?.list != null) {
+                        printParamListNode(node.params, node.params, file)
+                    }
 
                     file.appendText("ID"+node.actionBlock+" [label=\"BLOCK\"]\n")
                     file.appendText("ID"+node+"->ID"+node.actionBlock+"\n")
