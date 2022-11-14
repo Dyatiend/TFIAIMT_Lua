@@ -3,3 +3,6 @@
 .DS_Store
 .vscode/
 /Compiler/out/
+*.dot
+*.csv
+*.xml
