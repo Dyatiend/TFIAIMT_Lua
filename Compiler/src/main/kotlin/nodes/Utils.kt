@@ -35,7 +35,7 @@ object Utils {
     }
 
     private fun buildProgram(node: Node): ChunkNode {
-        val res = StmtSeqNode()
+        val res = StmtSeqNode(lastId, 0)
         val stmtSeq = node.firstChild
 
         for (i in 0 until stmtSeq.childNodes.length) {
@@ -44,6 +44,7 @@ object Utils {
             res.addStmt(stmt)
         }
 
+        res.lastID = lastId
         return ChunkNode(res)
     }
 
@@ -362,7 +363,7 @@ object Utils {
 
     private fun buildStmtSeqNode(node: Node): StmtSeqNode {
         if(node.nodeName == "elseif_seq") { // Костыль очень крутой
-            val res = StmtSeqNode()
+            val res = StmtSeqNode(lastId, 0)
             val stmtSeq = node.firstChild
 
             for (i in 0 until stmtSeq.childNodes.length) {
@@ -373,16 +374,18 @@ object Utils {
                 )
             }
 
+            res.lastID = lastId
             return res
         }
         else {
-            val res = StmtSeqNode()
+            val res = StmtSeqNode(lastId, 0)
 
             for (i in 0 until node.childNodes.length) {
                 val child = node.childNodes.item(i)
                 res.addStmt(buildStmtNode(child))
             }
 
+            res.lastID = lastId
             return res
         }
     }

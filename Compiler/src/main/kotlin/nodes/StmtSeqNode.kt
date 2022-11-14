@@ -1,6 +1,6 @@
 package nodes
 
-class StmtSeqNode    //Для Пустого elseIf и пустого stmt_seq
+class StmtSeqNode(val startID: Int, var lastID: Int)    //Для Пустого elseIf и пустого stmt_seq
 {
     var first: StmtNode? = null
     var last: StmtNode? = null

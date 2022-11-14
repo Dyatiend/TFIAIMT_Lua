@@ -96,14 +96,26 @@ private fun MutableMap<Constant, Int>.pushMethRef(className: String, fieldName: 
     return this.push(Constant.methodRef(_class, nameAndType))
 }
 
+private fun Table<Pair<Int, Int>, String, Int>._contains(name: String, id: Int): Boolean {
+    this.column(name).forEach{
+        val start = it.key.first
+        val end = it.key.second
+        if (id in (start + 1) until end) {
+            return true
+        }
+    }
+    return false
+}
+
 var constantsTable: MutableMap<Constant, Int> = HashMap()
-var localVarsTable: Table<Int, String, Int> = HashBasedTable.create()
+var localVarsTable: Table<Pair<Int, Int>, String, Int> = HashBasedTable.create()
 
 var classProgramId: Int = 0
 var valueClassId: Int = 0
 var functionClassId: Int = 0
 var objectClassId: Int = 0
-var programStmtId: Int = 0
+var programStartStmtId: Int = 0
+var programLastStmtId: Int = 0
 
 fun fillTables(program: ChunkNode) {
     constantsTable.push(Constant.utf8("CODE"))
@@ -131,11 +143,10 @@ fun fillTables(program: ChunkNode) {
     constantsTable.push(Constant.utf8("([Ljava/lang/String;)V"))
     constantsTable.pushMethRef("__PROGRAM__", "main", "([Ljava/lang/String;)V")
 
-    localVarsTable.put(program.block.first?.id, "args", localVarID)
+    localVarsTable.put(Pair(program.block.startID, program.block.lastID), "args", localVarID)
 
-    program.block.first?.let {
-        programStmtId = it.id
-    }
+    programStartStmtId = program.block.startID
+    programLastStmtId = program.block.lastID
 
     fillTables(program.block)
 
@@ -143,21 +154,25 @@ fun fillTables(program: ChunkNode) {
     constantsTable.pushMethRef("java/lang/Object", "<init>", "()V")
 }
 
-var currentStmtSeqId = 0
+var currentStmtSeqStartId = 0
+var currentStmtSeqLastId = 0
 
 private fun fillTables(stmtSeqNode: StmtSeqNode) {
     var current = stmtSeqNode.first
     current?.let {
-        //currentStmtSeqId = it.id
+        var prevID = stmtSeqNode.startID
+        currentStmtSeqStartId = prevID
+        currentStmtSeqLastId = stmtSeqNode.lastID
         while (current != null) {
-            currentStmtSeqId = it.id
-            fillTables(current!!, it.id)
+            fillTables(current!!, prevID, stmtSeqNode.lastID)
+            prevID = current!!.id
+            currentStmtSeqStartId = prevID
             current = current!!.next
         }
     }
 }
 
-private fun fillTables(stmtNode: StmtNode, ownerId: Int) {
+private fun fillTables(stmtNode: StmtNode, start: Int, end: Int) {
     when (stmtNode.type) {
         StmtType.UNINITIALIZED -> { // elseif
             fillTables(stmtNode.ifBlock!!)
@@ -177,9 +192,9 @@ private fun fillTables(stmtNode: StmtNode, ownerId: Int) {
                 }
                 else -> {
                     constantsTable.push(Constant.utf8(stmtNode.functionCall!!.ident))
-                    if (!localVarsTable.contains(ownerId, stmtNode.functionCall!!.ident)) {
+                    if (!localVarsTable._contains(stmtNode.functionCall!!.ident, stmtNode.id)) {
                         constantsTable.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
-                        localVarsTable.put(programStmtId, stmtNode.functionCall!!.ident, localVarID)
+                        localVarsTable.put(Pair(programStartStmtId, programLastStmtId), stmtNode.functionCall!!.ident, localVarID)
                     }
 
                     // constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
@@ -219,22 +234,21 @@ private fun fillTables(stmtNode: StmtNode, ownerId: Int) {
             constantsTable.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V")
 
             if(stmtNode.isLocal) {
-                localVarsTable.put(ownerId, stmtNode.ident, localVarID)
+                localVarsTable.put(Pair(start, end), stmtNode.ident, localVarID)
             } else {
                 constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
-                localVarsTable.put(programStmtId, stmtNode.ident, localVarID)
+                localVarsTable.put(Pair(programStartStmtId, programLastStmtId), stmtNode.ident, localVarID)
             }
 
-            stmtNode.actionBlock!!.first?.let {
-                fillTables(stmtNode.params!!, it.id)
-            }
+            fillTables(stmtNode.params!!, stmtNode.actionBlock!!.startID, stmtNode.actionBlock!!.lastID)
             fillTables(stmtNode.actionBlock!!)
         }
         StmtType.FOR -> {
             constantsTable.push(Constant.utf8(stmtNode.ident))
-            stmtNode.actionBlock!!.first?.let {
-                localVarsTable.put(it.id, stmtNode.ident, localVarID)
-            }
+            localVarsTable.put(
+                Pair(stmtNode.actionBlock!!.startID, stmtNode.actionBlock!!.lastID),
+                stmtNode.ident, localVarID
+            )
             fillTables(stmtNode.initialValue!!)
             fillTables(stmtNode.conditionExpr!!)
             stmtNode.stepExpr?.let {
@@ -244,7 +258,7 @@ private fun fillTables(stmtNode: StmtNode, ownerId: Int) {
         }
         // TODO: FOREACH?????????????
         StmtType.VAR_DEF -> {
-            fillTables(stmtNode.identList!!, ownerId)
+            fillTables(stmtNode.identList!!, start, end)
 
             stmtNode.values?.let {
                 fillTables(it)
@@ -289,7 +303,7 @@ private fun fillTables(exprNode: ExprNode) {
             constantsTable.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V")
         }
         ExprType.VAR -> {
-            fillTables(exprNode.varNode!!, currentStmtSeqId)
+            fillTables(exprNode.varNode!!)
         }
         ExprType.FUNCTION_CALL -> {
             when (exprNode.ident) {
@@ -301,9 +315,9 @@ private fun fillTables(exprNode: ExprNode) {
                 }
                 else -> {
                     constantsTable.push(Constant.utf8(exprNode.ident))
-                    if (!localVarsTable.contains(currentStmtSeqId, exprNode.ident)) {
+                    if (!localVarsTable._contains(exprNode.ident, exprNode.id)) {
                         constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
-                        localVarsTable.put(programStmtId, exprNode.ident, localVarID)
+                        localVarsTable.put(Pair(programStartStmtId, programLastStmtId), exprNode.ident, localVarID)
                     }
 
                     // constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
@@ -352,13 +366,13 @@ private fun fillTables(exprNode: ExprNode) {
     }
 }
 
-private fun fillTables(varItemNode: VarItemNode, ownerId: Int) {
+private fun fillTables(varItemNode: VarItemNode) {
     when (varItemNode.type) {
         VarType.IDENT -> {
             constantsTable.push(Constant.utf8(varItemNode.ident))
-            if (!localVarsTable.contains(ownerId, varItemNode.ident)) {
+            if (!localVarsTable._contains(varItemNode.ident, varItemNode.id)) {
                 constantsTable.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
-                localVarsTable.put(programStmtId, varItemNode.ident, localVarID)
+                localVarsTable.put(Pair(programStartStmtId, programLastStmtId), varItemNode.ident, localVarID)
             }
         }
         VarType.VAR -> {
@@ -390,33 +404,33 @@ private fun fillTables(varItemNode: VarItemNode, ownerId: Int) {
     }
 }
 
-private fun fillTables(varNode: VarNode, ownerId: Int) {
+private fun fillTables(varNode: VarNode) {
     var current: VarItemNode? = varNode.first
     while (current != null) {
-        fillTables(current, ownerId)
+        fillTables(current)
         current = current.next
     }
 }
 
-private fun fillTables(identNode: IdentNode, parentStmtId: Int) {
+private fun fillTables(identNode: IdentNode, start: Int, end : Int) {
     constantsTable.push(Constant.utf8(identNode.ident!!))
-    localVarsTable.put(parentStmtId, identNode.ident, localVarID)
+    localVarsTable.put(Pair(start, end), identNode.ident, localVarID)
 }
 
-private fun fillTables(identListNode: IdentListNode, parentStmtId: Int) {
+private fun fillTables(identListNode: IdentListNode, start: Int, end : Int) {
     var current: IdentNode? = identListNode.first
     while (current != null) {
-        fillTables(current, parentStmtId)
+        fillTables(current, start, end)
         current = current.next
     }
 }
 
-private fun fillTables(paramListNode: ParamListNode, parentStmtId: Int) {
+private fun fillTables(paramListNode: ParamListNode, start: Int, end: Int) {
     paramListNode.list?.let {
-        fillTables(it, parentStmtId)
+        fillTables(it, start, end)
         if (paramListNode.hasVarArg) {
             constantsTable.push(Constant.utf8("..."))
-            localVarsTable.put(parentStmtId, "...", localVarID)
+            localVarsTable.put(Pair(start, end), "...", localVarID)
         }
     }
 
@@ -479,7 +493,7 @@ fun MutableMap<Constant, Int>.toCSV() {
     }
 }
 
-fun Table<Int, String, Int>.toCSV() {
+fun Table<Pair<Int, Int>, String, Int>.toCSV() {
     val file = File("locals.csv")
     file.writeText("ID,Name,Owner\n")
 
@@ -488,6 +502,6 @@ fun Table<Int, String, Int>.toCSV() {
         val row = it.rowKey
         val value = it.value
 
-        file.appendText("$value, $col, $row\n")
+        file.appendText("$value, $col, ${row.first}, ${row.second}\n")
     }
 }
