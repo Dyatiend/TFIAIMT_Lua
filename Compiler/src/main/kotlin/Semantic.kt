@@ -519,7 +519,7 @@ fun MutableMap<Constant, Int>.toCSV() {
 
 fun Table<Pair<Int, Int>, String, Int>.toCSV() {
     val file = File("locals.csv")
-    file.writeText("ID,Name,Owner\n")
+    file.writeText("ID,Name,Start,End\n")
 
     this.cellSet().forEach {
         val col = it.columnKey
