@@ -183,12 +183,24 @@ private fun fillTables(stmtNode: StmtNode, start: Int, end: Int) {
             fillTables(stmtNode.values!!)
         }
         StmtType.FUNCTION_CALL -> {
-            when {
-                stmtNode.functionCall?.ident?.compareTo("print") == 0 -> {
+            when(stmtNode.functionCall?.ident) {
+                "print" -> {
                     constantsTable.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
                 }
-                stmtNode.functionCall?.ident?.compareTo("read") == 0 -> {
+                "read" -> {
                     constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
+                }
+                "error" -> {
+                    constantsTable.pushMethRef("__VALUE__", "error", "(L__VALUE__;)V")
+                }
+                "assert" -> {
+                    constantsTable.pushMethRef("__VALUE__", "assert", "(L__VALUE__;L__VALUE__;)V")
+                }
+                "pcall" -> {
+                    constantsTable.pushMethRef("__VALUE__", "pcall", "(L__VALUE__;[L__VALUE__;)L__VALUE__;")
+                }
+                "xpcall" -> {
+                    constantsTable.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;[L__VALUE__;)L__VALUE__;")
                 }
                 else -> {
                     constantsTable.push(Constant.utf8(stmtNode.functionCall!!.ident))
@@ -312,6 +324,18 @@ private fun fillTables(exprNode: ExprNode) {
                 }
                 "read" -> {
                     constantsTable.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
+                }
+                "error" -> {
+                    constantsTable.pushMethRef("__VALUE__", "error", "(L__VALUE__;)V")
+                }
+                "assert" -> {
+                    constantsTable.pushMethRef("__VALUE__", "assert", "(L__VALUE__;L__VALUE__;)V")
+                }
+                "pcall" -> {
+                    constantsTable.pushMethRef("__VALUE__", "pcall", "(L__VALUE__;[L__VALUE__;)L__VALUE__;")
+                }
+                "xpcall" -> {
+                    constantsTable.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;[L__VALUE__;)L__VALUE__;")
                 }
                 else -> {
                     constantsTable.push(Constant.utf8(exprNode.ident))
