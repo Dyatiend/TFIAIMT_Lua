@@ -3,15 +3,6 @@ import com.google.common.collect.Table
 import nodes.*
 import java.io.File
 
-private var constantID = 0
-    get() = ++field
-
-private var localVarID = 0
-    get() = ++field
-
-private var funID = 0
-    get() = ++field
-
 enum class ConstantType {
     CONSTANT_Utf8,
     CONSTANT_Integer,
@@ -71,51 +62,62 @@ data class Constant(
     }
 }
 
-private fun MutableMap<Constant, Int>.push(constant: Constant): Int {
-    if (this.containsKey(constant)) {
-        return this[constant]!!
+val classesTable = HashMap<String, ClassModel>()
+
+class ClassModel {
+
+    var constantsTable: MutableMap<Constant, Int> = HashMap()
+    var localVarsTable: Table<Pair<Int, Int>, String, Int> = HashBasedTable.create()
+
+    private var constantID = 0
+        get() = ++field
+
+    private var localVarID = 0
+        get() = ++field
+
+    fun pushLocalVar(scope: Pair<Int, Int>, name: String) {
+        localVarsTable.put(scope, name, localVarID)
     }
-    val id = constantID
-    this[constant] = id
-    return id
-}
 
-private fun MutableMap<Constant, Int>.pushFieldRef(className: String, fieldName: String, type: String): Int {
-    val name = this.push(Constant.utf8(fieldName))
-    val typeId = this.push(Constant.utf8(type))
-    val nameAndType = this.push(Constant.nameAndType(name, typeId))
-    val _class = this.push(Constant._class(this.push(Constant.utf8(className))))
-    return this.push(Constant.fieldRef(_class, nameAndType))
-}
-
-private fun MutableMap<Constant, Int>.pushMethRef(className: String, fieldName: String, type: String): Int {
-    val name = this.push(Constant.utf8(fieldName))
-    val typeId = this.push(Constant.utf8(type))
-    val nameAndType = this.push(Constant.nameAndType(name, typeId))
-    val _class = this.push(Constant._class(this.push(Constant.utf8(className))))
-    return this.push(Constant.methodRef(_class, nameAndType))
-}
-
-private fun Table<Pair<Int, Int>, String, Int>._contains(name: String, id: Int): Boolean {
-    this.column(name).forEach{
-        val start = it.key.first
-        val end = it.key.second
-        if (id in (start + 1) until end) {
-            return true
+    fun pushConstant(constant: Constant): Int {
+        if (constantsTable.containsKey(constant)) {
+            return constantsTable[constant]!!
         }
+        val id = constantID
+        constantsTable[constant] = id
+        return id
     }
-    return false
+
+    fun pushFieldRef(className: String, fieldName: String, type: String): Int {
+        val name = this.pushConstant(Constant.utf8(fieldName))
+        val typeId = this.pushConstant(Constant.utf8(type))
+        val nameAndType = this.pushConstant(Constant.nameAndType(name, typeId))
+        val _class = this.pushConstant(Constant._class(this.pushConstant(Constant.utf8(className))))
+        return this.pushConstant(Constant.fieldRef(_class, nameAndType))
+    }
+
+    fun pushMethRef(className: String, fieldName: String, type: String): Int {
+        val name = this.pushConstant(Constant.utf8(fieldName))
+        val typeId = this.pushConstant(Constant.utf8(type))
+        val nameAndType = this.pushConstant(Constant.nameAndType(name, typeId))
+        val _class = this.pushConstant(Constant._class(this.pushConstant(Constant.utf8(className))))
+        return this.pushConstant(Constant.methodRef(_class, nameAndType))
+    }
+
+    fun _contains(name: String, id: Int): Boolean {
+        localVarsTable.column(name).forEach{
+            val start = it.key.first
+            val end = it.key.second
+            if (id in (start + 1) until end) {
+                return true
+            }
+        }
+        return false
+    }
 }
 
-var constantsTable: MutableMap<Constant, Int> = HashMap()
-var localVarsTable: Table<Pair<Int, Int>, String, Int> = HashBasedTable.create()
-
-var classProgramId: Int = 0
-var valueClassId: Int = 0
-var functionClassId: Int = 0
-var objectClassId: Int = 0
-var programStartStmtId: Int = 0
-var programLastStmtId: Int = 0
+lateinit var globalScopeStartId: Int
+lateinit var globalScopeEndId: Int
 
 fun fillTables(program: ChunkNode) {
     constantsTable.push(Constant.utf8("CODE"))
