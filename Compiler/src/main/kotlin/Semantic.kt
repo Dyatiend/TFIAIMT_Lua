@@ -265,6 +265,9 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                 "xpcall" -> {
                     currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;[L__VALUE__;)L__VALUE__;")
                 }
+                "append" -> {
+                    currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;L__VALUE__;)V")
+                }
                 else -> {
                     currentClass.pushConstant(Constant.utf8(stmtNode.functionCall!!.ident))
                     if (!currentClass._contains(stmtNode.functionCall!!.ident, stmtNode.id)) {
@@ -410,6 +413,9 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
                 }
                 "xpcall" -> {
                     currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;[L__VALUE__;)L__VALUE__;")
+                }
+                "append" -> {
+                    currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;L__VALUE__;)V")
                 }
                 else -> {
                     currentClass.pushConstant(Constant.utf8(exprNode.ident))

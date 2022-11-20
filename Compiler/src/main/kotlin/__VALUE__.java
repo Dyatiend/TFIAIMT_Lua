@@ -867,7 +867,7 @@ public class __VALUE__ {
 //        throw new UnsupportedOperationException("Error: attempt to get length of a " + this.__type + " value");
 //    }
 //
-    // TODO: getByKey , exceptions
+    // TODO: getByKey , exceptions, append
     public __VALUE__ __invoke__(__VALUE__... args) {
         if(__type == __TYPE__.FUNC) {
             return __funVal.invoke(args);
