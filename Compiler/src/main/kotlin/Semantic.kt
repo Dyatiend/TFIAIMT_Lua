@@ -200,10 +200,12 @@ class ClassModel(val name: String) {
 
 var globalScopeStartId by Delegates.notNull<Int>()
 var globalScopeEndId by Delegates.notNull<Int>()
+var globalProgramClass by Delegates.notNull<ClassModel>()
 
 fun fillTables(program: ChunkNode) {
 
     val programClass = ClassModel("__PROGRAM__")
+    globalProgramClass = programClass
 
     classesTable["__PROGRAM__"] = programClass
 
@@ -273,6 +275,8 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                     if (!currentClass._contains(stmtNode.functionCall!!.ident, stmtNode.id)) {
                         currentClass.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
                         currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.functionCall!!.ident)
+                        globalProgramClass.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
+                        globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.functionCall!!.ident)
                     }
 
                     // constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
@@ -327,6 +331,8 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             } else {
                 currentClass.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
                 currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.ident)
+                globalProgramClass.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
+                globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.ident)
             }
 
             fillTables(stmtNode.params!!, funClass, stmtNode.actionBlock!!.startID, stmtNode.actionBlock!!.lastID)
@@ -422,6 +428,8 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
                     if (!currentClass._contains(exprNode.ident, exprNode.id)) {
                         currentClass.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
                         currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), exprNode.ident)
+                        globalProgramClass.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
+                        globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), exprNode.ident)
                     }
 
                     // constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
@@ -477,6 +485,8 @@ private fun fillTables(varItemNode: VarItemNode, currentClass: ClassModel) {
             if (!currentClass._contains(varItemNode.ident, varItemNode.id)) {
                 currentClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
                 currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), varItemNode.ident)
+                globalProgramClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
+                globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), varItemNode.ident)
             }
         }
         VarType.VAR -> {
