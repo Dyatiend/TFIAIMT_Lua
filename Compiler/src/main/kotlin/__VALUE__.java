@@ -19,14 +19,30 @@ public class __VALUE__ {
         @Override
         public String toString() {
             switch (this) {
-                case NIL ->  { return "Nil"; }
-                case INTEGER -> { return "Int"; }
-                case FLOAT -> { return "Float"; }
-                case BOOL -> { return "Bool"; }
-                case STRING -> { return "String"; }
-                case TABLE -> { return "Table"; }
-                case SEQ -> { return "Seq"; }
-                case FUNC -> { return "Func"; }
+                case NIL -> {
+                    return "Nil";
+                }
+                case INTEGER -> {
+                    return "Int";
+                }
+                case FLOAT -> {
+                    return "Float";
+                }
+                case BOOL -> {
+                    return "Bool";
+                }
+                case STRING -> {
+                    return "String";
+                }
+                case TABLE -> {
+                    return "Table";
+                }
+                case SEQ -> {
+                    return "Seq";
+                }
+                case FUNC -> {
+                    return "Func";
+                }
             }
             return null;
         }
@@ -36,7 +52,7 @@ public class __VALUE__ {
     public boolean __boolVal;
     public double __floatVal;
     public String __stringVal;
-    public HashMap<__VALUE__, __VALUE__> __tableVal;
+    public HashMap<__VALUE__, __VALUE__> __tableVal; //TODO реализуем функцию insert (индекс = последний числовый индекс + 1)
     public List<__VALUE__> __seqVal;
     public __FUN__ __funVal;
 
@@ -89,36 +105,11 @@ public class __VALUE__ {
     public __VALUE__ __add__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL -> {
+            case NIL, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
-                    if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
-                        __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                        if(res.__type == __TYPE__.SEQ)
-                            return res.__seqVal.get(0);
-                        else
-                            return res;
-                    }
-                }
-            }
-            case BOOL -> {
-                if (o.__type == __TYPE__.TABLE) {
-                    if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
-                        __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                        if(res.__type == __TYPE__.SEQ)
-                            return res.__seqVal.get(0);
-                        else
-                            return res;
-                    }
-                }
-            }
-            case FUNC -> {
-                if (o.__type == __TYPE__.TABLE) {
-                    if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
-                        __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                        if(res.__type == __TYPE__.SEQ)
-                            return res.__seqVal.get(0);
-                        else
-                            return res;
+                    try {
+                        this.name(o, "__add");
+                    } catch (UnsupportedOperationException ignored) {
                     }
                 }
             }
@@ -134,23 +125,18 @@ public class __VALUE__ {
                     case STRING -> {
                         try {
                             return new __VALUE__(__intVal + Integer.parseInt(o.__stringVal));
-                        }
-                        catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             try {
                                 return new __VALUE__(__intVal + Double.parseDouble(o.__stringVal));
-                            }
-                            catch (NumberFormatException ignored) {
+                            } catch (NumberFormatException ignored) {
 
                             }
                         }
                     }
                     case TABLE -> {
-                        if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                            if(res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
+                        try {
+                            this.name(o, "__add");
+                        } catch (UnsupportedOperationException ignored) {
                         }
                     }
                     case SEQ -> {
@@ -169,23 +155,18 @@ public class __VALUE__ {
                     case STRING -> {
                         try {
                             return new __VALUE__(__floatVal + Integer.parseInt(o.__stringVal));
-                        }
-                        catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             try {
                                 return new __VALUE__(__floatVal + Double.parseDouble(o.__stringVal));
-                            }
-                            catch (NumberFormatException ignored) {
+                            } catch (NumberFormatException ignored) {
 
                             }
                         }
                     }
                     case TABLE -> {
-                        if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                            if(res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
+                        try {
+                            this.name(o, "__add");
+                        } catch (UnsupportedOperationException ignored) {
                         }
                     }
                     case SEQ -> {
@@ -198,12 +179,10 @@ public class __VALUE__ {
                     case INTEGER -> {
                         try {
                             return new __VALUE__(Integer.parseInt(__stringVal) + o.__intVal);
-                        }
-                        catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             try {
                                 return new __VALUE__(Double.parseDouble(__stringVal) + o.__intVal);
-                            }
-                            catch (NumberFormatException ignored) {
+                            } catch (NumberFormatException ignored) {
 
                             }
                         }
@@ -211,12 +190,10 @@ public class __VALUE__ {
                     case FLOAT -> {
                         try {
                             return new __VALUE__(Integer.parseInt(__stringVal) + o.__floatVal);
-                        }
-                        catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             try {
                                 return new __VALUE__(Double.parseDouble(__stringVal) + o.__floatVal);
-                            }
-                            catch (NumberFormatException ignored) {
+                            } catch (NumberFormatException ignored) {
 
                             }
                         }
@@ -224,20 +201,16 @@ public class __VALUE__ {
                     case STRING -> {
                         try {
                             return new __VALUE__(Integer.parseInt(__stringVal) + Integer.parseInt(o.__stringVal));
-                        }
-                        catch (NumberFormatException e0) {
+                        } catch (NumberFormatException e0) {
                             try {
                                 return new __VALUE__(Double.parseDouble(__stringVal) + Integer.parseInt(o.__stringVal));
-                            }
-                            catch (NumberFormatException e1) {
+                            } catch (NumberFormatException e1) {
                                 try {
                                     return new __VALUE__(Integer.parseInt(__stringVal) + Double.parseDouble(o.__stringVal));
-                                }
-                                catch (NumberFormatException e2) {
+                                } catch (NumberFormatException e2) {
                                     try {
                                         return new __VALUE__(Double.parseDouble(__stringVal) + Double.parseDouble(o.__stringVal));
-                                    }
-                                    catch (NumberFormatException ignored) {
+                                    } catch (NumberFormatException ignored) {
 
                                     }
                                 }
@@ -245,12 +218,9 @@ public class __VALUE__ {
                         }
                     }
                     case TABLE -> {
-                        if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                            if(res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
+                        try {
+                            this.name(o, "__add");
+                        } catch (UnsupportedOperationException ignored) {
                         }
                     }
                     case SEQ -> {
@@ -263,7 +233,7 @@ public class __VALUE__ {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                            if(res.__type == __TYPE__.SEQ)
+                            if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
@@ -272,14 +242,13 @@ public class __VALUE__ {
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                            if(res.__type == __TYPE__.SEQ)
+                            if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
-                        }
-                        else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
                             __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
-                            if(res.__type == __TYPE__.SEQ)
+                            if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
@@ -300,7 +269,6 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
-
 
 
 //        if (this.__type == __TYPE__.INTEGER && o.__type == __TYPE__.INTEGER) {
@@ -372,7 +340,174 @@ public class __VALUE__ {
 //        throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
     }
 
-//    public __VALUE__ __sub__(__VALUE__ o) {
+    public __VALUE__ __sub__(__VALUE__ o) {
+
+        switch (__type) {
+            case NIL, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        this.name(o, "__sub");
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
+            }
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__intVal - o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__intVal - o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__intVal - Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__intVal - Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__sub");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __sub__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__floatVal - o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__floatVal - o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__floatVal - Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__floatVal - Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__sub");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __sub__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) - o.__intVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) - o.__intVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case FLOAT -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) - o.__floatVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) - o.__floatVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) - Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e0) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) - Integer.parseInt(o.__stringVal));
+                            } catch (NumberFormatException e1) {
+                                try {
+                                    return new __VALUE__(Integer.parseInt(__stringVal) - Double.parseDouble(o.__stringVal));
+                                } catch (NumberFormatException e2) {
+                                    try {
+                                        return new __VALUE__(Double.parseDouble(__stringVal) - Double.parseDouble(o.__stringVal));
+                                    } catch (NumberFormatException ignored) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__sub");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __sub__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__sub"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__sub"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__sub"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__sub")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__sub__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__sub__(o.__seqVal.get(0));
+                    }
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to sub a " + this.__type + " with a " + o.__type);
+
+
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
 //            return new __VALUE__(this.__iVal - o.__iVal);
 //        }
@@ -390,9 +525,175 @@ public class __VALUE__ {
 //        }
 //
 //        throw new UnsupportedOperationException("Error: attempt to sub a " + this.__type + " with a " + o.__type);
-//    }
-//
-//    public __VALUE__ __mul__(__VALUE__ o) {
+    }
+
+
+    public __VALUE__ __mul__(__VALUE__ o) {
+
+        switch (__type) {
+            case NIL, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        this.name(o, "__mul");
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
+            }
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__intVal * o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__intVal * o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__intVal * Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__intVal * Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__mul");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __mul__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__floatVal * o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__floatVal * o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__floatVal * Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__floatVal * Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__mul");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __mul__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) * o.__intVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) * o.__intVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case FLOAT -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) * o.__floatVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) * o.__floatVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) * Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e0) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) * Integer.parseInt(o.__stringVal));
+                            } catch (NumberFormatException e1) {
+                                try {
+                                    return new __VALUE__(Integer.parseInt(__stringVal) * Double.parseDouble(o.__stringVal));
+                                } catch (NumberFormatException e2) {
+                                    try {
+                                        return new __VALUE__(Double.parseDouble(__stringVal) * Double.parseDouble(o.__stringVal));
+                                    } catch (NumberFormatException ignored) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__mul");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __mul__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__mul"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__mul"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__mul"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__mul")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__mul__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__mul__(o.__seqVal.get(0));
+                    }
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to mul a " + this.__type + " with a " + o.__type);
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
 //            return new __VALUE__(this.__iVal * o.__iVal);
 //        }
@@ -410,9 +711,175 @@ public class __VALUE__ {
 //        }
 //
 //        throw new UnsupportedOperationException("Error: attempt to mul a " + this.__type + " with a " + o.__type);
-//    }
-//
-//    public __VALUE__ __div__(__VALUE__ o) {
+    }
+
+    public __VALUE__ __div__(__VALUE__ o) {
+
+        switch (__type) {
+            case NIL, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        this.name(o, "__div");
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
+            }
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__((double)__intVal / o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__((double)__intVal / o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__((double)__intVal / Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((double)__intVal / Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__div");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __div__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__floatVal / o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__floatVal / o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__floatVal / Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__floatVal / Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__div");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __div__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        try {
+                            return new __VALUE__((double)Integer.parseInt(__stringVal) / o.__intVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) / o.__intVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case FLOAT -> {
+                        try {
+                            return new __VALUE__((double)Integer.parseInt(__stringVal) / o.__floatVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) / o.__floatVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__((double)Integer.parseInt(__stringVal) / Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e0) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) / Integer.parseInt(o.__stringVal));
+                            } catch (NumberFormatException e1) {
+                                try {
+                                    return new __VALUE__((double)Integer.parseInt(__stringVal) / Double.parseDouble(o.__stringVal));
+                                } catch (NumberFormatException e2) {
+                                    try {
+                                        return new __VALUE__(Double.parseDouble(__stringVal) / Double.parseDouble(o.__stringVal));
+                                    } catch (NumberFormatException ignored) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__div");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __div__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__div"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__div"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__div"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__div")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__div__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__div__(o.__seqVal.get(0));
+                    }
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to div a " + this.__type + " with a " + o.__type);
+
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
 //            return new __VALUE__((double)this.__iVal / o.__iVal);
 //        }
@@ -430,9 +897,175 @@ public class __VALUE__ {
 //        }
 //
 //        throw new UnsupportedOperationException("Error: attempt to div a " + this.__type + " with a " + o.__type);
-//    }
-//
-//    public __VALUE__ __floor_div__(__VALUE__ o) {
+    }
+
+    public __VALUE__ __floor_div__(__VALUE__ o) {
+
+        switch (__type) {
+            case NIL, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        this.name(o, "__idiv");
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
+            }
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__intVal / o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__((int)(__intVal / o.__floatVal));
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__intVal / Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((int)(__intVal / Double.parseDouble(o.__stringVal)));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__idiv");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __floor_div__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__((int)(__floatVal / o.__intVal));
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__((int)(__floatVal / o.__floatVal));
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__((int)(__floatVal / Integer.parseInt(o.__stringVal)));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((int)(__floatVal / Double.parseDouble(o.__stringVal)));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__idiv");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __floor_div__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) / o.__intVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((int)(Double.parseDouble(__stringVal) / o.__intVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case FLOAT -> {
+                        try {
+                            return new __VALUE__((int)(Integer.parseInt(__stringVal) / o.__floatVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((int)(Double.parseDouble(__stringVal) / o.__floatVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) / Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e0) {
+                            try {
+                                return new __VALUE__((int)(Double.parseDouble(__stringVal) / Integer.parseInt(o.__stringVal)));
+                            } catch (NumberFormatException e1) {
+                                try {
+                                    return new __VALUE__((int)(Integer.parseInt(__stringVal) / Double.parseDouble(o.__stringVal)));
+                                } catch (NumberFormatException e2) {
+                                    try {
+                                        return new __VALUE__((int)(Double.parseDouble(__stringVal) / Double.parseDouble(o.__stringVal)));
+                                    } catch (NumberFormatException ignored) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__idiv");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __floor_div__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__idiv"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__idiv"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__idiv"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__idiv")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__floor_div__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__floor_div__(o.__seqVal.get(0));
+                    }
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to idiv a " + this.__type + " with a " + o.__type);
+
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
 //            return new __VALUE__(this.__iVal / o.__iVal);
 //        }
@@ -450,9 +1083,175 @@ public class __VALUE__ {
 //        }
 //
 //        throw new UnsupportedOperationException("Error: attempt to idiv a " + this.__type + " with a " + o.__type);
-//    }
-//
-//    public __VALUE__ __pow__(__VALUE__ o) {
+    }
+
+    public __VALUE__ __pow__(__VALUE__ o) {
+
+        switch (__type) {
+            case NIL, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        this.name(o, "__pow");
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
+            }
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__((int)Math.pow(this.__intVal, o.__intVal));
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__((float) Math.pow(this.__intVal, o.__floatVal));
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__((float) Math.pow(this.__intVal, Integer.parseInt(o.__stringVal)));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((float) Math.pow(this.__intVal, Double.parseDouble(o.__stringVal)));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__pow");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __pow__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__((float) Math.pow(this.__floatVal, o.__intVal));
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__((float) Math.pow(this.__floatVal, o.__floatVal));
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__((float) Math.pow(this.__floatVal, Integer.parseInt(o.__stringVal)));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((float) Math.pow(this.__floatVal, Double.parseDouble(o.__stringVal)));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__pow");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __pow__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        try {
+                            return new __VALUE__((int)Math.pow(Integer.parseInt(__stringVal), o.__intVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((float) Math.pow(Double.parseDouble(__stringVal), o.__intVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case FLOAT -> {
+                        try {
+                            return new __VALUE__((float) Math.pow(Integer.parseInt(__stringVal), o.__floatVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__((float) Math.pow(Double.parseDouble(__stringVal), o.__floatVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__((int)Math.pow(Integer.parseInt(__stringVal), Integer.parseInt(o.__stringVal)));
+                        } catch (NumberFormatException e0) {
+                            try {
+                                return new __VALUE__((float) Math.pow(Double.parseDouble(__stringVal), Integer.parseInt(o.__stringVal)));
+                            } catch (NumberFormatException e1) {
+                                try {
+                                    return new __VALUE__((float) Math.pow(Integer.parseInt(__stringVal), Double.parseDouble(o.__stringVal)));
+                                } catch (NumberFormatException e2) {
+                                    try {
+                                        return new __VALUE__((float) Math.pow(Double.parseDouble(__stringVal), Double.parseDouble(o.__stringVal)));
+                                    } catch (NumberFormatException ignored) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__pow");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __pow__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__pow"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__pow"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__pow"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__pow")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__pow__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__pow__(o.__seqVal.get(0));
+                    }
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to pow a " + this.__type + " with a " + o.__type);
+
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
 //            return new __VALUE__((int)Math.pow(this.__iVal, o.__iVal));
 //        }
@@ -470,9 +1269,215 @@ public class __VALUE__ {
 //        }
 //
 //        throw new UnsupportedOperationException("Error: attempt to pow a " + this.__type + " with a " + o.__type);
-//    }
-//
-//    public __VALUE__ __xor__(__VALUE__ o) {
+    }
+
+    public __VALUE__ __xor__(__VALUE__ o) {
+
+        switch (__type) {
+            case NIL, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        this.name(o, "__xor");
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
+            }
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(this.__intVal ^ o.__intVal);
+                    }
+                    case FLOAT -> {
+                        if(o.__floatVal - (int)o.__floatVal != 0) {
+                            throw new UnsupportedOperationException("Error: number has no integer representation");
+                        }
+                        return new __VALUE__(this.__intVal ^ (int)o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(this.__intVal ^ Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                if(Double.parseDouble(o.__stringVal) - (int)Double.parseDouble(o.__stringVal) != 0) {
+                                    throw new UnsupportedOperationException("Error: number has no integer representation"); //FIXME
+                                }
+                                return new __VALUE__(this.__intVal ^ (int)Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__xor");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __xor__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        if(this.__floatVal - (int)this.__floatVal != 0) {
+                            throw new UnsupportedOperationException("Error: number has no integer representation");
+                        }
+                        return new __VALUE__((int)this.__floatVal ^ o.__intVal);
+                    }
+                    case FLOAT -> {
+                        if(o.__floatVal - (int)o.__floatVal != 0 || this.__floatVal - (int)this.__floatVal != 0) {
+                            throw new UnsupportedOperationException("Error: number has no integer representation");
+                        }
+                        return new __VALUE__((int)this.__floatVal ^ (int)o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            if(this.__floatVal - (int)this.__floatVal != 0) {
+                                throw new UnsupportedOperationException("Error: number has no integer representation");
+                            }
+                            return new __VALUE__((int)this.__floatVal ^ Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                if(Double.parseDouble(o.__stringVal) - (int)Double.parseDouble(o.__stringVal) != 0
+                                        || this.__floatVal - (int)this.__floatVal != 0) {
+                                    throw new UnsupportedOperationException("Error: number has no integer representation");
+                                }
+                                return new __VALUE__((int)this.__floatVal ^ (int)Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__xor");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __xor__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) ^ o.__intVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                if(Double.parseDouble(__stringVal) - (int)Double.parseDouble(__stringVal) != 0) {
+                                    throw new UnsupportedOperationException("Error: number has no integer representation");
+                                }
+                                return new __VALUE__((int)Double.parseDouble(__stringVal) ^ o.__intVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case FLOAT -> {
+                        try {
+                            if(o.__floatVal - (int)o.__floatVal != 0) {
+                                throw new UnsupportedOperationException("Error: number has no integer representation");
+                            }
+                            return new __VALUE__(Integer.parseInt(__stringVal) ^ (int)o.__floatVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                if(o.__floatVal - (int)o.__floatVal != 0
+                                        || Double.parseDouble(__stringVal) - (int)Double.parseDouble(__stringVal) != 0) {
+                                    throw new UnsupportedOperationException("Error: number has no integer representation");
+                                }
+                                return new __VALUE__((int)Double.parseDouble(__stringVal) ^ (int)o.__floatVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) ^ Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e0) {
+                            try {
+                                if(Double.parseDouble(__stringVal) - (int)Double.parseDouble(__stringVal) != 0) {
+                                    throw new UnsupportedOperationException("Error: number has no integer representation");
+                                }
+                                return new __VALUE__((int)Double.parseDouble(__stringVal) ^ Integer.parseInt(o.__stringVal));
+                            } catch (NumberFormatException e1) {
+                                try {
+                                    if(Double.parseDouble(o.__stringVal) - (int)Double.parseDouble(o.__stringVal) != 0) {
+                                        throw new UnsupportedOperationException("Error: number has no integer representation");
+                                    }
+                                    return new __VALUE__(Integer.parseInt(__stringVal) ^ (int)Double.parseDouble(o.__stringVal));
+                                } catch (NumberFormatException e2) {
+                                    try {
+                                        if(Double.parseDouble(o.__stringVal) - (int)Double.parseDouble(o.__stringVal) != 0
+                                                || Double.parseDouble(__stringVal) - (int)Double.parseDouble(__stringVal) != 0) {
+                                            throw new UnsupportedOperationException("Error: number has no integer representation");
+                                        }
+                                        return new __VALUE__((int)Double.parseDouble(__stringVal) ^ (int)Double.parseDouble(o.__stringVal));
+                                    } catch (NumberFormatException ignored) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__xor");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __xor__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__xor"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__xor"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__xor"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__xor")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__xor__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__xor__(o.__seqVal.get(0));
+                    }
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to xor a " + this.__type + " with a " + o.__type);
+
+
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
 //            return new __VALUE__(this.__iVal ^ o.__iVal);
 //        }
@@ -500,9 +1505,175 @@ public class __VALUE__ {
 //        }
 //
 //        throw new UnsupportedOperationException("Error: attempt to xor a " + this.__type + " with a " + o.__type);
-//    }
-//
-//    public __VALUE__ __mod__(__VALUE__ o) {
+    }
+
+    public __VALUE__ __mod__(__VALUE__ o) {
+
+        switch (__type) {
+            case NIL, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        this.name(o, "__mod");
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
+            }
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__intVal % o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__intVal % o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__intVal % Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__intVal % Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__mod");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __mod__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__floatVal % o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__floatVal % o.__floatVal);
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(__floatVal % Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(__floatVal % Double.parseDouble(o.__stringVal));
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__mod");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __mod__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) % o.__intVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) % o.__intVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case FLOAT -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) % o.__floatVal);
+                        } catch (NumberFormatException e) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) % o.__floatVal);
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    }
+                    case STRING -> {
+                        try {
+                            return new __VALUE__(Integer.parseInt(__stringVal) % Integer.parseInt(o.__stringVal));
+                        } catch (NumberFormatException e0) {
+                            try {
+                                return new __VALUE__(Double.parseDouble(__stringVal) % Integer.parseInt(o.__stringVal));
+                            } catch (NumberFormatException e1) {
+                                try {
+                                    return new __VALUE__(Integer.parseInt(__stringVal) % Double.parseDouble(o.__stringVal));
+                                } catch (NumberFormatException e2) {
+                                    try {
+                                        return new __VALUE__(Double.parseDouble(__stringVal) % Double.parseDouble(o.__stringVal));
+                                    } catch (NumberFormatException ignored) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        try {
+                            this.name(o, "__mod");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __mod__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__mod"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__mod"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__mod"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__mod")).__invoke__(this, o);
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__mod__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__mod__(o.__seqVal.get(0));
+                    }
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to mod a " + this.__type + " with a " + o.__type);
+
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
 //            return new __VALUE__(this.__iVal % o.__iVal);
 //        }
@@ -520,7 +1691,7 @@ public class __VALUE__ {
 //        }
 //
 //        throw new UnsupportedOperationException("Error: attempt to mod a " + this.__type + " with a " + o.__type);
-//    }
+    }
 //
 //    public __VALUE__ __concat__(__VALUE__ o) {
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
@@ -869,10 +2040,9 @@ public class __VALUE__ {
 //
     // TODO: getByKey , exceptions, append
     public __VALUE__ __invoke__(__VALUE__... args) {
-        if(__type == __TYPE__.FUNC) {
+        if (__type == __TYPE__.FUNC) {
             return __funVal.invoke(args);
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Error: attempt to invoke of a " + this.__type + " value");
         }
     }
@@ -898,6 +2068,17 @@ public class __VALUE__ {
 //        Scanner scanner = new Scanner(System.in);
 //        return new __VALUE__(scanner.nextLine());
 //    }
+
+    private __VALUE__ name(__VALUE__ o, String nameFunction) {
+        if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__(nameFunction))) {
+            __VALUE__ res = o.__metatable.get(new __VALUE__(nameFunction)).__invoke__(this, o);
+            if (res.__type == __TYPE__.SEQ)
+                return res.__seqVal.get(0);
+            else
+                return res;
+        }
+        throw new UnsupportedOperationException("");
+    }
 
     //TODO МБ нужны __member_access__   __member_access_assign__   __to_i__   __to_f__   __to_s__    __split__   equals
 }
