@@ -3,13 +3,15 @@ import java.io.File
 
 fun main(args: Array<String>) {
 
-    val process = ProcessBuilder("../LuaCompiler/cmake-build-debug/LuaCompiler","../LuaCompiler/tests/test10.lua").start()
+    val process = ProcessBuilder("../LuaCompiler/cmake-build-debug/LuaCompiler","../LuaCompiler/tests/test16.lua").start()
 
     val rootNode = Utils.fromXML("xml.xml")!!
 
     fillTables(rootNode)
 
     classesTable.toCSV()
+
+    generateProgram(rootNode)
 
     val file = File("tree.dot")
     file.writeText("")

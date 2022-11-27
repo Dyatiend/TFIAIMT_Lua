@@ -2,6 +2,7 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import nodes.*
 import java.io.File
+import java.nio.ByteBuffer
 import kotlin.properties.Delegates
 
 enum class ConstantType {
@@ -28,6 +29,47 @@ data class Constant(
     var nameAndTypeId: Int = 0,
     var classId: Int = 0
 ) {
+    fun write(file: File) {
+        when (type) {
+            ConstantType.CONSTANT_Utf8 -> {
+                file.appendBytes(byteArrayOf(0x01))
+                file.appendBytes(stringVal.length.to2ByteArray())
+                file.appendBytes(stringVal.toByteArray())
+            }
+            ConstantType.CONSTANT_Integer -> {
+                file.appendBytes(byteArrayOf(0x03))
+                file.appendBytes(intVal.to4ByteArray())
+            }
+            ConstantType.CONSTANT_Float -> {
+                file.appendBytes(byteArrayOf(0x04))
+                file.appendBytes(floatVal.to4ByteArray())
+            }
+            ConstantType.CONSTANT_String -> {
+                file.appendBytes(byteArrayOf(0x08))
+                file.appendBytes(utf8Id.to2ByteArray())
+            }
+            ConstantType.CONSTANT_NameAndType -> {
+                file.appendBytes(byteArrayOf(0x0C))
+                file.appendBytes(nameId.to2ByteArray())
+                file.appendBytes(typeId.to2ByteArray())
+            }
+            ConstantType.CONSTANT_Class -> {
+                file.appendBytes(byteArrayOf(0x07))
+                file.appendBytes(classNameId.to2ByteArray())
+            }
+            ConstantType.CONSTANT_Fieldref -> {
+                file.appendBytes(byteArrayOf(0x09))
+                file.appendBytes(classId.to2ByteArray())
+                file.appendBytes(nameAndTypeId.to2ByteArray())
+            }
+            ConstantType.CONSTANT_Methodref -> {
+                file.appendBytes(byteArrayOf(0x0A))
+                file.appendBytes(classId.to2ByteArray())
+                file.appendBytes(nameAndTypeId.to2ByteArray())
+            }
+        }
+    }
+
     companion object {
         fun utf8(str: String): Constant {
             return Constant(type = ConstantType.CONSTANT_Utf8, stringVal = str)
@@ -76,9 +118,10 @@ class ClassModel(val name: String) {
 
     var constantsTable: MutableMap<Constant, Int> = HashMap()
     var localVarsTable: Table<Pair<Int, Int>, String, Int> = HashBasedTable.create()
+    var globalVarsTable: MutableMap<String, Int> = HashMap()
 
     init {
-        pushConstant(Constant.utf8("CODE"))
+        pushConstant(Constant.utf8("Code"))
         pushConstant(
             Constant._class(
                 pushConstant(Constant.utf8(name))
@@ -94,11 +137,19 @@ class ClassModel(val name: String) {
                 pushConstant(Constant.utf8("__FUN__"))
             )
         )
+//        pushConstant(
+//            Constant._class(
+//                pushConstant(Constant.utf8("Ljava/lang/Object;"))
+//            )
+//        )
         pushConstant(
             Constant._class(
-                pushConstant(Constant.utf8("Ljava/lang/Object;"))
+                pushConstant(Constant.utf8("java/lang/Object"))
             )
         )
+
+        pushMethRef(name, "<init>", "()V")
+        pushMethRef("java/lang/Object", "<init>", "()V")
     }
 
     private var constantID = 0
@@ -107,8 +158,15 @@ class ClassModel(val name: String) {
     private var localVarID = 0
         get() = ++field
 
+    private var globalVarID = 0
+        get() = ++field
+
     fun pushLocalVar(scope: Pair<Int, Int>, name: String) {
         localVarsTable.put(scope, name, localVarID)
+    }
+
+    fun pushGlobalVar(name: String) {
+        globalVarsTable[name] = globalVarID
     }
 
     fun pushConstant(constant: Constant): Int {
@@ -273,10 +331,13 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                 else -> {
                     currentClass.pushConstant(Constant.utf8(stmtNode.functionCall!!.ident))
                     if (!currentClass._contains(stmtNode.functionCall!!.ident, stmtNode.id)) {
-                        currentClass.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
-                        currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.functionCall!!.ident)
+//                        currentClass.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
+//                        currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.functionCall!!.ident)
+//                        globalProgramClass.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
+//                        globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.functionCall!!.ident)
+
                         globalProgramClass.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
-                        globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.functionCall!!.ident)
+                        globalProgramClass.pushGlobalVar(stmtNode.functionCall!!.ident)
                     }
 
                     // constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
@@ -329,10 +390,13 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             if(stmtNode.isLocal) {
                 currentClass.pushLocalVar(Pair(start, end), stmtNode.ident)
             } else {
-                currentClass.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
-                currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.ident)
+//                currentClass.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
+//                currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.ident)
+//                globalProgramClass.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
+//                globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.ident)
+
                 globalProgramClass.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
-                globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), stmtNode.ident)
+                globalProgramClass.pushGlobalVar(stmtNode.ident)
             }
 
             fillTables(stmtNode.params!!, funClass, stmtNode.actionBlock!!.startID, stmtNode.actionBlock!!.lastID)
@@ -426,10 +490,13 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
                 else -> {
                     currentClass.pushConstant(Constant.utf8(exprNode.ident))
                     if (!currentClass._contains(exprNode.ident, exprNode.id)) {
-                        currentClass.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
-                        currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), exprNode.ident)
+//                        currentClass.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
+//                        currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), exprNode.ident)
+//                        globalProgramClass.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
+//                        globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), exprNode.ident)
+
                         globalProgramClass.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
-                        globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), exprNode.ident)
+                        globalProgramClass.pushGlobalVar(exprNode.ident)
                     }
 
                     // constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
@@ -483,10 +550,13 @@ private fun fillTables(varItemNode: VarItemNode, currentClass: ClassModel) {
         VarType.IDENT -> {
             currentClass.pushConstant(Constant.utf8(varItemNode.ident))
             if (!currentClass._contains(varItemNode.ident, varItemNode.id)) {
-                currentClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
-                currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), varItemNode.ident)
+//                currentClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
+//                currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), varItemNode.ident)
+//                globalProgramClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
+//                globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), varItemNode.ident)
+
                 globalProgramClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
-                globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), varItemNode.ident)
+                globalProgramClass.pushGlobalVar(varItemNode.ident)
             }
         }
         VarType.VAR -> {
