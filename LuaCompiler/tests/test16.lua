@@ -1,1 +1,1 @@
-print "Hello world!"
+print(2 + 7 * (10 + 10) / 6)

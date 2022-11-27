@@ -2046,23 +2046,55 @@ public class __VALUE__ {
             throw new UnsupportedOperationException("Error: attempt to invoke of a " + this.__type + " value");
         }
     }
+
+    public __VALUE__ __adjust__() {
+        if (__type == __TYPE__.SEQ) {
+            return __seqVal.get(0);
+        }
+        else {
+            return this;
+        }
+    }
 //
-//    public String toString() {
-//        String s = "";
-//        if (this.__type == INTEGER)
-//            s += this.__iVal;
-//        if (this.__type == FLOAT)
-//            s += this.__fVal;
-//        if (this.__type == STRING)
-//            s += this.__sVal;
-//        if (this.__type == BOOLEAN)
-//            s += this.__bVal;
-//        return s;
-//    }
-//
-//    public static void print(__VALUE__ value) {
-//        System.out.print(value.toString());
-//    }
+    public String toString() {
+        switch (this.__type) {
+            case NIL -> {
+                return "Nil";
+            }
+            case INTEGER -> {
+                return String.valueOf(__intVal);
+            }
+            case FLOAT -> {
+                return String.valueOf(__floatVal);
+            }
+            case BOOL -> {
+                return String.valueOf(__boolVal);
+            }
+            case STRING -> {
+                return __stringVal;
+            }
+            case TABLE -> {
+                return "Table" + this;
+            }
+            case SEQ -> {
+                StringBuilder res = new StringBuilder();
+
+                for (__VALUE__ v: __seqVal) {
+                    res.append(v.toString());
+                }
+
+                return res.toString();
+            }
+            case FUNC -> {
+                return "Func" + this;
+            }
+        }
+        return "";
+    }
+
+    public static void print(__VALUE__ value) {
+        System.out.println(value.toString());
+    }
 //
 //    public static __VALUE__  __read__() {
 //        Scanner scanner = new Scanner(System.in);

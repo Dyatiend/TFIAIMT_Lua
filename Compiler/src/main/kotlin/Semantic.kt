@@ -147,6 +147,11 @@ class ClassModel(val name: String) {
                 pushConstant(Constant.utf8("java/lang/Object"))
             )
         )
+        pushConstant( // Пустая константа для пустого print
+            Constant.string(
+                pushConstant(Constant.utf8(""))
+            )
+        )
 
         pushMethRef(name, "<init>", "()V")
         pushMethRef("java/lang/Object", "<init>", "()V")
@@ -456,6 +461,7 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
             currentClass.pushMethRef("__VALUE__", "<init>", "(I)V")
         }
         ExprType.STRING -> {
+            currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(exprNode.stringValue))))
             currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
         }
         ExprType.VAR_ARG -> {
@@ -532,13 +538,19 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
         ExprType.NOT_EQUAL,
         ExprType.LOG_AND,
         ExprType.LOG_OR -> {
+            fillTables(exprNode.firstOperand!!, currentClass)
+            fillTables(exprNode.secondOperand!!, currentClass)
             currentClass.pushMethRef("__VALUE__", exprNode.type.getMethod(), "(L__VALUE__;)L__VALUE__;")
         }
         ExprType.UNARY_MINUS,
         ExprType.NOT,
         ExprType.LEN,
-        ExprType.BIT_NOT,
+        ExprType.BIT_NOT -> {
+            fillTables(exprNode.firstOperand!!, currentClass)
+            currentClass.pushMethRef("__VALUE__", exprNode.type.getMethod(), "()L__VALUE__;")
+        }
         ExprType.ADJUST -> {
+            fillTables(exprNode.adjustedExpr!!, currentClass)
             currentClass.pushMethRef("__VALUE__", exprNode.type.getMethod(), "()L__VALUE__;")
         }
         else -> {}
