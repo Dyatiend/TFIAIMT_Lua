@@ -2,7 +2,6 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import nodes.*
 import java.io.File
-import java.nio.ByteBuffer
 import kotlin.properties.Delegates
 
 enum class ConstantType {
@@ -313,10 +312,13 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
         StmtType.FUNCTION_CALL -> {
             when(stmtNode.functionCall?.ident) {
                 "print" -> {
-                    currentClass.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
+                    currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
+                    currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
+                    currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
+                    currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)V")
                 }
                 "read" -> {
-                    currentClass.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
+                    currentClass.pushMethRef("__VALUE__", "read", "()L__VALUE__;")
                 }
                 "error" -> {
                     currentClass.pushMethRef("__VALUE__", "error", "(L__VALUE__;)V")
@@ -473,10 +475,12 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
         ExprType.FUNCTION_CALL -> {
             when (exprNode.ident) {
                 "print" -> {
-                    currentClass.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V")
+                    currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
+                    currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
+                    currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)V")
                 }
                 "read" -> {
-                    currentClass.pushMethRef("__VALUE__", "read", "(L__VALUE__;)V")
+                    currentClass.pushMethRef("__VALUE__", "read", "()L__VALUE__;")
                 }
                 "error" -> {
                     currentClass.pushMethRef("__VALUE__", "error", "(L__VALUE__;)V")
@@ -515,8 +519,9 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
         }
         ExprType.TABLE_CONSTRUCTOR -> {
             currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/util/HashMap;)V")
-            exprNode.tableConstructor?.let {
-                fillTables(it, currentClass)
+            currentClass.pushMethRef("java/util/HashMap", "<init>", "()V")
+            if (exprNode.tableConstructor != null) {
+                fillTables(exprNode.tableConstructor!!, currentClass)
             }
         }
         ExprType.PLUS,
@@ -629,18 +634,21 @@ private fun fillTables(paramListNode: ParamListNode, currentClass: ClassModel, s
             currentClass.pushLocalVar(Pair(start, end), "...")
         }
     }
-
 }
 
 private fun fillTables(fieldNode: FieldNode, currentClass: ClassModel) {
     fieldNode.ident?.let {
-        currentClass.pushConstant(Constant.utf8(it))
+        currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(it))))
+        currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
+        currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;L__VALUE__;)V")
     }
     fieldNode.key?.let {
         fillTables(it, currentClass)
+        currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;L__VALUE__;)V")
     }
     fieldNode.value?.let {
         fillTables(it, currentClass)
+        currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)V")
     }
 }
 

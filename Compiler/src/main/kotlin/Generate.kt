@@ -1,11 +1,21 @@
 import nodes.*
 import java.io.File
+import java.nio.ByteBuffer
 
-fun Int.to2ByteArray() : ByteArray = byteArrayOf(shr(8).toByte(), toByte())
+fun Int.to2ByteArray() : ByteArray {
+    //return ByteBuffer.allocate(2).putInt(this).array()
+    return byteArrayOf(shr(8).toByte(), toByte())
+}
 
-fun Int.to4ByteArray() : ByteArray = byteArrayOf(shr(24).toByte(), shr(16).toByte(), shr(8).toByte(), toByte())
+fun Int.to4ByteArray() : ByteArray {
+    //return ByteBuffer.allocate(4).putInt(this).array()
+    return byteArrayOf(shr(24).toByte(), shr(16).toByte(), shr(8).toByte(), toByte())
+}
 
-fun Float.to4ByteArray() : ByteArray = byteArrayOf(toInt().shr(24).toByte(), toInt().shr(16).toByte(), toInt().shr(8).toByte(), toInt().toByte())
+fun Float.to4ByteArray() : ByteArray {
+    return ByteBuffer.allocate(4).putFloat(this).array()
+    //return byteArrayOf(toInt().shr(24).toByte(), toInt().shr(16).toByte(), toInt().shr(8).toByte(), toInt().toByte())
+}
 
 fun generateProgram(program: ChunkNode) {
     val className = "__PROGRAM__"
@@ -28,7 +38,7 @@ fun generateProgram(program: ChunkNode) {
     file.appendBytes(byteArrayOf(0xCA.toByte(), 0xFE.toByte(), 0xBA.toByte(), 0xBE.toByte()))
 
     // Version
-    file.appendBytes(byteArrayOf(0x00, 0x00, 0x00, 0x3F))
+    file.appendBytes(byteArrayOf(0x00, 0x00, 0x00, 0x3C))
 
     // Constants count
     val constants = classModel.constantsTable
@@ -190,9 +200,18 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
         StmtType.FUNCTION_CALL -> {
             return generate(stmtNode.functionCall!!, currentClass)
         }
-        else -> {
-            return byteArrayOf()
-        }
+        StmtType.UNINITIALIZED -> TODO() // elseif
+        StmtType.ASSIGNMENT -> TODO()
+        StmtType.BREAK -> TODO()
+        StmtType.DO_LOOP -> TODO()
+        StmtType.WHILE_LOOP -> TODO()
+        StmtType.REPEAT_LOOP -> TODO()
+        StmtType.IF -> TODO()
+        StmtType.FOR -> TODO()
+        StmtType.FOREACH -> TODO()
+        StmtType.FUNCTION_DEF -> TODO()
+        StmtType.VAR_DEF -> TODO()
+        StmtType.RETURN -> TODO()
     }
 }
 
@@ -271,6 +290,18 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             res += currentClass.pushMethRef("__VALUE__", exprNode.type.getMethod(), "(L__VALUE__;)L__VALUE__;").to2ByteArray()
             return res
         }
+        ExprType.UNARY_MINUS,
+        ExprType.NOT,
+        ExprType.LEN,
+        ExprType.BIT_NOT -> {
+            var res = byteArrayOf()
+
+            res += generate(exprNode.firstOperand!!, currentClass)
+
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", exprNode.type.getMethod(), "()L__VALUE__;").to2ByteArray()
+            return res
+        }
         ExprType.ADJUST -> {
             var res = byteArrayOf()
 
@@ -281,31 +312,132 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             return res
         }
         ExprType.FUNCTION_CALL -> {
-            if (exprNode.ident == "print") {
-                var res = byteArrayOf()
+            when (exprNode.ident) {
+                "print" -> {
+                    var res = byteArrayOf()
 
-                if (exprNode.args != null) {
-                    res += generate(exprNode.args!!, currentClass)
-                } else {
-                    res += byteArrayOf(0xBB.toByte()) // NEW
-                    res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).toByte()
-                    res += byteArrayOf(0x59) // dub
+                    if (exprNode.args != null) {
 
-                    res += byteArrayOf(0x12.toByte()) // ldc
-                    res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8("")))).toByte()
+                        res += byteArrayOf(0xBB.toByte()) // NEW
+                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList")))).to2ByteArray()
+                        res += byteArrayOf(0x59) // dub
 
-                    res += byteArrayOf(0xB7.toByte()) // invokespecial
-                    res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+                        res += byteArrayOf(0xB7.toByte()) // invokespecial
+                        res += currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                        var current: ExprNode? = exprNode.args!!.first
+                        while (current != null) {
+                            res += byteArrayOf(0x59) // dub
+
+                            res += generate(current, currentClass)
+
+                            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                            res += currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z").to2ByteArray()
+
+                            res += byteArrayOf(0x57) // POP add result
+
+                            current = current.next
+                        }
+
+                        //res += generate(exprNode.args!!, currentClass)
+                    } else {
+                        res += byteArrayOf(0xBB.toByte()) // NEW
+                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).toByte()
+                        res += byteArrayOf(0x59) // dub
+
+                        res += byteArrayOf(0x12.toByte()) // ldc
+                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8("")))).toByte()
+
+                        res += byteArrayOf(0xB7.toByte()) // invokespecial
+                        res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+                    }
+
+                    res += byteArrayOf(0xB8.toByte()) // invokestatic
+                    res += currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)V").to2ByteArray()
+                    return res
                 }
+                "read" -> {
+                    var res = byteArrayOf()
 
-                res += byteArrayOf(0xB8.toByte()) // invokestatic
-                res += currentClass.pushMethRef("__VALUE__", "print", "(L__VALUE__;)V").to2ByteArray()
-                return res
+                    res += byteArrayOf(0xB8.toByte()) // invokestatic
+                    res += currentClass.pushMethRef("__VALUE__", "read", "()L__VALUE__;").to2ByteArray()
+
+                    return res
+                }
+                "error" -> {
+                    TODO()
+                }
+                "assert" -> {
+                    TODO()
+                }
+                "pcall" -> {
+                    TODO()
+                }
+                "xpcall" -> {
+                    TODO()
+                }
+                "append" -> {
+                    TODO()
+                }
+                else -> {
+                    TODO()
+                }
             }
+        }
+        ExprType.UNINITIALIZED -> {
             return byteArrayOf()
         }
-        else -> {
-            return byteArrayOf()
+        ExprType.NIL -> {
+            var res = byteArrayOf()
+
+            res += byteArrayOf(0xBB.toByte()) // NEW
+            res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+            res += byteArrayOf(0x59) // dub
+
+            res += byteArrayOf(0xB7.toByte()) // invokespecial
+            res += currentClass.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+            return res
+        }
+        ExprType.FLOAT_NUMBER -> {
+            var res = byteArrayOf()
+
+            res += byteArrayOf(0xBB.toByte()) // NEW
+            res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+            res += byteArrayOf(0x59) // dub
+
+            res += byteArrayOf(0x12.toByte()) // ldc
+            res += currentClass.pushConstant(Constant.float(exprNode.floatNumberValue.toFloat())).toByte()
+
+            res += byteArrayOf(0xB7.toByte()) // invokespecial
+            res += currentClass.pushMethRef("__VALUE__", "<init>", "(F)V").to2ByteArray() // MethodRef VALUE Init
+
+            return res
+        }
+        ExprType.VAR_ARG -> TODO()
+        ExprType.VAR -> TODO()
+        ExprType.TABLE_CONSTRUCTOR -> {
+            var res = byteArrayOf()
+
+            res += byteArrayOf(0xBB.toByte()) // NEW
+            res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+            res += byteArrayOf(0x59) // dub
+
+            res += byteArrayOf(0xBB.toByte()) // NEW
+            res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/HashMap")))).to2ByteArray()
+            res += byteArrayOf(0x59) // dub
+
+            res += byteArrayOf(0xB7.toByte()) // invokespecial
+            res += currentClass.pushMethRef("java/util/HashMap", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+            res += byteArrayOf(0xB7.toByte()) // invokespecial
+            res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/util/HashMap;)V").to2ByteArray() // MethodRef VALUE Init
+
+            exprNode.tableConstructor?.let {
+                res += generate(exprNode.tableConstructor!!, currentClass)
+            }
+
+            return res
         }
     }
 }
@@ -319,5 +451,78 @@ private fun generate(exprSeqNode: ExprSeqNode, currentClass: ClassModel): ByteAr
         current = current.next
     }
 
+    return res
+}
+
+private fun generate(varItemNode: VarItemNode, currentClass: ClassModel) : ByteArray {
+    TODO()
+}
+
+private fun generate(varNode: VarNode, currentClass: ClassModel) : ByteArray {
+    TODO()
+}
+
+private fun generate(identNode: IdentNode, currentClass: ClassModel) : ByteArray {
+    TODO()
+}
+
+private fun generate(identListNode: IdentListNode, currentClass: ClassModel) : ByteArray {
+    TODO()
+}
+
+private fun generate(paramListNode: ParamListNode, currentClass: ClassModel): ByteArray {
+    TODO()
+}
+
+private fun generate(fieldNode: FieldNode, currentClass: ClassModel) : ByteArray {
+    var res = byteArrayOf(0x59) // dub
+
+    if(fieldNode.ident != null) {
+        // IDENT KEY
+        res += byteArrayOf(0xBB.toByte()) // NEW
+        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+        res += byteArrayOf(0x59) // dub
+
+        res += byteArrayOf(0x12.toByte()) // ldc
+        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(fieldNode.ident!!)))).toByte()
+
+        res += byteArrayOf(0xB7.toByte()) // invokespecial
+        res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+
+        // VALUE
+        res += generate(fieldNode.value!!, currentClass)
+
+        res += byteArrayOf(0xB6.toByte()) // invokevirtual
+        res += currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;L__VALUE__;)V").to2ByteArray()
+    }
+    else if(fieldNode.key != null) {
+        // KEY
+        res += generate(fieldNode.key!!, currentClass)
+
+        // VALUE
+        res += generate(fieldNode.value!!, currentClass)
+
+        res += byteArrayOf(0xB6.toByte()) // invokevirtual
+        res += currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;L__VALUE__;)V").to2ByteArray()
+    }
+    else {
+        // VALUE
+        res += generate(fieldNode.value!!, currentClass)
+
+        res += byteArrayOf(0xB6.toByte()) // invokevirtual
+        res += currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)V").to2ByteArray()
+    }
+
+    return res
+}
+
+private fun generate(fieldListNode: FieldListNode, currentClass: ClassModel) : ByteArray {
+    var current: FieldNode? = fieldListNode.first
+    var res = byteArrayOf()
+    while (current != null) {
+        res += generate(current, currentClass)
+
+        current = current.next
+    }
     return res
 }

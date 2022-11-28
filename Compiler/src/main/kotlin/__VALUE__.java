@@ -79,6 +79,11 @@ public class __VALUE__ {
         this.__type = __TYPE__.FLOAT;
     }
 
+    public __VALUE__(float value) {
+        this.__floatVal = value;
+        this.__type = __TYPE__.FLOAT;
+    }
+
     public __VALUE__(String value) {
         this.__stringVal = value;
         this.__type = __TYPE__.STRING;
@@ -2007,18 +2012,18 @@ public class __VALUE__ {
 //        throw new UnsupportedOperationException("Error: attempt to or logic a " + this.__type + " with a " + o.__type);
 //    }
 //
-//    public __VALUE__ __unary_minus__() {
-//
-//        if (this.__type == INTEGER) {
-//            return new __VALUE__((this.__iVal * -1));
-//        }
-//
-//        if (this.__type == FLOAT) {
-//            return new __VALUE__((this.__fVal * -1));
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to unm a " + this.__type);
-//    }
+    public __VALUE__ __unary_minus__() {
+
+        if (this.__type == __TYPE__.INTEGER) {
+            return new __VALUE__((this.__intVal * -1));
+        }
+
+        if (this.__type == __TYPE__.FLOAT) {
+            return new __VALUE__((this.__floatVal * -1));
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to unm a " + this.__type);
+    }
 //
 //    public __VALUE__ __not__() {
 //        if (this.__type == NIL) return new __VALUE__(true);
@@ -2038,7 +2043,22 @@ public class __VALUE__ {
 //        throw new UnsupportedOperationException("Error: attempt to get length of a " + this.__type + " value");
 //    }
 //
-    // TODO: getByKey , exceptions, append
+    // TODO: getByKey , exceptions, append с ключем и без
+
+    private int lastIntKey = 0;
+
+    public void __append__(__VALUE__ key, __VALUE__ value) {
+        if (key.__type == __TYPE__.INTEGER
+                && key.__intVal > lastIntKey) {
+            lastIntKey = key.__intVal;
+        }
+        __tableVal.put(key, value);
+    }
+
+    public void __append__(__VALUE__ value) {
+        __tableVal.put(new __VALUE__(++lastIntKey), value);
+    }
+
     public __VALUE__ __invoke__(__VALUE__... args) {
         if (__type == __TYPE__.FUNC) {
             return __funVal.invoke(args);
@@ -2056,7 +2076,7 @@ public class __VALUE__ {
         }
     }
 //
-    public String toString() {
+    public String toSString() {
         switch (this.__type) {
             case NIL -> {
                 return "Nil";
@@ -2074,7 +2094,13 @@ public class __VALUE__ {
                 return __stringVal;
             }
             case TABLE -> {
-                return "Table" + this;
+                //return ("Table" + this).replace("__VALUE__", "");
+
+                for (var a : __tableVal.entrySet()) {
+                    System.out.println(a.getKey().toSString() + "->" + a.getValue().toSString());
+                }
+
+                return "";
             }
             case SEQ -> {
                 StringBuilder res = new StringBuilder();
@@ -2086,20 +2112,41 @@ public class __VALUE__ {
                 return res.toString();
             }
             case FUNC -> {
-                return "Func" + this;
+                return ("Func" + this).replace("__VALUE__", "");
             }
         }
         return "";
     }
 
-    public static void print(__VALUE__ value) {
-        System.out.println(value.toString());
+    public static void print(ArrayList<__VALUE__> value) {
+        StringBuilder res = new StringBuilder();
+        for (var v: value) {
+            res.append(v.toSString()).append("\t");
+        }
+
+        System.out.println(res);
     }
-//
-//    public static __VALUE__  __read__() {
-//        Scanner scanner = new Scanner(System.in);
-//        return new __VALUE__(scanner.nextLine());
-//    }
+
+    public static __VALUE__ read() {
+        Scanner scanner = new Scanner(System.in);
+        var str = scanner.nextLine();
+
+        try {
+            return new __VALUE__(Integer.parseInt(str));
+        } catch (NumberFormatException e) {
+            try {
+                return new __VALUE__(Float.parseFloat(str));
+            } catch (NumberFormatException ignored) {
+                if (Objects.equals(str, "True") || Objects.equals(str, "true")) {
+                    return new __VALUE__(true);
+                }
+                if (Objects.equals(str, "False") || Objects.equals(str, "false")) {
+                    return new __VALUE__(false);
+                }
+                return new __VALUE__(str);
+            }
+        }
+    }
 
     private __VALUE__ name(__VALUE__ o, String nameFunction) {
         if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__(nameFunction))) {
