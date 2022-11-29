@@ -21,7 +21,7 @@ enum class ExprType {
             GE -> "__ge__"
             EQUAL -> "__equal__"
             NOT_EQUAL -> "__not_equal__"
-            LOG_AND -> "__logical_and__"
+            LOG_AND -> "__logic_and__"
             LOG_OR -> "__logical_or__"
             UNARY_MINUS -> "__unary_minus__"
             NOT -> "__not__"

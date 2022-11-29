@@ -38,7 +38,7 @@ fun generateProgram(program: ChunkNode) {
     file.appendBytes(byteArrayOf(0xCA.toByte(), 0xFE.toByte(), 0xBA.toByte(), 0xBE.toByte()))
 
     // Version
-    file.appendBytes(byteArrayOf(0x00, 0x00, 0x00, 0x3C))
+    file.appendBytes(byteArrayOf(0x00, 0x00, 0x00, 0x32))
 
     // Constants count
     val constants = classModel.constantsTable
@@ -200,13 +200,84 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
         StmtType.FUNCTION_CALL -> {
             return generate(stmtNode.functionCall!!, currentClass)
         }
-        StmtType.UNINITIALIZED -> TODO() // elseif
+        StmtType.UNINITIALIZED -> { // elseif
+            val condition = generate(stmtNode.conditionExpr!!, currentClass)
+            val ifBlock = generate(stmtNode.ifBlock!!, currentClass)
+
+            var res = byteArrayOf()
+
+            res += condition
+
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I").to2ByteArray()
+
+            res += byteArrayOf(0x99.toByte()) // ifeq
+            res += (ifBlock.size + 6).to2ByteArray() // +6 т.к. ifeq 3 байта и goto 3 байта
+
+            res += ifBlock // Goto добавляется в IF
+
+            return res
+        }
         StmtType.ASSIGNMENT -> TODO()
         StmtType.BREAK -> TODO()
         StmtType.DO_LOOP -> TODO()
         StmtType.WHILE_LOOP -> TODO()
         StmtType.REPEAT_LOOP -> TODO()
-        StmtType.IF -> TODO()
+        StmtType.IF -> {
+            val condition = generate(stmtNode.conditionExpr!!, currentClass)
+            var ifBlock = generate(stmtNode.ifBlock!!, currentClass)
+
+            var res = byteArrayOf()
+            var currentJumpSize = 0
+
+            val elseifs = mutableListOf<ByteArray>()
+            var current = stmtNode.elseifSeq?.first
+            current?.let {
+                while (current != null) {
+                    elseifs.add(generate(current!!, currentClass))
+
+                    current = current!!.next
+                }
+            }
+
+            val elseBlock = if (stmtNode.elseBlock != null) generate(stmtNode.elseBlock!!, currentClass) else null
+            currentJumpSize += elseBlock?.size ?: 0
+
+            var i = elseifs.size
+            while (i > 0) {
+                i -= 1
+
+                var elseif = elseifs[i]
+                elseif += byteArrayOf(0xA7.toByte()) // goto
+                elseif += (currentJumpSize + 3).to2ByteArray() // +3 т.к. goto 3 байта
+                elseifs.removeAt(i)
+                elseifs.add(i, elseif)
+                currentJumpSize += elseif.size
+            }
+
+            ifBlock += byteArrayOf(0xA7.toByte()) // goto
+            ifBlock += (currentJumpSize + 3).to2ByteArray() // +3 т.к. goto 3 байта
+
+            res += condition
+
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I").to2ByteArray()
+
+            res += byteArrayOf(0x99.toByte()) // ifeq
+            res += (ifBlock.size + 3).to2ByteArray() // +3 т.к. ifeq 3 байта
+
+            res += ifBlock
+
+            elseifs.forEach {
+                res += it
+            }
+
+            elseBlock?.let {
+                res += it
+            }
+
+            return res
+        }
         StmtType.FOR -> TODO()
         StmtType.FOREACH -> TODO()
         StmtType.FUNCTION_DEF -> TODO()

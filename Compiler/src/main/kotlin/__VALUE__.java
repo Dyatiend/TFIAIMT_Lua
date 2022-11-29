@@ -1764,13 +1764,18 @@ public class __VALUE__ {
 //        }
 //    }
 //
-//    public __VALUE__ __greater__(__VALUE__ o) {
+    public __VALUE__ __greater__(__VALUE__ o) {
+        if (__type == __TYPE__.INTEGER && o.__type == __TYPE__.INTEGER) {
+            return new __VALUE__(__intVal > o.__intVal);
+        }
+
+        throw new UnsupportedOperationException("Error: attempt to compare a " + this.__type + " with a " + o.__type);
 //        try {
 //            return new __VALUE__(!__less_or_eql__(o).__bVal);
 //        } catch (UnsupportedOperationException e) {
 //            throw new UnsupportedOperationException("Error: attempt to compare a " + this.__type + " with a " + o.__type);
 //        }
-//    }
+    }
 //
 //    public __VALUE__ __greater_or_eql__(__VALUE__ o) {
 //        try {
@@ -1824,93 +1829,15 @@ public class __VALUE__ {
 //        }
 //    }
 //
-//    public __VALUE__ __logic_and__(__VALUE__ o) {
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(o.__iVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(o.__fVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(o.__iVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(o.__fVal);
-//        }
-//
-//        if (this.__type == STRING && o.__type == STRING) {
-//            return new __VALUE__(o.__sVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == STRING) {
-//            return new __VALUE__(o.__sVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == STRING) {
-//            return new __VALUE__(o.__sVal);
-//        }
-//        if (this.__type == STRING && o.__type == INTEGER) {
-//            return new __VALUE__(o.__iVal);
-//        }
-//        if (this.__type == STRING && o.__type == FLOAT) {
-//            return new __VALUE__(o.__fVal);
-//        }
-//
-//        if (this.__type == STRING && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//        if (this.__type == TABLE && o.__type == INTEGER) {
-//            return new __VALUE__(o.__iVal);
-//        }
-//        if (this.__type == TABLE && o.__type == FLOAT) {
-//            return new __VALUE__(o.__fVal);
-//        }
-//        if (this.__type == TABLE && o.__type == STRING) {
-//            return new __VALUE__(o.__sVal);
-//        }
-//        if (this.__type == TABLE && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//
-//        if (this.__type == BOOLEAN && o.__type == BOOLEAN) {
-//            return new __VALUE__(this.__bVal && o.__bVal);
-//        }
-//
-//        if (this.__type == BOOLEAN && o.__type == INTEGER) {
-//            if(this.__bVal) {
-//                return new __VALUE__(o.__iVal);
-//            } else {
-//                return new __VALUE__(this.__bVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == FLOAT) {
-//            if(this.__bVal) {
-//                return new __VALUE__(o.__fVal);
-//            } else {
-//                return new __VALUE__(this.__bVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == STRING) {
-//            if(this.__bVal) {
-//                return new __VALUE__(o.__sVal);
-//            } else {
-//                return new __VALUE__(this.__bVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//
-//        if (o.__type == BOOLEAN) {
-//            return new __VALUE__(o.__bVal);
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to or logic a " + this.__type + " with a " + o.__type);
-//    }
+    public __VALUE__ __logic_and__(__VALUE__ o) {
+        if (this.__type == __TYPE__.BOOL && o.__type == __TYPE__.BOOL) {
+            return new __VALUE__(__boolVal && o.__boolVal);
+        }
+
+
+
+        throw new UnsupportedOperationException("Error: attempt to or logic a " + this.__type + " with a " + o.__type);
+    }
 //
 //    public __VALUE__ __logic_or__(__VALUE__ o) {
 //        if (this.__type == INTEGER && o.__type == INTEGER) {
@@ -2076,6 +2003,19 @@ public class __VALUE__ {
         }
     }
 //
+    public int __to_bool__() {
+        // TODO протестить
+        if(__type == __TYPE__.BOOL) {
+            if (__boolVal)
+                return 1;
+            else
+                return 0;
+        }
+
+        if(__type == __TYPE__.NIL) return 0;
+        return 1;
+    }
+
     public String toSString() {
         switch (this.__type) {
             case NIL -> {

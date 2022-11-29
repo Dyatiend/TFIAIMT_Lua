@@ -367,6 +367,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             fillTables(stmtNode.actionBlock!!, currentClass)
         }
         StmtType.IF -> {
+            currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I")
             fillTables(stmtNode.conditionExpr!!, currentClass)
             fillTables(stmtNode.ifBlock!!, currentClass)
             if(stmtNode.elseifSeq != null && stmtNode.elseifSeq?.first != null) {
