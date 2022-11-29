@@ -359,10 +359,12 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             fillTables(stmtNode.actionBlock!!, currentClass)
         }
         StmtType.WHILE_LOOP -> {
+            currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I")
             fillTables(stmtNode.conditionExpr!!, currentClass)
             fillTables(stmtNode.actionBlock!!, currentClass)
         }
         StmtType.REPEAT_LOOP -> {
+            currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I")
             fillTables(stmtNode.conditionExpr!!, currentClass)
             fillTables(stmtNode.actionBlock!!, currentClass)
         }

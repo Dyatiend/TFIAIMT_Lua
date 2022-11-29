@@ -220,9 +220,47 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
         }
         StmtType.ASSIGNMENT -> TODO()
         StmtType.BREAK -> TODO()
-        StmtType.DO_LOOP -> TODO()
-        StmtType.WHILE_LOOP -> TODO()
-        StmtType.REPEAT_LOOP -> TODO()
+        StmtType.DO_LOOP -> { // FIXME? постеститб как работает в оригинале
+            return generate(stmtNode.actionBlock!!, currentClass)
+        }
+        StmtType.WHILE_LOOP -> {
+            val condition = generate(stmtNode.conditionExpr!!, currentClass)
+            var action = generate(stmtNode.actionBlock!!, currentClass)
+
+            action += byteArrayOf(0xA7.toByte()) // goto
+            action += (-action.size-condition.size-5).to2ByteArray() // -5 т.к. 2 бита адрес + 3 бита ifeq
+
+            var res = byteArrayOf()
+
+            res += condition
+
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I").to2ByteArray()
+
+            res += byteArrayOf(0x99.toByte()) // ifeq
+            res += (action.size + 3).to2ByteArray() // +3 т.к. ifeq 3 байта
+
+            res += action
+
+            return res
+        }
+        StmtType.REPEAT_LOOP -> {
+            val action = generate(stmtNode.actionBlock!!, currentClass)
+            var condition = generate(stmtNode.conditionExpr!!, currentClass)
+
+            condition += byteArrayOf(0xB6.toByte()) // invokevirtual
+            condition += currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I").to2ByteArray()
+
+            var res = byteArrayOf()
+
+            res += action
+            res += condition
+
+            res += byteArrayOf(0x9A.toByte()) // ifne
+            res += (-action.size-condition.size).to2ByteArray()
+
+            return res
+        }
         StmtType.IF -> {
             val condition = generate(stmtNode.conditionExpr!!, currentClass)
             var ifBlock = generate(stmtNode.ifBlock!!, currentClass)
