@@ -277,6 +277,17 @@ private fun generateFun(stmtNode: StmtNode) {
             val ident = current.ident
             val num = classModel.localVarsTable.get(Pair(stmtNode.actionBlock?.startID!!, stmtNode.actionBlock?.lastID!!), ident)!!
 
+            code += byteArrayOf(0x11) // sipush
+            code += argId.to2ByteArray()
+
+            code += byteArrayOf(0x2B) // aload_1 (args)
+
+            code += byteArrayOf(0xB6.toByte()) // invokevirtual
+            code += classModel.pushMethRef("java/util/ArrayList", "size", "()I").to2ByteArray()
+
+            code += byteArrayOf(0xA2.toByte()) // if_icmpge
+            code += (16).to2ByteArray()
+
             code += byteArrayOf(0x2B) // aload_1 (args)
 
             code += byteArrayOf(0x11) // sipush
@@ -287,6 +298,16 @@ private fun generateFun(stmtNode: StmtNode) {
 
             code += byteArrayOf(0xC0.toByte()) // checkcast
             code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+
+            code += byteArrayOf(0xA7.toByte()) // goto
+            code += (10).to2ByteArray()
+
+            code += byteArrayOf(0xBB.toByte()) // NEW
+            code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+            code += byteArrayOf(0x59) // dub
+
+            code += byteArrayOf(0xB7.toByte()) // invokespecial
+            code += classModel.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
 
             code += byteArrayOf(0x3A) // astore
             code += num.toByte()
@@ -301,6 +322,17 @@ private fun generateFun(stmtNode: StmtNode) {
         code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
         code += byteArrayOf(0x59) // dub
 
+        code += byteArrayOf(0x11) // sipush
+        code += argId.to2ByteArray()
+
+        code += byteArrayOf(0x2B) // aload_1 (args)
+
+        code += byteArrayOf(0xB6.toByte()) // invokevirtual
+        code += classModel.pushMethRef("java/util/ArrayList", "size", "()I").to2ByteArray()
+
+        code += byteArrayOf(0xA2.toByte()) // if_icmpge
+        code += (17).to2ByteArray()
+
         code += byteArrayOf(0x2B) // aload_1 (args)
 
         code += byteArrayOf(0x11) // sipush
@@ -313,6 +345,16 @@ private fun generateFun(stmtNode: StmtNode) {
 
         code += byteArrayOf(0xB6.toByte()) // invokevirtual
         code += classModel.pushMethRef("java/util/ArrayList", "subList", "(II)Ljava/util/List;").to2ByteArray()
+
+        code += byteArrayOf(0xA7.toByte()) // goto
+        code += (10).to2ByteArray()
+
+        code += byteArrayOf(0xBB.toByte()) // NEW
+        code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("java/util/ArrayList")))).to2ByteArray()
+        code += byteArrayOf(0x59) // dub
+
+        code += byteArrayOf(0xB7.toByte()) // invokespecial
+        code += classModel.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
 
         code += byteArrayOf(0xB7.toByte()) // invokespecial
         code += classModel.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V").to2ByteArray() // MethodRef VALUE Init
@@ -753,7 +795,7 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                     res += currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
 
                     // Пишем все аргументы в аррей лист
-                    var current: ExprNode? = exprNode.args!!.first
+                    var current: ExprNode? = exprNode.args?.first
                     while (current != null) {
                         res += byteArrayOf(0x59) // dub
 
