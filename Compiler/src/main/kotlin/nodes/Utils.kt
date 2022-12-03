@@ -358,7 +358,10 @@ object Utils {
     }
 
     private fun buildParamListNode(node: Node): ParamListNode {
-        return ParamListNode(buildIdentListNode(node.firstChild), node.attributes.getNamedItem("has_var_arg").nodeValue == "true")
+        node.firstChild?.let {
+            return ParamListNode(buildIdentListNode(it), node.attributes.getNamedItem("has_var_arg").nodeValue == "true")
+        }
+        return ParamListNode(null, node.attributes.getNamedItem("has_var_arg").nodeValue == "true")
     }
 
     private fun buildStmtSeqNode(node: Node): StmtSeqNode {

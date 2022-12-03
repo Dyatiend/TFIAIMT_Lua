@@ -235,7 +235,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -244,13 +244,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__add"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__add")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -472,7 +472,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__sub"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -481,13 +481,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__sub"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__sub"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__sub")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__sub")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -660,7 +660,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__mul"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -669,13 +669,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__mul"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__mul"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__mul")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__mul")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -845,7 +845,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__div"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -854,13 +854,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__div"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__div"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__div")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__div")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1031,7 +1031,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__idiv"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1040,13 +1040,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__idiv"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__idiv"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__idiv")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__idiv")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1217,7 +1217,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__pow"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1226,13 +1226,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__pow"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__pow"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__pow")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__pow")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1442,7 +1442,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__xor"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1451,13 +1451,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__xor"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__xor"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__xor")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__xor")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1639,7 +1639,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__mod"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1648,13 +1648,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__mod"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__mod"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__mod")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__mod")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1778,7 +1778,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1787,13 +1787,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__concat"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__concat")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1918,7 +1918,7 @@ public class __VALUE__ {
                 switch (o.__type) {
                     case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__less"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__less")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__less")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1927,13 +1927,13 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__less"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__less")).__invoke__(this, o);
+                            __VALUE__ res = __metatable.get(new __VALUE__("__less")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
                         } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__less"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__less")).__invoke__(this, o);
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__less")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -2836,7 +2836,7 @@ public class __VALUE__ {
         throw new UnsupportedOperationException("Error");
     }
 
-    public __VALUE__ __invoke__(__VALUE__... args) {
+    public __VALUE__ __invoke__(ArrayList<__VALUE__> args) {
         if (__type == __TYPE__.FUNC) {
             return __funVal.invoke(args);
         } else {
@@ -2896,7 +2896,8 @@ public class __VALUE__ {
                 StringBuilder res = new StringBuilder();
 
                 for (__VALUE__ v: __seqVal) {
-                    res.append(v.toString());
+                    res.append(v.toSString());
+                    res.append("\t");
                 }
 
                 return res.toString();
@@ -2926,7 +2927,7 @@ public class __VALUE__ {
     //TODO переименовать
     private __VALUE__ name(__VALUE__ o, String nameFunction) {
         if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__(nameFunction))) {
-            __VALUE__ res = o.__metatable.get(new __VALUE__(nameFunction)).__invoke__(this, o);
+            __VALUE__ res = o.__metatable.get(new __VALUE__(nameFunction)).__invoke__(new ArrayList<>(List.of(this, o)));
             if (res.__type == __TYPE__.SEQ)
                 return res.__seqVal.get(0);
             else

@@ -21,16 +21,6 @@ fun generateProgram(program: ChunkNode) {
     val className = "__PROGRAM__"
     val classModel = classesTable[className]!!
 
-
-    // ----------------
-
-//    classModel.pushFieldRef("java/lang/System", "out", "Ljava/io/PrintStream;")
-//    classModel.pushConstant(Constant.string(classModel.pushConstant(Constant.utf8("Hello world!"))))
-//    classModel.pushMethRef("java/io/PrintStream", "println", "(Ljava/lang/String;)V")
-
-    // ----------------
-
-
     val file = File("out/production/Compiler/$className.class")
     file.writeText("")
 
@@ -67,8 +57,8 @@ fun generateProgram(program: ChunkNode) {
 
     // Fields table
     globals.forEach {
-        // Flags (PUBLIC)
-        file.appendBytes(byteArrayOf(0x00, 0x01))
+        // Flags (PUBLIC STATIC)
+        file.appendBytes(byteArrayOf(0x00, 0x09))
 
         // Name
         file.appendBytes(classModel.pushConstant(Constant.utf8(it.key)).to2ByteArray())
@@ -144,7 +134,7 @@ fun generateProgram(program: ChunkNode) {
     // Name
     file.appendBytes(classModel.pushConstant(Constant.utf8("Code")).to2ByteArray())
 
-    // Bytecode TODO
+    // Bytecode gen
     val code = generate(program.block, classModel) + 0xB1.toByte() // return
 
     // Length
@@ -153,21 +143,213 @@ fun generateProgram(program: ChunkNode) {
     // Stack size (max)
     file.appendBytes(byteArrayOf(0xFF.toByte(), 0xFF.toByte()))
 
-    // Locals count TODO
-    file.appendBytes(byteArrayOf(0x00, 0x01))
+    // Locals count
+    file.appendBytes(classModel.localVarsTable.size().to2ByteArray())
 
     // Bytecode length
     file.appendBytes((code.size).to4ByteArray())
 
-    // Bytecode TODO
+    // Bytecode
     file.appendBytes(code)
-//    file.appendBytes(byteArrayOf(0xB2.toByte())) // getstatic
-//    file.appendBytes(classModel.pushFieldRef("java/lang/System", "out", "Ljava/io/PrintStream;").to2ByteArray())
-//    file.appendBytes(byteArrayOf(0x12)) // ldc
-//    file.appendBytes(byteArrayOf(classModel.pushConstant(Constant.string(classModel.pushConstant(Constant.utf8("Hello world!")))).toByte()))
-//    file.appendBytes(byteArrayOf(0xB6.toByte())) // invokevirtual
-//    file.appendBytes(classModel.pushMethRef("java/io/PrintStream", "println", "(Ljava/lang/String;)V").to2ByteArray())
-//    file.appendBytes(byteArrayOf(0xB1.toByte())) // return
+
+    // Exceptions table length (always 0)
+    file.appendBytes(byteArrayOf(0x00, 0x00))
+
+    // Code attrs count (always 0)
+    file.appendBytes(byteArrayOf(0x00, 0x00))
+
+    // -----------------------------------------------------
+
+    // Class attrs count
+    file.appendBytes(byteArrayOf(0x00, 0x00))
+}
+
+private fun generateFun(stmtNode: StmtNode) {
+    val className = "__${stmtNode.ident}__${stmtNode.id}"
+    val classModel = classesTable[className]!!
+
+    val file = File("out/production/Compiler/$className.class")
+    file.writeText("")
+
+    // CAFEBABE
+    file.appendBytes(byteArrayOf(0xCA.toByte(), 0xFE.toByte(), 0xBA.toByte(), 0xBE.toByte()))
+
+    // Version
+    file.appendBytes(byteArrayOf(0x00, 0x00, 0x00, 0x32))
+
+    // Constants count
+    val constants = classModel.constantsTable
+    file.appendBytes((constants.size + 1).to2ByteArray())
+
+    // Constants
+    constants.toList().sortedBy { (k, v) -> v }.forEach {
+        it.first.write(file)
+    }
+
+    // Flags (PUBLIC + SUPER)
+    file.appendBytes(byteArrayOf(0x00, 0x03))
+
+    // Current class
+    file.appendBytes(classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8(className)))).to2ByteArray())
+
+    // Parent class
+    file.appendBytes(classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__FUN__")))).to2ByteArray())
+
+    // Interfaces
+    file.appendBytes(byteArrayOf(0x00, 0x00))
+
+    // Fields count
+    file.appendBytes(byteArrayOf(0x00, 0x00))
+
+    // Methods count (always 2 (constructor + invoke))
+    file.appendBytes(byteArrayOf(0x00, 0x02))
+
+    // Methods table
+    // ------------------ Program constructor --------------
+
+    // Flags (PUBLIC)
+    file.appendBytes(byteArrayOf(0x00, 0x01))
+
+    // Name
+    file.appendBytes(classModel.pushConstant(Constant.utf8("<init>")).to2ByteArray())
+
+    // Descriptor
+    file.appendBytes(classModel.pushConstant(Constant.utf8("()V")).to2ByteArray())
+
+    // Method attrs count (always 1)
+    file.appendBytes(byteArrayOf(0x00, 0x01))
+
+    // Code attr
+    // Name
+    file.appendBytes(classModel.pushConstant(Constant.utf8("Code")).to2ByteArray())
+
+    // Length
+    file.appendBytes(byteArrayOf(0x00, 0x00, 0x00, 0x11))
+
+    // Stack size (max)
+    file.appendBytes(byteArrayOf(0xFF.toByte(), 0xFF.toByte()))
+
+    // Locals count (this)
+    file.appendBytes(byteArrayOf(0x00, 0x01))
+
+    // Bytecode length
+    file.appendBytes(byteArrayOf(0x00, 0x00, 0x00, 0x05))
+
+    // Bytecode (Fun constructor call)
+    file.appendBytes(byteArrayOf(0x2A)) // aload_0
+    file.appendBytes(byteArrayOf(0xB7.toByte())) // invokespecial
+    file.appendBytes(classModel.pushMethRef("__FUN__", "<init>", "()V").to2ByteArray()) // MethodRef FUN Init
+    file.appendBytes(byteArrayOf(0xB1.toByte())) // return
+
+    // Exceptions table length (always 0)
+    file.appendBytes(byteArrayOf(0x00, 0x00))
+
+    // Code attrs count (always 0)
+    file.appendBytes(byteArrayOf(0x00, 0x00))
+
+    // ------------------ invoke --------------
+
+    // Flags (PUBLIC)
+    file.appendBytes(byteArrayOf(0x00, 0x01))
+
+    // Name
+    file.appendBytes(classModel.pushConstant(Constant.utf8("invoke")).to2ByteArray())
+
+    // Descriptor
+    file.appendBytes(classModel.pushConstant(Constant.utf8("(Ljava/util/ArrayList;)L__VALUE__;")).to2ByteArray())
+
+    // Method attrs count (always 1)
+    file.appendBytes(byteArrayOf(0x00, 0x01))
+
+    // Code attr
+    // Name
+    file.appendBytes(classModel.pushConstant(Constant.utf8("Code")).to2ByteArray())
+
+    // Bytecode gen
+    var code = byteArrayOf()
+
+    // Инициализируем переменные данными из массива __args__
+    val args = stmtNode.params?.list
+    var argId = 0
+    args?.let {
+        var current: IdentNode? = it.first
+        while (current != null) {
+            val ident = current.ident
+            val num = classModel.localVarsTable.get(Pair(stmtNode.actionBlock?.startID!!, stmtNode.actionBlock?.lastID!!), ident)!!
+
+            code += byteArrayOf(0x2B) // aload_1 (args)
+
+            code += byteArrayOf(0x11) // sipush
+            code += argId.to2ByteArray()
+
+            code += byteArrayOf(0xB6.toByte()) // invokevirtual
+            code += classModel.pushMethRef("java/util/ArrayList", "get", "(I)Ljava/lang/Object;").to2ByteArray()
+
+            code += byteArrayOf(0xC0.toByte()) // checkcast
+            code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+
+            code += byteArrayOf(0x3A) // astore
+            code += num.toByte()
+
+            argId += 1
+            current = current.next
+        }
+    }
+
+    if (stmtNode.params?.hasVarArg == true) {
+        code += byteArrayOf(0xBB.toByte()) // NEW
+        code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+        code += byteArrayOf(0x59) // dub
+
+        code += byteArrayOf(0x2B) // aload_1 (args)
+
+        code += byteArrayOf(0x11) // sipush
+        code += argId.to2ByteArray()
+
+        code += byteArrayOf(0x2B) // aload_1 (args)
+
+        code += byteArrayOf(0xB6.toByte()) // invokevirtual
+        code += classModel.pushMethRef("java/util/ArrayList", "size", "()I").to2ByteArray()
+
+        code += byteArrayOf(0xB6.toByte()) // invokevirtual
+        code += classModel.pushMethRef("java/util/ArrayList", "subList", "(II)Ljava/util/List;").to2ByteArray()
+
+        code += byteArrayOf(0xB7.toByte()) // invokespecial
+        code += classModel.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V").to2ByteArray() // MethodRef VALUE Init
+
+        val num = classModel.localVarsTable.get(Pair(stmtNode.actionBlock?.startID!!, stmtNode.actionBlock?.lastID!!), "...")!!
+
+        code += byteArrayOf(0x3A) // astore
+        code += num.toByte()
+    }
+
+    // Генерим тело
+    code += generate(stmtNode.actionBlock!!, classModel)
+
+    // Return Nil по умолчанию, если нет другого ретурна раньше
+    code += byteArrayOf(0xBB.toByte()) // NEW
+    code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+    code += byteArrayOf(0x59) // dub
+
+    code += byteArrayOf(0xB7.toByte()) // invokespecial
+    code += classModel.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+    code += 0xB0.toByte() // areturn
+
+    // Length
+    file.appendBytes((code.size + 12).to4ByteArray())
+
+    // Stack size (max)
+    file.appendBytes(byteArrayOf(0xFF.toByte(), 0xFF.toByte()))
+
+    // Locals count (+1 под this)
+    file.appendBytes((classModel.localVarsTable.size() + 1).to2ByteArray())
+
+    // Bytecode length
+    file.appendBytes((code.size).to4ByteArray())
+
+    // Bytecode
+    file.appendBytes(code)
 
     // Exceptions table length (always 0)
     file.appendBytes(byteArrayOf(0x00, 0x00))
@@ -318,7 +500,53 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
         }
         StmtType.FOR -> TODO()
         StmtType.FOREACH -> TODO()
-        StmtType.FUNCTION_DEF -> TODO()
+        StmtType.FUNCTION_DEF -> {
+            generateFun(stmtNode)
+            val className = "__${stmtNode.ident}__${stmtNode.id}"
+
+            var res = byteArrayOf()
+
+            res += byteArrayOf(0xBB.toByte()) // NEW
+            res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+            res += byteArrayOf(0x59) // dub
+
+            res += byteArrayOf(0xBB.toByte()) // NEW
+            res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8(className)))).to2ByteArray()
+            res += byteArrayOf(0x59) // dub
+
+            res += byteArrayOf(0xB7.toByte()) // invokespecial
+            res += currentClass.pushMethRef(className, "<init>", "()V").to2ByteArray() // MethodRef Init
+
+            res += byteArrayOf(0xB7.toByte()) // invokespecial
+            res += currentClass.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V").to2ByteArray() // MethodRef VALUE Init
+
+            if (stmtNode.isLocal) {
+                // Поиск ноиера локалки
+                var min = 100000
+                var num : Int? = null
+                for (it in currentClass.localVarsTable.column(stmtNode.ident)) {
+                    val f = it.key.first
+                    val s = it.key.second
+                    val n = it.value
+
+                    if (stmtNode.id in (f + 1) until s) {
+                        if (min > s - f) {
+                            min = s - f
+                            num = n
+                        }
+                    }
+                }
+
+                res += byteArrayOf(0x3A.toByte()) // astore
+                res += num!!.toByte()
+
+            } else {
+                res += byteArrayOf(0xB3.toByte()) // putstatic
+                res += currentClass.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;").to2ByteArray()
+            }
+
+            return res
+        }
         StmtType.VAR_DEF -> TODO()
         StmtType.RETURN -> TODO()
     }
@@ -489,7 +717,61 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                     TODO()
                 }
                 else -> {
-                    TODO()
+                    var res = byteArrayOf()
+
+                    // Поиск локалки с именем функции
+                    var min = 100000
+                    var num : Int? = null
+                    for (it in currentClass.localVarsTable.column(exprNode.ident)) {
+                        val f = it.key.first
+                        val s = it.key.second
+                        val n = it.value
+
+                        if (exprNode.id in (f + 1) until s) {
+                            if (min > s - f) {
+                                min = s - f
+                                num = n
+                            }
+                        }
+                    }
+
+                    // Если нашли - достаем функцию из локалки, иначе - из статик поля
+                    if (num != null) {
+                        res += byteArrayOf(0x19.toByte()) // aload
+                        res += num.toByte()
+                    } else {
+                        res += byteArrayOf(0xB2.toByte()) // getstatic
+                        res += currentClass.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;").to2ByteArray()
+                    }
+
+                    // Создаем аррей лист
+                    res += byteArrayOf(0xBB.toByte()) // NEW
+                    res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList")))).to2ByteArray()
+                    res += byteArrayOf(0x59) // dub
+
+                    res += byteArrayOf(0xB7.toByte()) // invokespecial
+                    res += currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                    // Пишем все аргументы в аррей лист
+                    var current: ExprNode? = exprNode.args!!.first
+                    while (current != null) {
+                        res += byteArrayOf(0x59) // dub
+
+                        res += generate(current, currentClass)
+
+                        res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                        res += currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z").to2ByteArray()
+
+                        res += byteArrayOf(0x57) // POP add result
+
+                        current = current.next
+                    }
+
+                    // Вызываем функцию
+                    res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                    res += currentClass.pushMethRef("__VALUE__", "__invoke__", "(Ljava/util/ArrayList;)L__VALUE__;").to2ByteArray()
+
+                    return res
                 }
             }
         }
@@ -523,8 +805,54 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
 
             return res
         }
-        ExprType.VAR_ARG -> TODO()
-        ExprType.VAR -> TODO()
+        ExprType.VAR_ARG -> { // TODO()
+            // ХАРДКОД ДЛЯ ТЕСТОВ FIXME
+            var res = byteArrayOf()
+
+            var min = 100000
+            var num : Int? = null
+            for (it in currentClass.localVarsTable.column("...")) {
+                val f = it.key.first
+                val s = it.key.second
+                val n = it.value
+
+                if (exprNode.id in (f + 1) until s) {
+                    if (min > s - f) {
+                        min = s - f
+                        num = n
+                    }
+                }
+            }
+
+            res += byteArrayOf(0x19.toByte()) // aload
+            res += num!!.toByte()
+
+            return res
+        }
+        ExprType.VAR -> { // TODO()
+            // ХАРДКОД ДЛЯ ТЕСТОВ FIXME
+            var res = byteArrayOf()
+
+            var min = 100000
+            var num : Int? = null
+            for (it in currentClass.localVarsTable.column(exprNode.varNode?.first?.ident)) {
+                val f = it.key.first
+                val s = it.key.second
+                val n = it.value
+
+                if (exprNode.id in (f + 1) until s) {
+                    if (min > s - f) {
+                        min = s - f
+                        num = n
+                    }
+                }
+            }
+
+            res += byteArrayOf(0x19.toByte()) // aload
+            res += num!!.toByte()
+
+            return res
+        }
         ExprType.TABLE_CONSTRUCTOR -> {
             var res = byteArrayOf()
 

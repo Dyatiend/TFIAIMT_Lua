@@ -349,6 +349,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
 
                     // constantsTable.pushFieldRef("__PROGRAM__", stmtNode.ident, "L__VALUE__;")
                     currentClass.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
+                    currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
                 }
             }
             stmtNode.functionCall!!.args?.let {
@@ -395,7 +396,23 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                 )
             )
 
+            currentClass.pushMethRef("__VALUE__", "<init>", "()V")
+            funClass.pushMethRef("__VALUE__", "<init>", "()V")
             currentClass.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V")
+            currentClass.pushMethRef("__FUN__", "<init>", "()V")
+            currentClass.pushMethRef("__${stmtNode.ident}__${stmtNode.id}", "<init>", "()V")
+            currentClass.pushMethRef("__VALUE__", "__invoke__", "(Ljava/util/ArrayList;)L__VALUE__;")
+            currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
+            currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
+            funClass.pushMethRef("__FUN__", "<init>", "()V")
+            funClass.pushMethRef("__VALUE__", "__invoke__", "(Ljava/util/ArrayList;)L__VALUE__;")
+            funClass.pushMethRef("__FUN__", "invoke", "(Ljava/util/ArrayList;)L__VALUE__;")
+            funClass.pushMethRef("java/util/ArrayList", "get", "(I)Ljava/lang/Object;")
+            funClass.pushConstant(Constant._class(funClass.pushConstant(Constant.utf8("__${stmtNode.ident}__${stmtNode.id}"))))
+            funClass.pushConstant(Constant._class(funClass.pushConstant(Constant.utf8("__FUN__"))))
+            funClass.pushMethRef("java/util/ArrayList", "size", "()I")
+            funClass.pushMethRef("java/util/ArrayList", "subList", "(II)Ljava/util/List;")
+            funClass.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V")
 
             if(stmtNode.isLocal) {
                 currentClass.pushLocalVar(Pair(start, end), stmtNode.ident)
@@ -409,6 +426,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                 globalProgramClass.pushGlobalVar(stmtNode.ident)
             }
 
+            funClass.pushLocalVar(Pair(stmtNode.actionBlock!!.startID, stmtNode.actionBlock!!.lastID), "__args__")
             fillTables(stmtNode.params!!, funClass, stmtNode.actionBlock!!.startID, stmtNode.actionBlock!!.lastID)
             fillTables(stmtNode.actionBlock!!, funClass)
         }
@@ -514,6 +532,7 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
 
                     // constantsTable.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
                     currentClass.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
+                    currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
                 }
             }
             exprNode.args?.let {
@@ -632,10 +651,10 @@ private fun fillTables(identListNode: IdentListNode, currentClass: ClassModel, s
 private fun fillTables(paramListNode: ParamListNode, currentClass: ClassModel, start: Int, end: Int) {
     paramListNode.list?.let {
         fillTables(it, currentClass, start, end)
-        if (paramListNode.hasVarArg) {
-            currentClass.pushConstant(Constant.utf8("..."))
-            currentClass.pushLocalVar(Pair(start, end), "...")
-        }
+    }
+    if (paramListNode.hasVarArg) {
+        currentClass.pushConstant(Constant.utf8("..."))
+        currentClass.pushLocalVar(Pair(start, end), "...")
     }
 }
 

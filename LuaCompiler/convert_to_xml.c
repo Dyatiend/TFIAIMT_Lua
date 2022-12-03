@@ -129,7 +129,7 @@ void stmt_node_to_xml(struct stmt_node * node, FILE * file) {
 
             fprintf(file, "<name ident=\"%s\"/>", node->ident);
             fprintf(file, "<params>");
-            if(node->params->list != NULL) {
+            if(node->params != NULL) {
                 param_list_node_to_xml(node->params, node->params, file);
             }
             fprintf(file, "</params>");
@@ -444,13 +444,15 @@ void ident_node_to_xml(struct ident_node * node, FILE * file) {
 }
 
 void ident_list_node_to_xml(struct ident_list_node * node, void * parent, FILE * file) {
-    struct ident_node * current = node->first;
-    fprintf(file, "<ident_list_node>");
-    while (current != NULL) {
-        ident_node_to_xml(current, file);
-        current = current->next;
+    if (node != NULL) {
+        struct ident_node *current = node->first;
+        fprintf(file, "<ident_list_node>");
+        while (current != NULL) {
+            ident_node_to_xml(current, file);
+            current = current->next;
+        }
+        fprintf(file, "</ident_list_node>");
     }
-    fprintf(file, "</ident_list_node>");
 }
 
 void param_list_node_to_xml(struct param_list_node * node, void * parent, FILE * file) {
