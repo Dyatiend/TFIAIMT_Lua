@@ -2817,7 +2817,7 @@ public class __VALUE__ {
 //        throw new UnsupportedOperationException("Error: attempt to get length of a " + this.__type + " value");
     }
 
-    // TODO: getByKey , exceptions, append с ключем и без
+    // TODO: getByKey, append с ключем и без
 
     private int lastIntKey = 0;
 
@@ -2922,6 +2922,48 @@ public class __VALUE__ {
         Scanner scanner = new Scanner(System.in);
         var str = scanner.nextLine();
         return new __VALUE__(str);
+    }
+
+    public static void error(__VALUE__ message) throws Exception {
+        throw new Exception(message.toSString());
+    }
+
+    public static __VALUE__ __assert__(__VALUE__ condition, __VALUE__ message) throws Exception {
+        if(condition.__type == __TYPE__.NIL || condition.__type == __TYPE__.BOOL && !condition.__boolVal) {
+            __VALUE__.error(message);
+        }
+        List<__VALUE__> listParameters = Arrays.asList(condition, message);
+        return new __VALUE__(listParameters);
+    }
+
+    public static __VALUE__ pcall(__VALUE__ func, ArrayList<__VALUE__> args) {
+        __VALUE__ result;
+        try {
+            result = func.__invoke__(args);
+        } catch (Exception e) {
+            List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(false), new __VALUE__(e.getMessage()));
+            return new __VALUE__(listParameters);
+        }
+        //TODO при войде не выводится значение функции
+        List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(true), result);
+        return new __VALUE__(listParameters);
+    }
+
+    public static __VALUE__ xpcall(__VALUE__ func, __VALUE__ errorFunc, ArrayList<__VALUE__> args) {
+        __VALUE__ result;
+        try {
+            result = func.__invoke__(args);
+        } catch (Exception e) {
+            ArrayList<__VALUE__> parameter = new ArrayList<>();
+            parameter.add(new __VALUE__(e.getMessage()));
+            __VALUE__ resultError = errorFunc.__invoke__(parameter);
+            //TODO при войде выводится nil
+            List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(false), resultError);
+            return new __VALUE__(listParameters);
+        }
+        //TODO при войде не выводится значение функции
+        List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(true), result);
+        return new __VALUE__(listParameters);
     }
 
     //TODO переименовать
