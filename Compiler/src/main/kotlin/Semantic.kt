@@ -152,6 +152,7 @@ class ClassModel(val name: String) {
             )
         )
 
+        pushMethRef("__VALUE__", "<init>", "()V")
         pushMethRef(name, "<init>", "()V")
         pushMethRef("java/lang/Object", "<init>", "()V")
     }
@@ -306,6 +307,8 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             fillTables(stmtNode.conditionExpr!!, currentClass)
         }
         StmtType.ASSIGNMENT -> {
+            currentClass.pushMethRef("__VALUE__", "getFromSeq", "(I)L__VALUE__;")
+            currentClass.pushMethRef("__VALUE__", "__adjust__", "()L__VALUE__;")
             fillTables(stmtNode.varList!!, currentClass)
             fillTables(stmtNode.values!!, currentClass)
         }
@@ -381,8 +384,6 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             }
         }
         StmtType.FUNCTION_DEF -> {
-            // TODO? нужны вложенные классы или  нет ?????
-
             val funClass = ClassModel("__${stmtNode.ident}__${stmtNode.id}")
 
             classesTable["__${stmtNode.ident}__${stmtNode.id}"] = funClass
@@ -443,7 +444,6 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             }
             fillTables(stmtNode.actionBlock!!, currentClass)
         }
-        // TODO: FOREACH?????????????
         StmtType.VAR_DEF -> {
             fillTables(stmtNode.identList!!, currentClass, start, end)
 
@@ -452,7 +452,16 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             }
         }
         StmtType.RETURN -> {
-            fillTables(stmtNode.values!!, currentClass)
+            currentClass.pushMethRef("__VALUE__", "<init>", "()V")
+            currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__"))))
+            currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
+            currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
+            currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
+            currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__"))))
+            currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V")
+            stmtNode.values?.let {
+                fillTables(stmtNode.values!!, currentClass)
+            }
         }
         else -> {}
     }
@@ -588,12 +597,14 @@ private fun fillTables(varItemNode: VarItemNode, currentClass: ClassModel) {
     when (varItemNode.type) {
         VarType.IDENT -> {
             currentClass.pushConstant(Constant.utf8(varItemNode.ident))
+            currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident))))
+            currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
             if (!currentClass._contains(varItemNode.ident, varItemNode.id)) {
 //                currentClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
 //                currentClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), varItemNode.ident)
 //                globalProgramClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
 //                globalProgramClass.pushLocalVar(Pair(globalScopeStartId, globalScopeEndId), varItemNode.ident)
-
+                currentClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
                 globalProgramClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;")
                 globalProgramClass.pushGlobalVar(varItemNode.ident)
             }
@@ -601,6 +612,8 @@ private fun fillTables(varItemNode: VarItemNode, currentClass: ClassModel) {
         VarType.VAR -> {
             if (varItemNode.isMapKey) {
                 currentClass.pushConstant(Constant.utf8(varItemNode.ident))
+                currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident))))
+                currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
             } else {
                 fillTables(varItemNode.secondExpr!!, currentClass)
             }
@@ -608,6 +621,8 @@ private fun fillTables(varItemNode: VarItemNode, currentClass: ClassModel) {
         VarType.FUNCTION_CALL -> {
             if (varItemNode.isMapKey) {
                 currentClass.pushConstant(Constant.utf8(varItemNode.ident))
+                currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident))))
+                currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
                 fillTables(varItemNode.firstExpr!!, currentClass)
             } else {
                 fillTables(varItemNode.firstExpr!!, currentClass)
@@ -617,6 +632,8 @@ private fun fillTables(varItemNode: VarItemNode, currentClass: ClassModel) {
         VarType.ADJUSTED_EXPR -> {
             if (varItemNode.isMapKey) {
                 currentClass.pushConstant(Constant.utf8(varItemNode.ident))
+                currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident))))
+                currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
                 fillTables(varItemNode.firstExpr!!, currentClass)
             } else {
                 fillTables(varItemNode.firstExpr!!, currentClass)
@@ -628,6 +645,8 @@ private fun fillTables(varItemNode: VarItemNode, currentClass: ClassModel) {
 }
 
 private fun fillTables(varNode: VarNode, currentClass: ClassModel) {
+    currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;L__VALUE__;)V")
+    currentClass.pushMethRef("__VALUE__", "getByKey", "(L__VALUE__;)L__VALUE__;")
     var current: VarItemNode? = varNode.first
     while (current != null) {
         fillTables(current, currentClass)

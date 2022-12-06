@@ -1,6 +1,3 @@
-function a(a, b, ...)
-    print(a, b)
-    print(...)
-end
+a, b, c = 1, a, b
 
-a(1)
+print(a,b,c)

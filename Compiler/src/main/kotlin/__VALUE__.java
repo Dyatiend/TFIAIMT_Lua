@@ -102,6 +102,42 @@ public class __VALUE__ {
         __type = __TYPE__.SEQ;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        __VALUE__ value__ = (__VALUE__) o;
+
+        if (__intVal != value__.__intVal) return false;
+        if (__boolVal != value__.__boolVal) return false;
+        if (Double.compare(value__.__floatVal, __floatVal) != 0) return false;
+        if (!Objects.equals(__stringVal, value__.__stringVal)) return false;
+        if (!Objects.equals(__tableVal, value__.__tableVal)) return false;
+        if (!Objects.equals(__seqVal, value__.__seqVal)) return false;
+        if (!Objects.equals(__funVal, value__.__funVal)) return false;
+        if (!Objects.equals(__metatable, value__.__metatable)) return false;
+        return __type == value__.__type;
+    }
+
+    @Override
+    public int hashCode() {
+        // FIXME?: проверить все ли параметры нужны
+        int result;
+        long temp;
+        result = __intVal;
+        result = 31 * result + (__boolVal ? 1 : 0);
+        temp = Double.doubleToLongBits(__floatVal);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (__stringVal != null ? __stringVal.hashCode() : 0);
+        result = 31 * result + (__tableVal != null ? __tableVal.hashCode() : 0);
+        result = 31 * result + (__seqVal != null ? __seqVal.hashCode() : 0);
+        result = 31 * result + (__funVal != null ? __funVal.hashCode() : 0);
+        result = 31 * result + (__metatable != null ? __metatable.hashCode() : 0);
+        result = 31 * result + (__type != null ? __type.hashCode() : 0);
+        return result;
+    }
+
     // +++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -2853,6 +2889,26 @@ public class __VALUE__ {
         }
     }
 
+    // Для генерации кода assignment
+    public __VALUE__ getFromSeq(int i) {
+        if(__type == __TYPE__.SEQ) {
+            if (i >= __seqVal.size()) {
+                return new __VALUE__();
+            }
+            return __seqVal.get(i);
+        } else {
+            if (i == 0) {
+                return this;
+            }
+            return new __VALUE__();
+        }
+    }
+
+    public __VALUE__ getByKey(__VALUE__ key) {
+        return __tableVal.get(key);
+        // TODO ошибки
+    }
+
     public int __to_bool__() {
         // TODO протестить
         if(__type == __TYPE__.BOOL) {
@@ -2884,13 +2940,13 @@ public class __VALUE__ {
                 return __stringVal;
             }
             case TABLE -> {
-                //return ("Table" + this).replace("__VALUE__", "");
-                //TODO Удалить
-                for (var a : __tableVal.entrySet()) {
-                    System.out.println(a.getKey().toSString() + "->" + a.getValue().toSString());
-                }
-
-                return "";
+                return ("Table" + this).replace("__VALUE__", "");
+//                //TODO Удалить
+//                for (var a : __tableVal.entrySet()) {
+//                    System.out.println(a.getKey().toSString() + "->" + a.getValue().toSString());
+//                }
+//
+//                return "";
             }
             case SEQ -> {
                 StringBuilder res = new StringBuilder();

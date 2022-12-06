@@ -135,7 +135,21 @@ fun generateProgram(program: ChunkNode) {
     file.appendBytes(classModel.pushConstant(Constant.utf8("Code")).to2ByteArray())
 
     // Bytecode gen
-    val code = generate(program.block, classModel) + 0xB1.toByte() // return
+    var code = byteArrayOf()
+
+    globals.forEach {
+        code += byteArrayOf(0xBB.toByte()) // NEW
+        code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+        code += byteArrayOf(0x59) // dub
+
+        code += byteArrayOf(0xB7.toByte()) // invokespecial
+        code += classModel.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+        code += byteArrayOf(0xB3.toByte()) // putstatic
+        code += classModel.pushFieldRef("__PROGRAM__", it.key, "L__VALUE__;").to2ByteArray()
+    }
+
+    code += generate(program.block, classModel) + 0xB1.toByte() // return
 
     // Length
     file.appendBytes((code.size + 12).to4ByteArray())
@@ -442,7 +456,189 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
 
             return res
         }
-        StmtType.ASSIGNMENT -> TODO()
+        StmtType.ASSIGNMENT -> {
+            val vars = ArrayList<VarNode>()
+            var current: ExprNode? = stmtNode.varList!!.first
+            while (current != null) {
+                vars.add(current.varNode!!)
+
+                current = current.next
+            }
+
+            val values = ArrayList<ExprNode>()
+            current = stmtNode.values!!.first
+            while (current != null) {
+
+                if (current.next == null) {
+                    values.add(current)
+                } else {
+                    values.add(ExprNode.createAdjustingExprNode(current))
+                }
+
+                current = current.next
+            }
+
+            var res = byteArrayOf()
+
+            for (i in vars.indices) {
+                val `var` = vars[i];
+                val `val` = if (i < values.size) values[i] else values.last()
+                val seqItemId = i - values.lastIndex
+
+                if (`var`.last.type != VarType.IDENT) {
+                    var curVar: VarItemNode? = `var`.first
+                    while (curVar != null) {
+                        if (curVar.next == null) {
+                            when (curVar.type) {
+                                VarType.VAR -> {
+                                    if (curVar.isMapKey) {
+                                        res += byteArrayOf(0xBB.toByte()) // NEW
+                                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                                        res += byteArrayOf(0x59) // dub
+
+                                        res += byteArrayOf(0x12.toByte()) // ldc
+                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).toByte()
+
+                                        res += byteArrayOf(0xB7.toByte()) // invokespecial
+                                        res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+                                    } else {
+                                        res += generate(curVar.secondExpr!!, currentClass)
+                                    }
+                                }
+                                VarType.FUNCTION_CALL, VarType.ADJUSTED_EXPR -> {
+                                    res += generate(curVar.firstExpr!!, currentClass)
+                                    if (curVar.isMapKey) {
+                                        res += byteArrayOf(0xBB.toByte()) // NEW
+                                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                                        res += byteArrayOf(0x59) // dub
+
+                                        res += byteArrayOf(0x12.toByte()) // ldc
+                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).toByte()
+
+                                        res += byteArrayOf(0xB7.toByte()) // invokespecial
+                                        res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+                                    } else {
+                                        res += generate(curVar.secondExpr!!, currentClass)
+                                    }
+                                }
+                                else -> {}
+                            }
+                        } else {
+                            when (curVar.type) {
+                                VarType.IDENT -> {
+                                    // Поиск локалки с именем
+                                    var min = 100000
+                                    var num : Int? = null
+                                    for (it in currentClass.localVarsTable.column(curVar.ident)) {
+                                        val f = it.key.first
+                                        val s = it.key.second
+                                        val n = it.value
+
+                                        if (curVar.id in (f + 1) until s) {
+                                            if (min > s - f) {
+                                                min = s - f
+                                                num = n
+                                            }
+                                        }
+                                    }
+
+                                    // Если нашли - достаем из локалки, иначе - из статик поля
+                                    if (num != null) {
+                                        res += byteArrayOf(0x19.toByte()) // aload
+                                        res += num.toByte()
+                                    } else {
+                                        res += byteArrayOf(0xB2.toByte()) // getstatic
+                                        res += currentClass.pushFieldRef("__PROGRAM__", curVar.ident, "L__VALUE__;").to2ByteArray()
+                                    }
+                                }
+                                VarType.VAR -> {
+                                    if (curVar.isMapKey) {
+                                        res += byteArrayOf(0xBB.toByte()) // NEW
+                                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                                        res += byteArrayOf(0x59) // dub
+
+                                        res += byteArrayOf(0x12.toByte()) // ldc
+                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).toByte()
+
+                                        res += byteArrayOf(0xB7.toByte()) // invokespecial
+                                        res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+                                    } else {
+                                        res += generate(curVar.secondExpr!!, currentClass)
+                                    }
+                                    res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                                    res += currentClass.pushMethRef("__VALUE__", "getByKey", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+                                }
+                                VarType.FUNCTION_CALL, VarType.ADJUSTED_EXPR -> {
+                                    res += generate(curVar.firstExpr!!, currentClass)
+                                    if (curVar.isMapKey) {
+                                        res += byteArrayOf(0xBB.toByte()) // NEW
+                                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                                        res += byteArrayOf(0x59) // dub
+
+                                        res += byteArrayOf(0x12.toByte()) // ldc
+                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).toByte()
+
+                                        res += byteArrayOf(0xB7.toByte()) // invokespecial
+                                        res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+                                    } else {
+                                        res += generate(curVar.secondExpr!!, currentClass)
+                                    }
+                                    res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                                    res += currentClass.pushMethRef("__VALUE__", "getByKey", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+                                }
+                                else -> {}
+                            }
+                        }
+
+                        curVar = curVar.next
+                    }
+                }
+
+                res += generate(`val`, currentClass)
+                if (seqItemId >= 0) {
+                    res += byteArrayOf(0x11) // sipush
+                    res += seqItemId.to2ByteArray()
+
+                    res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                    res += currentClass.pushMethRef("__VALUE__", "getFromSeq", "(I)L__VALUE__;").to2ByteArray()
+                }
+            }
+
+            for (i in vars.indices.reversed()) {
+                val `var` = vars[i]
+
+                if (`var`.last.type != VarType.IDENT) {
+                    res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                    res += currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;L__VALUE__;)V").to2ByteArray()
+                } else {
+                    // Поиск локалки с именем
+                    var min = 100000
+                    var num : Int? = null
+                    for (it in currentClass.localVarsTable.column(`var`.last.ident)) {
+                        val f = it.key.first
+                        val s = it.key.second
+                        val n = it.value
+
+                        if (`var`.last.id in (f + 1) until s) {
+                            if (min > s - f) {
+                                min = s - f
+                                num = n
+                            }
+                        }
+                    }
+
+                    if (num != null) {
+                        res += byteArrayOf(0x3A.toByte()) // astore
+                        res += num.toByte()
+                    } else {
+                        res += byteArrayOf(0xB3.toByte()) // putstatic
+                        res += currentClass.pushFieldRef("__PROGRAM__", `var`.last.ident, "L__VALUE__;").to2ByteArray()
+                    }
+                }
+            }
+
+            return res
+        }
         StmtType.BREAK -> TODO()
         StmtType.DO_LOOP -> { // FIXME? постеститб как работает в оригинале
             return generate(stmtNode.actionBlock!!, currentClass)
@@ -541,7 +737,7 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
             return res
         }
         StmtType.FOR -> TODO()
-        StmtType.FOREACH -> TODO()
+        StmtType.FOREACH -> TODO() // НЕ ДЕЛАЕМ
         StmtType.FUNCTION_DEF -> {
             generateFun(stmtNode)
             val className = "__${stmtNode.ident}__${stmtNode.id}"
@@ -590,7 +786,56 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
             return res
         }
         StmtType.VAR_DEF -> TODO()
-        StmtType.RETURN -> TODO()
+        StmtType.RETURN -> {
+            if (stmtNode.values == null) {
+                var res = byteArrayOf()
+
+                res += byteArrayOf(0xBB.toByte()) // NEW
+                res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                res += byteArrayOf(0x59) // dub
+
+                res += byteArrayOf(0xB7.toByte()) // invokespecial
+                res += currentClass.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                res += 0xB0.toByte() // areturn
+
+                return res
+            } else {
+                var res = byteArrayOf()
+
+                res += byteArrayOf(0xBB.toByte()) // NEW
+                res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                res += byteArrayOf(0x59) // dub
+
+                res += byteArrayOf(0xBB.toByte()) // NEW
+                res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList")))).to2ByteArray()
+                res += byteArrayOf(0x59) // dub
+
+                res += byteArrayOf(0xB7.toByte()) // invokespecial
+                res += currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                var current: ExprNode? = stmtNode.values!!.first
+                while (current != null) {
+                    res += byteArrayOf(0x59) // dub
+
+                    res += generate(current!!, currentClass)
+
+                    res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                    res += currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z").to2ByteArray()
+
+                    res += byteArrayOf(0x57) // POP add result
+
+                    current = current!!.next
+                }
+
+                res += byteArrayOf(0xB7.toByte()) // invokespecial
+                res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V").to2ByteArray() // MethodRef VALUE Init
+
+                res += 0xB0.toByte() // areturn
+
+                return res
+            }
+        }
     }
 }
 
@@ -847,8 +1092,7 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
 
             return res
         }
-        ExprType.VAR_ARG -> { // TODO()
-            // ХАРДКОД ДЛЯ ТЕСТОВ FIXME
+        ExprType.VAR_ARG -> { // FIXME?: не уверен
             var res = byteArrayOf()
 
             var min = 100000
@@ -871,29 +1115,8 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
 
             return res
         }
-        ExprType.VAR -> { // TODO()
-            // ХАРДКОД ДЛЯ ТЕСТОВ FIXME
-            var res = byteArrayOf()
-
-            var min = 100000
-            var num : Int? = null
-            for (it in currentClass.localVarsTable.column(exprNode.varNode?.first?.ident)) {
-                val f = it.key.first
-                val s = it.key.second
-                val n = it.value
-
-                if (exprNode.id in (f + 1) until s) {
-                    if (min > s - f) {
-                        min = s - f
-                        num = n
-                    }
-                }
-            }
-
-            res += byteArrayOf(0x19.toByte()) // aload
-            res += num!!.toByte()
-
-            return res
+        ExprType.VAR -> {
+            return generate(exprNode.varNode!!, currentClass)
         }
         ExprType.TABLE_CONSTRUCTOR -> {
             var res = byteArrayOf()
@@ -934,11 +1157,86 @@ private fun generate(exprSeqNode: ExprSeqNode, currentClass: ClassModel): ByteAr
 }
 
 private fun generate(varItemNode: VarItemNode, currentClass: ClassModel) : ByteArray {
-    TODO()
+    var res = byteArrayOf()
+
+    when (varItemNode.type) {
+        VarType.IDENT -> {
+            // Поиск локалки с именем
+            var min = 100000
+            var num : Int? = null
+            for (it in currentClass.localVarsTable.column(varItemNode.ident)) {
+                val f = it.key.first
+                val s = it.key.second
+                val n = it.value
+
+                if (varItemNode.id in (f + 1) until s) {
+                    if (min > s - f) {
+                        min = s - f
+                        num = n
+                    }
+                }
+            }
+
+            // Если нашли - достаем из локалки, иначе - из статик поля
+            if (num != null) {
+                res += byteArrayOf(0x19.toByte()) // aload
+                res += num.toByte()
+            } else {
+                res += byteArrayOf(0xB2.toByte()) // getstatic
+                res += currentClass.pushFieldRef("__PROGRAM__", varItemNode.ident, "L__VALUE__;").to2ByteArray()
+            }
+        }
+        VarType.VAR -> {
+            if (varItemNode.isMapKey) {
+                res += byteArrayOf(0xBB.toByte()) // NEW
+                res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                res += byteArrayOf(0x59) // dub
+
+                res += byteArrayOf(0x12.toByte()) // ldc
+                res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident)))).toByte()
+
+                res += byteArrayOf(0xB7.toByte()) // invokespecial
+                res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+            } else {
+                res += generate(varItemNode.secondExpr!!, currentClass)
+            }
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "getByKey", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+        }
+        VarType.FUNCTION_CALL, VarType.ADJUSTED_EXPR -> {
+            res += generate(varItemNode.firstExpr!!, currentClass)
+            if (varItemNode.isMapKey) {
+                res += byteArrayOf(0xBB.toByte()) // NEW
+                res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                res += byteArrayOf(0x59) // dub
+
+                res += byteArrayOf(0x12.toByte()) // ldc
+                res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident)))).toByte()
+
+                res += byteArrayOf(0xB7.toByte()) // invokespecial
+                res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+            } else {
+                res += generate(varItemNode.secondExpr!!, currentClass)
+            }
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "getByKey", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+        }
+        else -> {}
+    }
+
+    return res
 }
 
 private fun generate(varNode: VarNode, currentClass: ClassModel) : ByteArray {
-    TODO()
+    var current: VarItemNode? = varNode.first
+    var res = byteArrayOf()
+    while (current != null) {
+        res += generate(current, currentClass)
+
+        current = current.next
+    }
+
+    return res
 }
 
 private fun generate(identNode: IdentNode, currentClass: ClassModel) : ByteArray {
