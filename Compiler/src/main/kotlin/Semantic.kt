@@ -655,7 +655,7 @@ private fun fillTables(varNode: VarNode, currentClass: ClassModel) {
 }
 
 private fun fillTables(identNode: IdentNode, currentClass: ClassModel, start: Int, end : Int) {
-    currentClass.pushConstant(Constant.utf8(identNode.ident!!))
+    currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(identNode.ident!!))))
     currentClass.pushLocalVar(Pair(start, end), identNode.ident!!)
 }
 

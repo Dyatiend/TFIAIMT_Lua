@@ -537,7 +537,7 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                                         if (curVar.id in (f + 1) until s) {
                                             if (min > s - f) {
                                                 min = s - f
-                                                num = n
+                                                num = if (currentClass.name == "__PROGRAM__") n - 1 else n
                                             }
                                         }
                                     }
@@ -622,7 +622,7 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                         if (`var`.last.id in (f + 1) until s) {
                             if (min > s - f) {
                                 min = s - f
-                                num = n
+                                num = if (currentClass.name == "__PROGRAM__") n - 1 else n
                             }
                         }
                     }
@@ -770,7 +770,7 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                     if (stmtNode.id in (f + 1) until s) {
                         if (min > s - f) {
                             min = s - f
-                            num = n
+                            num = if (currentClass.name == "__PROGRAM__") n - 1 else n
                         }
                     }
                 }
@@ -785,7 +785,107 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
 
             return res
         }
-        StmtType.VAR_DEF -> TODO()
+        StmtType.VAR_DEF -> {
+            if (stmtNode.values == null) {
+                var res = byteArrayOf()
+
+                var current: IdentNode? = stmtNode.identList!!.first
+                while (current != null) {
+                    res += byteArrayOf(0xBB.toByte()) // NEW
+                    res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                    res += byteArrayOf(0x59) // dub
+
+                    res += byteArrayOf(0xB7.toByte()) // invokespecial
+                    res += currentClass.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                    // Поиск локалки с именем
+                    var min = 100000
+                    var num : Int? = null
+                    for (it in currentClass.localVarsTable.column(current!!.ident)) {
+                        val f = it.key.first
+                        val s = it.key.second
+                        val n = it.value
+
+                        if (current!!.id in (f + 1) until s) {
+                            if (min > s - f) {
+                                min = s - f
+                                num = if (currentClass.name == "__PROGRAM__") n - 1 else n
+                            }
+                        }
+                    }
+
+                    res += byteArrayOf(0x3A.toByte()) // astore
+                    res += num!!.toByte()
+
+                    current = current!!.next
+                }
+
+                return res
+            }
+
+            val vars = ArrayList<IdentNode>()
+            var current: IdentNode? = stmtNode.identList!!.first
+            while (current != null) {
+                vars.add(current!!)
+
+                current = current!!.next
+            }
+
+            val values = ArrayList<ExprNode>()
+            var currentt: ExprNode? = stmtNode.values!!.first
+            while (currentt != null) {
+
+                if (currentt.next == null) {
+                    values.add(currentt)
+                } else {
+                    values.add(ExprNode.createAdjustingExprNode(currentt))
+                }
+
+                currentt = currentt.next
+            }
+
+            var res = byteArrayOf()
+
+            for (i in vars.indices) {
+                val `var` = vars[i];
+                val `val` = if (i < values.size) values[i] else values.last()
+                val seqItemId = i - values.lastIndex
+
+                res += generate(`val`, currentClass)
+                if (seqItemId >= 0) {
+                    res += byteArrayOf(0x11) // sipush
+                    res += seqItemId.to2ByteArray()
+
+                    res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                    res += currentClass.pushMethRef("__VALUE__", "getFromSeq", "(I)L__VALUE__;").to2ByteArray()
+                }
+            }
+
+            for (i in vars.indices.reversed()) {
+                val item = vars[i]
+
+                // Поиск локалки с именем
+                var min = 100000
+                var num : Int? = null
+                for (it in currentClass.localVarsTable.column(item.ident)) {
+                    val f = it.key.first
+                    val s = it.key.second
+                    val n = it.value
+
+                    if (item.id in (f + 1) until s) {
+                        if (min > s - f) {
+                            min = s - f
+                            num = if (currentClass.name == "__PROGRAM__") n - 1 else n
+                        }
+                    }
+                }
+
+                res += byteArrayOf(0x3A.toByte()) // astore
+                res += num!!.toByte()
+            }
+
+            return res
+        }
         StmtType.RETURN -> {
             if (stmtNode.values == null) {
                 var res = byteArrayOf()
@@ -1017,7 +1117,7 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                         if (exprNode.id in (f + 1) until s) {
                             if (min > s - f) {
                                 min = s - f
-                                num = n
+                                num = if (currentClass.name == "__PROGRAM__") n - 1 else n
                             }
                         }
                     }
@@ -1105,7 +1205,7 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                 if (exprNode.id in (f + 1) until s) {
                     if (min > s - f) {
                         min = s - f
-                        num = n
+                        num = if (currentClass.name == "__PROGRAM__") n - 1 else n
                     }
                 }
             }
@@ -1172,7 +1272,7 @@ private fun generate(varItemNode: VarItemNode, currentClass: ClassModel) : ByteA
                 if (varItemNode.id in (f + 1) until s) {
                     if (min > s - f) {
                         min = s - f
-                        num = n
+                        num = if (currentClass.name == "__PROGRAM__") n - 1 else n
                     }
                 }
             }

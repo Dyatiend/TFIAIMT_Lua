@@ -1,3 +1,9 @@
-a, b, c = 1, a, b
+a = 7
 
-print(a,b,c)
+if true then
+    print (a)
+    local a = 10
+    print (a)
+end
+
+print(a)
