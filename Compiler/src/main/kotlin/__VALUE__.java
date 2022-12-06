@@ -3038,6 +3038,10 @@ public class __VALUE__ {
         return "";
     }
 
+    public static void setmetatable(__VALUE__ t, __VALUE__ mt) {
+        // TODO
+    }
+
     public static void print(ArrayList<__VALUE__> value) {
         StringBuilder res = new StringBuilder();
         for (var v: value) {

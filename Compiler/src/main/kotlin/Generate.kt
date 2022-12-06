@@ -639,7 +639,7 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
 
             return res
         }
-        StmtType.BREAK -> TODO()
+        StmtType.BREAK -> TODO("Break не делаем)")
         StmtType.DO_LOOP -> { // FIXME? постеститб как работает в оригинале
             return generate(stmtNode.actionBlock!!, currentClass)
         }
@@ -1193,22 +1193,154 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                     return res
                 }
                 "error" -> {
-                    TODO()
+                    var res = byteArrayOf()
+
+                    res += if (exprNode.args != null) {
+                        generate(exprNode.args!!.first, currentClass)
+                    } else {
+                        generate(ExprNode.createNilExprNode(), currentClass)
+                    }
+
+                    res += byteArrayOf(0xB8.toByte()) // invokestatic
+                    res += currentClass.pushMethRef("__VALUE__", "error", "(L__VALUE__;)V").to2ByteArray()
+
+                    return res
                 }
                 "assert" -> {
-                    TODO()
+                    var res = byteArrayOf()
+
+                    if (exprNode.args != null) {
+                        res += generate(exprNode.args!!.first, currentClass)
+                        res += if(exprNode.args!!.first.next != null) {
+                            generate(exprNode.args!!.first.next!!, currentClass)
+                        } else {
+                            generate(ExprNode.createNilExprNode(), currentClass)
+                        }
+                    } else {
+                        res += generate(ExprNode.createNilExprNode(), currentClass)
+                        res += generate(ExprNode.createNilExprNode(), currentClass)
+                    }
+
+                    res += byteArrayOf(0xB8.toByte()) // invokestatic
+                    res += currentClass.pushMethRef("__VALUE__", "__assert__", "(L__VALUE__;L__VALUE__;)L__VALUE__;").to2ByteArray()
+
+                    return res
                 }
                 "pcall" -> {
-                    TODO()
+                    var res = byteArrayOf()
+
+                    res += if (exprNode.args != null) {
+                        generate(exprNode.args!!.first, currentClass)
+                    } else {
+                        generate(ExprNode.createNilExprNode(), currentClass)
+                    }
+
+                    res += byteArrayOf(0xBB.toByte()) // NEW
+                    res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList")))).to2ByteArray()
+                    res += byteArrayOf(0x59) // dub
+
+                    res += byteArrayOf(0xB7.toByte()) // invokespecial
+                    res += currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                    var current: ExprNode? = exprNode.args!!.first.next
+                    while (current != null) {
+                        res += byteArrayOf(0x59) // dub
+
+                        res += generate(current, currentClass)
+
+                        res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                        res += currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z").to2ByteArray()
+
+                        res += byteArrayOf(0x57) // POP add result
+
+                        current = current.next
+                    }
+
+                    res += byteArrayOf(0xB8.toByte()) // invokestatic
+                    res += currentClass.pushMethRef("__VALUE__", "pcall", "(L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;").to2ByteArray()
+
+                    return res
                 }
                 "xpcall" -> {
-                    TODO()
+                    var res = byteArrayOf()
+
+                    if (exprNode.args != null) {
+                        res += generate(exprNode.args!!.first, currentClass)
+                        res += if(exprNode.args!!.first.next != null) {
+                            generate(exprNode.args!!.first.next!!, currentClass)
+                        } else {
+                            generate(ExprNode.createNilExprNode(), currentClass)
+                        }
+                    } else {
+                        res += generate(ExprNode.createNilExprNode(), currentClass)
+                        res += generate(ExprNode.createNilExprNode(), currentClass)
+                    }
+
+                    res += byteArrayOf(0xBB.toByte()) // NEW
+                    res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList")))).to2ByteArray()
+                    res += byteArrayOf(0x59) // dub
+
+                    res += byteArrayOf(0xB7.toByte()) // invokespecial
+                    res += currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                    var current: ExprNode? = exprNode.args!!.first.next?.next
+                    while (current != null) {
+                        res += byteArrayOf(0x59) // dub
+
+                        res += generate(current, currentClass)
+
+                        res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                        res += currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z").to2ByteArray()
+
+                        res += byteArrayOf(0x57) // POP add result
+
+                        current = current.next
+                    }
+
+                    res += byteArrayOf(0xB8.toByte()) // invokestatic
+                    res += currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;").to2ByteArray()
+
+                    return res
                 }
                 "append" -> {
-                    TODO()
+                    var res = byteArrayOf()
+
+                    if (exprNode.args != null) {
+                        res += generate(exprNode.args!!.first, currentClass)
+                        res += if(exprNode.args!!.first.next != null) {
+                            generate(exprNode.args!!.first.next!!, currentClass)
+                        } else {
+                            generate(ExprNode.createNilExprNode(), currentClass)
+                        }
+                    } else {
+                        res += generate(ExprNode.createNilExprNode(), currentClass)
+                        res += generate(ExprNode.createNilExprNode(), currentClass)
+                    }
+
+                    res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                    res += currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;)V").to2ByteArray()
+
+                    return res
                 }
                 "setmetatable" -> {
-                    TODO()
+                    var res = byteArrayOf()
+
+                    if (exprNode.args != null) {
+                        res += generate(exprNode.args!!.first, currentClass)
+                        res += if(exprNode.args!!.first.next != null) {
+                            generate(exprNode.args!!.first.next!!, currentClass)
+                        } else {
+                            generate(ExprNode.createNilExprNode(), currentClass)
+                        }
+                    } else {
+                        res += generate(ExprNode.createNilExprNode(), currentClass)
+                        res += generate(ExprNode.createNilExprNode(), currentClass)
+                    }
+
+                    res += byteArrayOf(0xB8.toByte()) // invokestatic
+                    res += currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)V").to2ByteArray()
+
+                    return res
                 }
                 else -> {
                     var res = byteArrayOf()

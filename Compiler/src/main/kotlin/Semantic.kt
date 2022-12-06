@@ -327,16 +327,19 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                     currentClass.pushMethRef("__VALUE__", "error", "(L__VALUE__;)V")
                 }
                 "assert" -> {
-                    currentClass.pushMethRef("__VALUE__", "assert", "(L__VALUE__;L__VALUE__;)V")
+                    currentClass.pushMethRef("__VALUE__", "__assert__", "(L__VALUE__;L__VALUE__;)L__VALUE__;")
                 }
                 "pcall" -> {
-                    currentClass.pushMethRef("__VALUE__", "pcall", "(L__VALUE__;[L__VALUE__;)L__VALUE__;")
+                    currentClass.pushMethRef("__VALUE__", "pcall", "(L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "xpcall" -> {
-                    currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;[L__VALUE__;)L__VALUE__;")
+                    currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "append" -> {
                     currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;L__VALUE__;)V")
+                }
+                "setmetatable" -> {
+                    currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)V")
                 }
                 else -> {
                     currentClass.pushConstant(Constant.utf8(stmtNode.functionCall!!.ident))
@@ -525,16 +528,25 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
                     currentClass.pushMethRef("__VALUE__", "error", "(L__VALUE__;)V")
                 }
                 "assert" -> {
-                    currentClass.pushMethRef("__VALUE__", "assert", "(L__VALUE__;L__VALUE__;)V")
+                    currentClass.pushMethRef("__VALUE__", "__assert__", "(L__VALUE__;L__VALUE__;)L__VALUE__;")
                 }
                 "pcall" -> {
-                    currentClass.pushMethRef("__VALUE__", "pcall", "(L__VALUE__;[L__VALUE__;)L__VALUE__;")
+                    currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
+                    currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
+                    currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
+                    currentClass.pushMethRef("__VALUE__", "pcall", "(L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "xpcall" -> {
-                    currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;[L__VALUE__;)L__VALUE__;")
+                    currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
+                    currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
+                    currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
+                    currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "append" -> {
                     currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;L__VALUE__;)V")
+                }
+                "setmetatable" -> {
+                    currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)V")
                 }
                 else -> {
                     currentClass.pushConstant(Constant.utf8(exprNode.ident))
