@@ -2904,6 +2904,79 @@ public class __VALUE__ {
         }
     }
 
+    // Для цикла for
+    public void checkNumber() {
+        if(__type == __TYPE__.INTEGER || __type == __TYPE__.FLOAT)
+            return;
+        throw new IllegalArgumentException("bad 'for' argument (number expected, got " + __type + ")");
+    }
+
+    // Для цикла for
+    public void isZero() {
+        if(__type == __TYPE__.INTEGER) {
+            if (__intVal == 0)
+                throw new IllegalArgumentException("'for' step is zero");
+        }
+        if(__type == __TYPE__.FLOAT) {
+            if (__floatVal == 0)
+                throw new IllegalArgumentException("'for' step is zero");
+        }
+    }
+
+    // Для цикла for
+    public int isLessThanZero() {
+        if(__type == __TYPE__.INTEGER) {
+            if (__intVal < 0)
+                return 1;
+            return 0;
+        }
+        if(__type == __TYPE__.FLOAT) {
+            if (__floatVal < 0)
+                return 1;
+            return 0;
+        }
+        throw new RuntimeException();
+    }
+
+    // Для цикла for
+    public int needJmp(__VALUE__ o) {
+        switch (__type) {
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        if (__intVal <= o.__intVal)
+                            return 1;
+                        else
+                            return 0;
+                    }
+                    case FLOAT -> {
+                        if (__intVal <= o.__floatVal)
+                            return 1;
+                        else
+                            return 0;
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        if (__floatVal <= o.__intVal)
+                            return 1;
+                        else
+                            return 0;
+                    }
+                    case FLOAT -> {
+                        if (__floatVal <= o.__floatVal)
+                            return 1;
+                        else
+                            return 0;
+                    }
+                }
+            }
+        }
+        throw new RuntimeException();
+    }
+
     public __VALUE__ getByKey(__VALUE__ key) {
         return __tableVal.get(key);
         // TODO ошибки

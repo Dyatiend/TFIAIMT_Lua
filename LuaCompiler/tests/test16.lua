@@ -1,9 +1,5 @@
-a = 7
-
-if true then
-    print (a)
-    local a = 10
-    print (a)
+for i = 1, 10, -5 do
+    print (i)
 end
 
-print(a)
+print(i)

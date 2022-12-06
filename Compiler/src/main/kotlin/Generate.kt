@@ -736,7 +736,111 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
 
             return res
         }
-        StmtType.FOR -> TODO()
+        StmtType.FOR -> {
+            var num = currentClass.localVarsTable.get(Pair(stmtNode.actionBlock?.startID!!, stmtNode.actionBlock?.lastID!!), stmtNode.ident)!!
+
+            if(currentClass.name == "__PROGRAM__") {
+                num -= 1
+            }
+
+            var res = byteArrayOf()
+
+            res += byteArrayOf(0xBB.toByte()) // NEW
+            res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+            res += byteArrayOf(0x59) // dub
+
+            res += byteArrayOf(0xB7.toByte()) // invokespecial
+            res += currentClass.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+            res += byteArrayOf(0x3A.toByte()) // astore
+            res += num.toByte()
+
+            val step = if (stmtNode.stepExpr == null) {
+                var tmp = byteArrayOf(0x19.toByte()) // aload
+                tmp += num.toByte()
+
+                tmp += byteArrayOf(0xBB.toByte()) // NEW
+                tmp += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+                tmp += byteArrayOf(0x59) // dub
+
+                tmp += byteArrayOf(0x04.toByte()) // iconst_1
+
+                tmp += byteArrayOf(0xB7.toByte()) // invokespecial
+                tmp += currentClass.pushMethRef("__VALUE__", "<init>", "(I)V").to2ByteArray() // MethodRef VALUE Init
+
+                tmp += byteArrayOf(0xB6.toByte()) // invokevirtual
+                tmp += currentClass.pushMethRef("__VALUE__", "__add__", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+
+                tmp += byteArrayOf(0x3A.toByte()) // astore
+                tmp += num.toByte()
+
+                tmp
+            } else {
+                var tmp = byteArrayOf(0x19.toByte()) // aload
+                tmp += num.toByte()
+
+                tmp += generate(stmtNode.stepExpr!!, currentClass)
+
+                tmp += byteArrayOf(0xB6.toByte()) // invokevirtual
+                tmp += currentClass.pushMethRef("__VALUE__", "__add__", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+
+                tmp += byteArrayOf(0x3A.toByte()) // astore
+                tmp += num.toByte()
+
+                tmp
+            }
+
+            val action = generate(stmtNode.actionBlock!!, currentClass)
+
+            val init = generate(stmtNode.initialValue!!, currentClass)
+            val limit = generate(stmtNode.conditionExpr!!, currentClass)
+
+            res += init
+            res += byteArrayOf(0x59) // dub
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "checkNumber", "()V").to2ByteArray()
+
+            res += limit
+            res += byteArrayOf(0x59) // dub
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "checkNumber", "()V").to2ByteArray()
+
+            if (stmtNode.stepExpr != null) {
+                res += generate(stmtNode.stepExpr!!, currentClass)
+                res += byteArrayOf(0x59) // dub
+                res += byteArrayOf(0x59) // dub
+                res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                res += currentClass.pushMethRef("__VALUE__", "checkNumber", "()V").to2ByteArray()
+                res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                res += currentClass.pushMethRef("__VALUE__", "isZero", "()V").to2ByteArray()
+                res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                res += currentClass.pushMethRef("__VALUE__", "isLessThanZero", "()I").to2ByteArray()
+
+                res += byteArrayOf(0x9D.toByte()) // ifgt
+                res += (init.size + action.size + step.size + limit.size + 16).to2ByteArray()
+            }
+
+            res += byteArrayOf(0xA3.toByte()) // if_icmpgt
+            res += (init.size + action.size + step.size + limit.size + 13).to2ByteArray()
+
+            res += init
+            res += byteArrayOf(0x3A.toByte()) // astore
+            res += num.toByte()
+
+            res += action
+            res += step
+
+            res += byteArrayOf(0x19.toByte()) // aload
+            res += num.toByte()
+
+            res += limit
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "needJmp", "(L__VALUE__;)I").to2ByteArray()
+            res += byteArrayOf(0x9D.toByte()) // ifgt
+            res += (-action.size - step.size - limit.size - 5).to2ByteArray()
+
+            return res
+        }
         StmtType.FOREACH -> TODO() // НЕ ДЕЛАЕМ
         StmtType.FUNCTION_DEF -> {
             generateFun(stmtNode)
@@ -1103,6 +1207,9 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                 "append" -> {
                     TODO()
                 }
+                "setmetatable" -> {
+                    TODO()
+                }
                 else -> {
                     var res = byteArrayOf()
 
@@ -1337,18 +1444,6 @@ private fun generate(varNode: VarNode, currentClass: ClassModel) : ByteArray {
     }
 
     return res
-}
-
-private fun generate(identNode: IdentNode, currentClass: ClassModel) : ByteArray {
-    TODO()
-}
-
-private fun generate(identListNode: IdentListNode, currentClass: ClassModel) : ByteArray {
-    TODO()
-}
-
-private fun generate(paramListNode: ParamListNode, currentClass: ClassModel): ByteArray {
-    TODO()
 }
 
 private fun generate(fieldNode: FieldNode, currentClass: ClassModel) : ByteArray {

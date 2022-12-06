@@ -432,6 +432,15 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             fillTables(stmtNode.actionBlock!!, funClass)
         }
         StmtType.FOR -> {
+            currentClass.pushMethRef("__VALUE__", "checkNumber", "()V")
+            currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__"))))
+            currentClass.pushMethRef("__VALUE__", "<init>", "()V")
+            currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__"))))
+            currentClass.pushMethRef("__VALUE__", "<init>", "(I)V")
+            currentClass.pushMethRef("__VALUE__", "__add__", "(L__VALUE__;)L__VALUE__;")
+            currentClass.pushMethRef("__VALUE__", "needJmp", "(L__VALUE__;)I")
+            currentClass.pushMethRef("__VALUE__", "isZero", "()V")
+            currentClass.pushMethRef("__VALUE__", "isLessThanZero", "()V")
             currentClass.pushConstant(Constant.utf8(stmtNode.ident))
             currentClass.pushLocalVar(
                 Pair(stmtNode.actionBlock!!.startID, stmtNode.actionBlock!!.lastID),
