@@ -1,22 +1,9 @@
-and
-break
-do
-else
-elseif
+function f(n)
+    if(n==0) then
+        return 1
+    else
+        return n * f(n-1)
+    end
 end
-false
-for
-function
-goto
-if
-in
-local
-nil
-not
-or
-repeat
-return
-then
-true
-until
-while
+
+print(f(6))

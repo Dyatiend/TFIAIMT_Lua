@@ -676,7 +676,7 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
             res += action
             res += condition
 
-            res += byteArrayOf(0x9A.toByte()) // ifne
+            res += byteArrayOf(0x99.toByte()) // ifeq
             res += (-action.size-condition.size).to2ByteArray()
 
             return res
@@ -805,6 +805,9 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
             res += byteArrayOf(0xB6.toByte()) // invokevirtual
             res += currentClass.pushMethRef("__VALUE__", "checkNumber", "()V").to2ByteArray()
 
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "needJmp", "(L__VALUE__;)I").to2ByteArray()
+
             if (stmtNode.stepExpr != null) {
                 res += generate(stmtNode.stepExpr!!, currentClass)
                 res += byteArrayOf(0x59) // dub
@@ -820,7 +823,7 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                 res += (init.size + action.size + step.size + limit.size + 16).to2ByteArray()
             }
 
-            res += byteArrayOf(0xA3.toByte()) // if_icmpgt
+            res += byteArrayOf(0x99.toByte()) // ifeq
             res += (init.size + action.size + step.size + limit.size + 13).to2ByteArray()
 
             res += init

@@ -19,7 +19,7 @@ enum class ExprType {
             LE -> "__le__"
             GREATER -> "__greater__"
             GE -> "__ge__"
-            EQUAL -> "__equal__"
+            EQUAL -> "__eql__"
             NOT_EQUAL -> "__not_equal__"
             LOG_AND -> "__logic_and__"
             LOG_OR -> "__logical_or__"

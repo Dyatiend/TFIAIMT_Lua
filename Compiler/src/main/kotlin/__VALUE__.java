@@ -2868,6 +2868,7 @@ public class __VALUE__ {
     public void __append__(__VALUE__ value) {
         if(__type == __TYPE__.TABLE) {
             __tableVal.put(new __VALUE__(++lastIntKey), value);
+            return;
         }
         throw new UnsupportedOperationException("Error");
     }
@@ -2990,6 +2991,8 @@ public class __VALUE__ {
             else
                 return 0;
         }
+
+        if (__type == __TYPE__.SEQ) return __seqVal.get(0).__to_bool__();
 
         if(__type == __TYPE__.NIL) return 0;
         return 1;
