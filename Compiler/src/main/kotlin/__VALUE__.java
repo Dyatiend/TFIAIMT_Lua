@@ -1,10 +1,9 @@
-import com.google.common.collect.Table;
-
 import java.util.*;
 
 public class __VALUE__ {
 
     public enum __TYPE__ {
+        VOID,
         NIL,
         INTEGER,
         FLOAT,
@@ -102,6 +101,12 @@ public class __VALUE__ {
         __type = __TYPE__.SEQ;
     }
 
+    public static __VALUE__ voidVal() {
+        __VALUE__ voidValue = new __VALUE__();
+        voidValue.__type = __TYPE__.VOID;
+        return voidValue;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -144,10 +149,10 @@ public class __VALUE__ {
     public __VALUE__ __add__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__add");
+                        this.metatableFunc(o, "__add");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -174,7 +179,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__add");
+                            this.metatableFunc(o, "__add");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -204,7 +209,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__add");
+                            this.metatableFunc(o, "__add");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -258,7 +263,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__add");
+                            this.metatableFunc(o, "__add");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -269,7 +274,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -308,84 +313,15 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
-
-
-//        if (this.__type == __TYPE__.INTEGER && o.__type == __TYPE__.INTEGER) {
-//            return new __VALUE__(this.__iVal + o.__iVal);
-//        }
-//
-//        if (this.__type == __TYPE__.INTEGER && o.__type == __TYPE__.FLOAT) {
-//            return new __VALUE__(this.__iVal + o.__fVal);
-//        }
-//
-//        if (this.__type == __TYPE__.FLOAT && o.__type == __TYPE__.INTEGER) {
-//            return new __VALUE__(this.__fVal + o.__iVal);
-//        }
-//
-//        if (this.__type == __TYPE__.FLOAT && o.__type == __TYPE__.FLOAT) {
-//            return new __VALUE__(this.__fVal + o.__fVal);
-//        }
-//
-//        if (__type == __TYPE__.STRING && o.__type == __TYPE__.STRING) {
-//            try {
-//                return new __VALUE__(Integer.parseInt(__sVal) + Integer.parseInt(o.__sVal));
-//            }
-//            catch (NumberFormatException e) {
-//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
-//            }
-//        }
-//
-//        if (__type == __TYPE__.STRING && o.__type == __TYPE__.INTEGER) {
-//            try {
-//                return new __VALUE__(Integer.parseInt(__sVal) + o.__iVal);
-//            }
-//            catch (NumberFormatException e) {
-//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
-//            }
-//        }
-//
-//        if (__type == __TYPE__.STRING && o.__type == __TYPE__.FLOAT) {
-//            try {
-//                return new __VALUE__(Integer.parseInt(__sVal) + o.__fVal);
-//            }
-//            catch (NumberFormatException e) {
-//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
-//            }
-//        }
-//
-//        if (__type == __TYPE__.INTEGER && o.__type == __TYPE__.STRING) {
-//            try {
-//                return new __VALUE__(__iVal + Integer.parseInt(o.__sVal));
-//            }
-//            catch (NumberFormatException e) {
-//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
-//            }
-//        }
-//
-//        if (__type == __TYPE__.FLOAT && o.__type == __TYPE__.STRING) {
-//            try {
-//                return new __VALUE__(__fVal + Integer.parseInt(o.__sVal));
-//            }
-//            catch (NumberFormatException e) {
-//                throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
-//            }
-//        }
-//
-//
-//                Table
-//
-//                VarArg
-//
-//        throw new UnsupportedOperationException("Error: attempt to add a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __sub__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__sub");
+                        this.metatableFunc(o, "__sub");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -411,7 +347,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__sub");
+                            this.metatableFunc(o, "__sub");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -441,7 +377,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__sub");
+                            this.metatableFunc(o, "__sub");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -495,7 +431,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__sub");
+                            this.metatableFunc(o, "__sub");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -506,7 +442,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__sub"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -545,35 +481,16 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to sub a " + this.__type + " with a " + o.__type);
-
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal - o.__iVal);
-//        }
-//
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(this.__iVal - o.__fVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(this.__fVal - o.__iVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal - o.__fVal);
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to sub a " + this.__type + " with a " + o.__type);
     }
 
 
     public __VALUE__ __mul__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__mul");
+                        this.metatableFunc(o, "__mul");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -599,7 +516,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__mul");
+                            this.metatableFunc(o, "__mul");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -629,7 +546,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__mul");
+                            this.metatableFunc(o, "__mul");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -683,7 +600,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__mul");
+                            this.metatableFunc(o, "__mul");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -694,7 +611,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__mul"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -733,32 +650,15 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to mul a " + this.__type + " with a " + o.__type);
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal * o.__iVal);
-//        }
-//
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(this.__iVal * o.__fVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(this.__fVal * o.__iVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal * o.__fVal);
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to mul a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __div__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__div");
+                        this.metatableFunc(o, "__div");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -784,7 +684,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__div");
+                            this.metatableFunc(o, "__div");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -814,7 +714,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__div");
+                            this.metatableFunc(o, "__div");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -868,7 +768,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__div");
+                            this.metatableFunc(o, "__div");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -879,7 +779,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__div"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -918,33 +818,15 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to div a " + this.__type + " with a " + o.__type);
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__((double)this.__iVal / o.__iVal);
-//        }
-//
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(this.__iVal / o.__fVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(this.__fVal / o.__iVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal / o.__fVal);
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to div a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __floor_div__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__idiv");
+                        this.metatableFunc(o, "__idiv");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -970,7 +852,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__idiv");
+                            this.metatableFunc(o, "__idiv");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1000,7 +882,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__idiv");
+                            this.metatableFunc(o, "__idiv");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1054,7 +936,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__idiv");
+                            this.metatableFunc(o, "__idiv");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1065,7 +947,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__idiv"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -1104,33 +986,15 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to idiv a " + this.__type + " with a " + o.__type);
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal / o.__iVal);
-//        }
-//
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__((int) (this.__iVal / o.__fVal));
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__((int)(this.__fVal / o.__iVal));
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__((int)(this.__fVal / o.__fVal));
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to idiv a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __pow__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__pow");
+                        this.metatableFunc(o, "__pow");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1156,7 +1020,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__pow");
+                            this.metatableFunc(o, "__pow");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1186,7 +1050,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__pow");
+                            this.metatableFunc(o, "__pow");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1240,7 +1104,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__pow");
+                            this.metatableFunc(o, "__pow");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1251,7 +1115,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__pow"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -1290,33 +1154,15 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to pow a " + this.__type + " with a " + o.__type);
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__((int)Math.pow(this.__iVal, o.__iVal));
-//        }
-//
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__((float) Math.pow(this.__iVal, o.__iVal));
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__((float) Math.pow(this.__iVal, o.__iVal));
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__((float) Math.pow(this.__fVal, o.__fVal));
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to pow a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __xor__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__xor");
+                        this.metatableFunc(o, "__xor");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1348,7 +1194,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__xor");
+                            this.metatableFunc(o, "__xor");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1391,7 +1237,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__xor");
+                            this.metatableFunc(o, "__xor");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1465,7 +1311,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__xor");
+                            this.metatableFunc(o, "__xor");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1476,7 +1322,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__xor"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -1515,44 +1361,15 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to xor a " + this.__type + " with a " + o.__type);
-
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal ^ o.__iVal);
-//        }
-//
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            if(o.__fVal - (int)o.__fVal != 0) {
-//                throw new UnsupportedOperationException("Error: number has no integer representation");
-//            }
-//            return new __VALUE__(this.__iVal ^ (int)o.__fVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            if(this.__fVal - (int)this.__fVal != 0) {
-//                throw new UnsupportedOperationException("Error: number has no integer representation");
-//            }
-//            return new __VALUE__((int)this.__fVal ^ o.__iVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            if(o.__fVal - (int)o.__fVal != 0 || this.__fVal - (int)this.__fVal != 0) {
-//                throw new UnsupportedOperationException("Error: number has no integer representation");
-//            }
-//
-//            return new __VALUE__((int)this.__fVal ^ (int)o.__fVal);
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to xor a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __mod__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__mod");
+                        this.metatableFunc(o, "__mod");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1578,7 +1395,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__mod");
+                            this.metatableFunc(o, "__mod");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1608,7 +1425,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__mod");
+                            this.metatableFunc(o, "__mod");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1662,7 +1479,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__mod");
+                            this.metatableFunc(o, "__mod");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1673,7 +1490,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__mod"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -1712,33 +1529,15 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to mod a " + this.__type + " with a " + o.__type);
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal % o.__iVal);
-//        }
-//
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(this.__iVal % o.__fVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(this.__fVal % o.__iVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal % o.__fVal);
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to mod a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __concat__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__concat");
+                        this.metatableFunc(o, "__concat");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1757,7 +1556,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__concat");
+                            this.metatableFunc(o, "__concat");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1779,7 +1578,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__concat");
+                            this.metatableFunc(o, "__concat");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1801,7 +1600,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__concat");
+                            this.metatableFunc(o, "__concat");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1812,7 +1611,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -1852,44 +1651,15 @@ public class __VALUE__ {
 
 
         throw new UnsupportedOperationException("Error: attempt to concatenate a " + this.__type + " with a " + o.__type);
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
-//
-//        if (this.__type == STRING && o.__type == STRING) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
-//        if (this.__type == FLOAT && o.__type == STRING) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
-//        if (this.__type == INTEGER && o.__type == STRING) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
-//        if (this.__type == STRING && o.__type == FLOAT) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
-//        if (this.__type == STRING && o.__type == INTEGER) {
-//            return new __VALUE__(this.toString() + o.toString());
-//        }
     }
 
     public __VALUE__ __less__(__VALUE__ o) {
 
         switch (__type) {
-            case NIL, BOOL, FUNC -> {
+            case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.name(o, "__less");
+                        this.metatableFunc(o, "__less");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1905,7 +1675,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__less");
+                            this.metatableFunc(o, "__less");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1924,7 +1694,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__less");
+                            this.metatableFunc(o, "__less");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1941,7 +1711,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.name(o, "__less");
+                            this.metatableFunc(o, "__less");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1952,7 +1722,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__less"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__less")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
@@ -1991,30 +1761,6 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to compare a " + this.__type + " with a " + o.__type);
-
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal < o.__iVal);
-//        }
-//        //TODO ПРОВЕРИТЬ СРАВНЕНИЕ ФЛОАТОВ
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(this.__iVal < o.__fVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(this.__fVal < o.__iVal);
-//        }
-//
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal < o.__fVal);
-//        }
-//
-//        if (this.__type == STRING && o.__type == STRING) {
-//            int compared = this.__sVal.compareTo(o.__sVal);
-//            return new __VALUE__(compared < 0);
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to compare a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __less_or_eql__(__VALUE__ o) {
@@ -2065,7 +1811,7 @@ public class __VALUE__ {
                     case SEQ -> {
                         return __eql__(o.__seqVal.get(0));
                     }
-                    case INTEGER, FLOAT, NIL, STRING, TABLE, FUNC -> {
+                    case INTEGER, FLOAT, NIL, VOID, STRING, TABLE, FUNC -> {
                         return new __VALUE__(false);
                     }
                 }
@@ -2078,7 +1824,7 @@ public class __VALUE__ {
                     case FUNC -> {
                         return new __VALUE__(this == o);
                     }
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, TABLE -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, TABLE -> {
                         return new __VALUE__(false);
                     }
                 }
@@ -2091,7 +1837,7 @@ public class __VALUE__ {
                     case FLOAT -> { //TODO ПРОВЕРИТЬ СРАВНЕНИЕ ФЛОАТОВ
                         return new __VALUE__(__intVal == o.__floatVal);
                     }
-                    case BOOL, NIL, STRING, TABLE, FUNC -> {
+                    case BOOL, NIL, VOID, STRING, TABLE, FUNC -> {
                         return new __VALUE__(false);
                     }
                     case SEQ -> {
@@ -2107,7 +1853,7 @@ public class __VALUE__ {
                     case FLOAT -> { //TODO ПРОВЕРИТЬ СРАВНЕНИЕ ФЛОАТОВ
                         return new __VALUE__(__floatVal == o.__floatVal);
                     }
-                    case BOOL, NIL, STRING, TABLE, FUNC -> {
+                    case BOOL, NIL, VOID, STRING, TABLE, FUNC -> {
                         return new __VALUE__(false);
                     }
                     case SEQ -> {
@@ -2117,7 +1863,7 @@ public class __VALUE__ {
             }
             case STRING -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, TABLE, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, TABLE, FUNC -> {
                         return new __VALUE__(false);
                     }
                     case STRING -> {
@@ -2136,14 +1882,14 @@ public class __VALUE__ {
                     case TABLE -> {
                         return new __VALUE__(this == o); //TODO Проверить
                     }
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         return new __VALUE__(false);
                     }
                 }
             }
             case SEQ -> {
                 switch (o.__type) {
-                    case INTEGER, FLOAT, STRING, TABLE, NIL, BOOL, FUNC -> {
+                    case INTEGER, FLOAT, STRING, TABLE, NIL, VOID, BOOL, FUNC -> {
                         return __seqVal.get(0).__eql__(o);
                     }
                     case SEQ -> {
@@ -2155,39 +1901,6 @@ public class __VALUE__ {
 
 
         throw new UnsupportedOperationException("Error: attempt to compare a " + this.__type + " with a " + o.__type);
-
-//
-//        if (this.__type == NIL && o.__type == NIL) return new __VALUE__(true);
-//        if (this.__type == NIL || o.__type == NIL) return new __VALUE__(false);
-//        if (__type == FUNC || o.__type == FUNC) return new __VALUE__(
-//                __type == o.__type || __fun == o.__fun
-//        );
-//
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal == o.__iVal);
-//        }
-//        //TODO ПРОВЕРИТЬ СРАВНЕНИЕ ФЛОАТОВ
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(this.__iVal == o.__fVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(this.__fVal == o.__iVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal == o.__fVal);
-//        }
-//
-//        if (this.__type == STRING && o.__type == STRING) {
-//            return new __VALUE__(this.__sVal.equals(o.__sVal));
-//        }
-//
-//        if (this.__type == BOOLEAN && o.__type == BOOLEAN) {
-//            return new __VALUE__(this.__bVal == o.__bVal);
-//        }
-//
-//        if (this.__type != o.__type) return new __VALUE__(false);
-//
-//        throw new UnsupportedOperationException("Error: attempt to compare a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __not_eql__(__VALUE__ o) {
@@ -2203,7 +1916,7 @@ public class __VALUE__ {
         switch (__type) {
             case NIL -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, TABLE, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, TABLE, FUNC -> {
                         return new __VALUE__();
                     }
                     case SEQ -> {
@@ -2373,7 +2086,7 @@ public class __VALUE__ {
             }
             case SEQ -> {
                 switch (o.__type) {
-                    case INTEGER, FLOAT, STRING, TABLE, NIL, BOOL, FUNC -> {
+                    case INTEGER, FLOAT, STRING, TABLE, NIL, VOID, BOOL, FUNC -> {
                         return __seqVal.get(0).__eql__(o);
                     }
                     case SEQ -> {
@@ -2383,7 +2096,7 @@ public class __VALUE__ {
             }
             case FUNC -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, TABLE, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, TABLE, FUNC -> {
                         return new __VALUE__();
                     }
                     case SEQ -> {
@@ -2394,93 +2107,6 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to or logic a " + this.__type + " with a " + o.__type);
-
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(o.__iVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(o.__fVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(o.__iVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(o.__fVal);
-//        }
-//
-//        if (this.__type == STRING && o.__type == STRING) {
-//            return new __VALUE__(o.__sVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == STRING) {
-//            return new __VALUE__(o.__sVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == STRING) {
-//            return new __VALUE__(o.__sVal);
-//        }
-//        if (this.__type == STRING && o.__type == INTEGER) {
-//            return new __VALUE__(o.__iVal);
-//        }
-//        if (this.__type == STRING && o.__type == FLOAT) {
-//            return new __VALUE__(o.__fVal);
-//        }
-//
-//        if (this.__type == STRING && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//        if (this.__type == TABLE && o.__type == INTEGER) {
-//            return new __VALUE__(o.__iVal);
-//        }
-//        if (this.__type == TABLE && o.__type == FLOAT) {
-//            return new __VALUE__(o.__fVal);
-//        }
-//        if (this.__type == TABLE && o.__type == STRING) {
-//            return new __VALUE__(o.__sVal);
-//        }
-//        if (this.__type == TABLE && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//
-//        if (this.__type == BOOLEAN && o.__type == BOOLEAN) {
-//            return new __VALUE__(this.__bVal && o.__bVal);
-//        }
-//
-//        if (this.__type == BOOLEAN && o.__type == INTEGER) {
-//            if(this.__bVal) {
-//                return new __VALUE__(o.__iVal);
-//            } else {
-//                return new __VALUE__(this.__bVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == FLOAT) {
-//            if(this.__bVal) {
-//                return new __VALUE__(o.__fVal);
-//            } else {
-//                return new __VALUE__(this.__bVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == STRING) {
-//            if(this.__bVal) {
-//                return new __VALUE__(o.__sVal);
-//            } else {
-//                return new __VALUE__(this.__bVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == TABLE) {
-//            return new __VALUE__(o.__aVal);
-//        }
-//
-//        if (o.__type == BOOLEAN) {
-//            return new __VALUE__(o.__bVal);
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to or logic a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __logic_or__(__VALUE__ o) {
@@ -2515,7 +2141,7 @@ public class __VALUE__ {
             }
             case INTEGER -> {
                 switch (o.__type) {
-                    case NIL, FUNC -> {
+                    case NIL, VOID, FUNC -> {
                         return new __VALUE__();
                     }
                     case INTEGER -> {
@@ -2540,7 +2166,7 @@ public class __VALUE__ {
             }
             case FLOAT -> {
                 switch (o.__type) {
-                    case NIL, FUNC -> {
+                    case NIL, VOID, FUNC -> {
                         return new __VALUE__();
                     }
                     case INTEGER -> {
@@ -2565,7 +2191,7 @@ public class __VALUE__ {
             }
             case BOOL -> {
                 switch (o.__type) {
-                    case NIL, FUNC -> {
+                    case NIL, VOID, FUNC -> {
                         return new __VALUE__();
                     }
                     case INTEGER -> {
@@ -2606,7 +2232,7 @@ public class __VALUE__ {
             }
             case STRING -> {
                 switch (o.__type) {
-                    case NIL, FUNC -> {
+                    case NIL, VOID, FUNC -> {
                         return new __VALUE__();
                     }
                     case INTEGER -> {
@@ -2631,7 +2257,7 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, FUNC -> {
+                    case NIL, VOID, FUNC -> {
                         return new __VALUE__();
                     }
                     case INTEGER -> {
@@ -2656,7 +2282,7 @@ public class __VALUE__ {
             }
             case SEQ -> {
                 switch (o.__type) {
-                    case INTEGER, FLOAT, STRING, TABLE, NIL, BOOL, FUNC -> {
+                    case INTEGER, FLOAT, STRING, TABLE, NIL, VOID, BOOL, FUNC -> {
                         return __seqVal.get(0).__eql__(o);
                     }
                     case SEQ -> {
@@ -2666,7 +2292,7 @@ public class __VALUE__ {
             }
             case FUNC -> {
                 switch (o.__type) {
-                    case NIL, INTEGER, FLOAT, BOOL, STRING, TABLE, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, TABLE, FUNC -> {
                         return new __VALUE__();
                     }
                     case SEQ -> {
@@ -2677,104 +2303,6 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to or logic a " + this.__type + " with a " + o.__type);
-
-//        if (this.__type == INTEGER && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal);
-//        }
-//
-//        if (this.__type == STRING && o.__type == STRING) {
-//            return new __VALUE__(this.__sVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == STRING) {
-//            return new __VALUE__(this.__sVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == STRING) {
-//            return new __VALUE__(this.__sVal);
-//        }
-//        if (this.__type == STRING && o.__type == INTEGER) {
-//            return new __VALUE__(this.__iVal);
-//        }
-//        if (this.__type == STRING && o.__type == FLOAT) {
-//            return new __VALUE__(this.__fVal);
-//        }
-//
-//        if (this.__type == STRING && o.__type == TABLE) {
-//            return new __VALUE__(this.__sVal);
-//        }
-//        if (this.__type == INTEGER && o.__type == TABLE) {
-//            return new __VALUE__(this.__iVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == TABLE) {
-//            return new __VALUE__(this.__fVal);
-//        }
-//        if (this.__type == TABLE && o.__type == INTEGER) {
-//            return new __VALUE__(this.__aVal);
-//        }
-//        if (this.__type == TABLE && o.__type == FLOAT) {
-//            return new __VALUE__(this.__aVal);
-//        }
-//        if (this.__type == TABLE && o.__type == STRING) {
-//            return new __VALUE__(this.__aVal);
-//        }
-//        if (this.__type == TABLE && o.__type == TABLE) {
-//            return new __VALUE__(this.__aVal);
-//        }
-//
-//        if (this.__type == BOOLEAN && o.__type == BOOLEAN) {
-//            return new __VALUE__(this.__bVal || o.__bVal);
-//        }
-//
-//        if (this.__type == BOOLEAN && o.__type == INTEGER) {
-//            if(this.__bVal) {
-//                return new __VALUE__(this.__bVal);
-//            } else {
-//                return new __VALUE__(o.__iVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == FLOAT) {
-//            if(this.__bVal) {
-//                return new __VALUE__(this.__bVal);
-//            } else {
-//                return new __VALUE__(o.__fVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == STRING) {
-//            if(this.__bVal) {
-//                return new __VALUE__(this.__bVal);
-//            } else {
-//                return new __VALUE__(o.__sVal);
-//            }
-//        }
-//        if (this.__type == BOOLEAN && o.__type == TABLE) {
-//            if(this.__bVal) {
-//                return new __VALUE__(this.__bVal);
-//            } else {
-//                return new __VALUE__(o.__aVal);
-//            }
-//        }
-//
-//        if (this.__type == INTEGER && o.__type == BOOLEAN) {
-//            return new __VALUE__(this.__iVal);
-//        }
-//        if (this.__type == FLOAT && o.__type == BOOLEAN) {
-//            return new __VALUE__(this.__fVal);
-//        }
-//        if (this.__type == STRING && o.__type == BOOLEAN) {
-//            return new __VALUE__(this.__sVal);
-//        }
-//        if (this.__type == TABLE && o.__type == BOOLEAN) {
-//            return new __VALUE__(this.__aVal);
-//        }
-//        throw new UnsupportedOperationException("Error: attempt to or logic a " + this.__type + " with a " + o.__type);
     }
 
     public __VALUE__ __unary_minus__() {
@@ -2792,17 +2320,6 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to unm a " + this.__type);
-
-
-//        if (this.__type == __TYPE__.INTEGER) {
-//            return new __VALUE__((this.__intVal * -1));
-//        }
-//
-//        if (this.__type == __TYPE__.FLOAT) {
-//            return new __VALUE__((this.__floatVal * -1));
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to unm a " + this.__type);
     }
 
     public __VALUE__ __not__() {
@@ -2819,11 +2336,6 @@ public class __VALUE__ {
             }
         }
         return new __VALUE__(false);
-
-
-//        if (this.__type == NIL) return new __VALUE__(true);
-//        if (this.__type == BOOLEAN) return new __VALUE__(!this.__bVal);
-//        return new __VALUE__(false);
     }
 
     public __VALUE__ __len__() {
@@ -2841,19 +2353,7 @@ public class __VALUE__ {
         }
 
         throw new UnsupportedOperationException("Error: attempt to get length of a " + this.__type + " value");
-
-//        if (this.__type == STRING) {
-//            return new __VALUE__(this.__sVal.length());
-//        }
-//
-//        if (this.__type == TABLE) {
-//            return new __VALUE__(this.__aVal.size());
-//        }
-//
-//        throw new UnsupportedOperationException("Error: attempt to get length of a " + this.__type + " value");
     }
-
-    // TODO: getByKey, append с ключем и без
 
     private int lastIntKey = 0;
 
@@ -2870,7 +2370,7 @@ public class __VALUE__ {
             __tableVal.put(new __VALUE__(++lastIntKey), value);
             return;
         }
-        throw new UnsupportedOperationException("Error");
+        throw new UnsupportedOperationException("Error"); //FIXME изменить ошибку
     }
 
     public __VALUE__ __invoke__(ArrayList<__VALUE__> args) {
@@ -2979,8 +2479,10 @@ public class __VALUE__ {
     }
 
     public __VALUE__ getByKey(__VALUE__ key) {
-        return __tableVal.get(key);
-        // TODO ошибки
+        if(__type == __TYPE__.TABLE) {
+            return __tableVal.get(key);
+        }
+        throw new UnsupportedOperationException("Error"); //FIXME изменить ошибку
     }
 
     public int __to_bool__() {
@@ -3042,7 +2544,11 @@ public class __VALUE__ {
     }
 
     public static void setmetatable(__VALUE__ t, __VALUE__ mt) {
-        // TODO
+        if(t.__type == __TYPE__.TABLE && mt.__type == __TYPE__.TABLE) {
+            t.__metatable = mt.__tableVal;
+            return;
+        }
+        throw new UnsupportedOperationException("Error"); //FIXME изменить ошибку
     }
 
     public static void print(ArrayList<__VALUE__> value) {
@@ -3080,8 +2586,13 @@ public class __VALUE__ {
             List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(false), new __VALUE__(e.getMessage()));
             return new __VALUE__(listParameters);
         }
-        //TODO при войде не выводится значение функции
-        List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(true), result);
+        List<__VALUE__> listParameters;
+        if(result.__type == __TYPE__.VOID) {
+            listParameters = new ArrayList<>();
+            listParameters.add(new __VALUE__(true));
+            return new __VALUE__(listParameters);
+        }
+        listParameters = Arrays.asList(new __VALUE__(true), result);
         return new __VALUE__(listParameters);
     }
 
@@ -3093,17 +2604,23 @@ public class __VALUE__ {
             ArrayList<__VALUE__> parameter = new ArrayList<>();
             parameter.add(new __VALUE__(e.getMessage()));
             __VALUE__ resultError = errorFunc.__invoke__(parameter);
-            //TODO при войде выводится nil
+            if(resultError.__type == __TYPE__.VOID) {
+                resultError.__type = __TYPE__.NIL;
+            }
             List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(false), resultError);
             return new __VALUE__(listParameters);
         }
-        //TODO при войде не выводится значение функции
-        List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(true), result);
+        List<__VALUE__> listParameters;
+        if(result.__type == __TYPE__.VOID) {
+            listParameters = new ArrayList<>();
+            listParameters.add(new __VALUE__(true));
+            return new __VALUE__(listParameters);
+        }
+        listParameters = Arrays.asList(new __VALUE__(true), result);
         return new __VALUE__(listParameters);
     }
 
-    //TODO переименовать
-    private __VALUE__ name(__VALUE__ o, String nameFunction) {
+    private __VALUE__ metatableFunc(__VALUE__ o, String nameFunction) {
         if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__(nameFunction))) {
             __VALUE__ res = o.__metatable.get(new __VALUE__(nameFunction)).__invoke__(new ArrayList<>(List.of(this, o)));
             if (res.__type == __TYPE__.SEQ)
@@ -3111,6 +2628,6 @@ public class __VALUE__ {
             else
                 return res;
         }
-        throw new UnsupportedOperationException("");
+        throw new UnsupportedOperationException(""); //FIXME изменить ошибку
     }
 }
