@@ -401,7 +401,9 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             )
 
             currentClass.pushMethRef("__VALUE__", "<init>", "()V")
+            currentClass.pushMethRef("__VALUE__", "voidVal", "()L__VALUE__;")
             funClass.pushMethRef("__VALUE__", "<init>", "()V")
+            funClass.pushMethRef("__VALUE__", "voidVal", "()L__VALUE__;")
             currentClass.pushMethRef("__VALUE__", "<init>", "(L__FUN__;)V")
             currentClass.pushMethRef("__FUN__", "<init>", "()V")
             currentClass.pushMethRef("__${stmtNode.ident}__${stmtNode.id}", "<init>", "()V")
@@ -474,6 +476,9 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/util/List;)V")
             stmtNode.values?.let {
                 fillTables(stmtNode.values!!, currentClass)
+            }
+            if(stmtNode.values == null) {
+                currentClass.pushMethRef("__VALUE__", "voidVal", "()L__VALUE__;")
             }
         }
         else -> {}

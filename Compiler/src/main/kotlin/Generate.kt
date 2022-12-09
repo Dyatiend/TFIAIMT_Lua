@@ -383,12 +383,13 @@ private fun generateFun(stmtNode: StmtNode) {
     code += generate(stmtNode.actionBlock!!, classModel)
 
     // Return Nil по умолчанию, если нет другого ретурна раньше
-    code += byteArrayOf(0xBB.toByte()) // NEW
-    code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
-    code += byteArrayOf(0x59) // dub
+//    code += byteArrayOf(0xBB.toByte()) // NEW
+//    code += classModel.pushConstant(Constant._class(classModel.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+//    code += byteArrayOf(0x59) // dub
 
-    code += byteArrayOf(0xB7.toByte()) // invokespecial
-    code += classModel.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+//    code += byteArrayOf(0xB7.toByte()) // invokespecial
+    code += byteArrayOf(0xB8.toByte()) // invokestatic
+    code += classModel.pushMethRef("__VALUE__", "voidVal", "()L__VALUE__;").to2ByteArray() // MethodRef VALUE Init
 
     code += 0xB0.toByte() // areturn
 
@@ -997,12 +998,14 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
             if (stmtNode.values == null) {
                 var res = byteArrayOf()
 
-                res += byteArrayOf(0xBB.toByte()) // NEW
-                res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
-                res += byteArrayOf(0x59) // dub
+//                res += byteArrayOf(0xBB.toByte()) // NEW
+//                res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
+//                res += byteArrayOf(0x59) // dub
 
-                res += byteArrayOf(0xB7.toByte()) // invokespecial
-                res += currentClass.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+//                res += byteArrayOf(0xB7.toByte()) // invokespecial
+//                res += currentClass.pushMethRef("__VALUE__", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+                res += byteArrayOf(0xB8.toByte()) // invokestatic
+                res += currentClass.pushMethRef("__VALUE__", "voidVal", "()L__VALUE__;").to2ByteArray() // MethodRef VALUE Init
 
                 res += 0xB0.toByte() // areturn
 
