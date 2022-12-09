@@ -437,7 +437,9 @@ private fun generate(stmtSeqNode: StmtSeqNode, currentClass: ClassModel): ByteAr
 private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
     when (stmtNode.type) {
         StmtType.FUNCTION_CALL -> {
-            return generate(stmtNode.functionCall!!, currentClass)
+            var res = generate(stmtNode.functionCall!!, currentClass)
+            res += byteArrayOf(0x57) // POP result
+            return res
         }
         StmtType.UNINITIALIZED -> { // elseif
             val condition = generate(stmtNode.conditionExpr!!, currentClass)
@@ -996,6 +998,42 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
             return res
         }
         StmtType.RETURN -> {
+            if (currentClass.name == "__PROGRAM__") {
+                if (stmtNode.values == null) {
+                    return byteArrayOf(0xB1.toByte()) // return
+                }
+                else {
+                    var res = byteArrayOf()
+
+                    res += byteArrayOf(0xBB.toByte()) // NEW
+                    res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList")))).to2ByteArray()
+                    res += byteArrayOf(0x59) // dub
+
+                    res += byteArrayOf(0xB7.toByte()) // invokespecial
+                    res += currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                    var current: ExprNode? = stmtNode.values!!.first
+                    while (current != null) {
+                        res += byteArrayOf(0x59) // dub
+
+                        res += generate(current!!, currentClass)
+
+                        res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                        res += currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z").to2ByteArray()
+
+                        res += byteArrayOf(0x57) // POP add result
+
+                        current = current!!.next
+                    }
+
+                    res += byteArrayOf(0xB8.toByte()) // invokestatic
+                    res += currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)L__VALUE__;").to2ByteArray()
+
+                    res += byteArrayOf(0xB1.toByte()) // return
+                    return res
+                }
+            }
+
             if (stmtNode.values == null) {
                 var res = byteArrayOf()
 
@@ -1188,7 +1226,7 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                     }
 
                     res += byteArrayOf(0xB8.toByte()) // invokestatic
-                    res += currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)V").to2ByteArray()
+                    res += currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)L__VALUE__;").to2ByteArray()
                     return res
                 }
                 "read" -> {
@@ -1325,7 +1363,7 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                     }
 
                     res += byteArrayOf(0xB6.toByte()) // invokevirtual
-                    res += currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;)V").to2ByteArray()
+                    res += currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
 
                     return res
                 }
@@ -1345,7 +1383,7 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                     }
 
                     res += byteArrayOf(0xB8.toByte()) // invokestatic
-                    res += currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)V").to2ByteArray()
+                    res += currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)L__VALUE__;").to2ByteArray()
 
                     return res
                 }

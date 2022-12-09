@@ -1,3 +1,3 @@
-for i = "1", "10", "2.5" do
-    print (i)
-end
+a = print(1)
+b = a + 1
+print(b)

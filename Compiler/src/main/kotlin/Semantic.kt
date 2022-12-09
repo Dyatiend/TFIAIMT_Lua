@@ -318,7 +318,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                     currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
                     currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
                     currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
-                    currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)V")
+                    currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "read" -> {
                     currentClass.pushMethRef("__VALUE__", "read", "()L__VALUE__;")
@@ -336,10 +336,10 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                     currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "append" -> {
-                    currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;L__VALUE__;)V")
+                    currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;)L__VALUE__;")
                 }
                 "setmetatable" -> {
-                    currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)V")
+                    currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)L__VALUE__;")
                 }
                 else -> {
                     currentClass.pushConstant(Constant.utf8(stmtNode.functionCall!!.ident))
@@ -525,7 +525,7 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
                 "print" -> {
                     currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
                     currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
-                    currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)V")
+                    currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "read" -> {
                     currentClass.pushMethRef("__VALUE__", "read", "()L__VALUE__;")
@@ -549,10 +549,10 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
                     currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "append" -> {
-                    currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;L__VALUE__;)V")
+                    currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;)L__VALUE__;")
                 }
                 "setmetatable" -> {
-                    currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)V")
+                    currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)L__VALUE__;")
                 }
                 else -> {
                     currentClass.pushConstant(Constant.utf8(exprNode.ident))

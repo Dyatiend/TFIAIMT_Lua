@@ -2365,10 +2365,10 @@ public class __VALUE__ {
         __tableVal.put(key, value);
     }
 
-    public void __append__(__VALUE__ value) {
+    public __VALUE__ __append__(__VALUE__ value) {
         if(__type == __TYPE__.TABLE) {
             __tableVal.put(new __VALUE__(++lastIntKey), value);
-            return;
+            return voidVal();
         }
         throw new UnsupportedOperationException("Error: bad argument to 'insert' (table expected, got " + this.__type + ")");
     }
@@ -2557,10 +2557,11 @@ public class __VALUE__ {
         return "";
     }
 
-    public static void setmetatable(__VALUE__ t, __VALUE__ mt) {
+    public static __VALUE__ setmetatable(__VALUE__ t, __VALUE__ mt) {
         if(t.__type == __TYPE__.TABLE) {
             if(mt.__type == __TYPE__.TABLE || mt.__type == __TYPE__.NIL) {
                 t.__metatable = mt.__tableVal;
+                return t;
             }
             else {
                 throw new UnsupportedOperationException("Error: bad argument #2 to 'setmetatable' (nil or table expected)");
@@ -2571,13 +2572,14 @@ public class __VALUE__ {
         }
     }
 
-    public static void print(ArrayList<__VALUE__> value) {
+    public static __VALUE__ print(ArrayList<__VALUE__> value) {
         StringBuilder res = new StringBuilder();
         for (var v: value) {
             res.append(v.toSString()).append("\t");
         }
 
         System.out.println(res);
+        return voidVal();
     }
 
     public static __VALUE__ read() {
