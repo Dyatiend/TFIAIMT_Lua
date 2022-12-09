@@ -1,5 +1,18 @@
-a = {}
+function t()
+    print(1)
+    return true
+end
 
-append(a, 6)
+function f()
+    print(2)
+    return false
+end
 
-print(#a)
+a = f() and t()
+
+print("------")
+
+b = t() or f()
+
+print(a)
+print(b)

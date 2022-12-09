@@ -1143,17 +1143,13 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
         ExprType.POW,
         ExprType.XOR,
         ExprType.MOD,
-        ExprType.BIT_AND,
-        ExprType.BIT_OR,
         ExprType.CONCAT,
         ExprType.LESS,
         ExprType.LE,
         ExprType.GREATER,
         ExprType.GE,
         ExprType.EQUAL,
-        ExprType.NOT_EQUAL,
-        ExprType.LOG_AND,
-        ExprType.LOG_OR -> {
+        ExprType.NOT_EQUAL -> {
             var res = byteArrayOf()
 
             res += generate(exprNode.firstOperand!!, currentClass)
@@ -1162,6 +1158,48 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             res += byteArrayOf(0xB6.toByte()) // invokevirtual
             res += currentClass.pushMethRef("__VALUE__", exprNode.type.getMethod(), "(L__VALUE__;)L__VALUE__;").to2ByteArray()
             return res
+        }
+        ExprType.LOG_AND -> {
+            var res = byteArrayOf()
+
+            val second = generate(exprNode.secondOperand!!, currentClass)
+
+            res += generate(exprNode.firstOperand!!, currentClass)
+            res += byteArrayOf(0x59) // dub
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I").to2ByteArray()
+
+            res += byteArrayOf(0x99.toByte()) // ifeq
+            res += (second.size + 6).to2ByteArray()
+
+            res += second
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", exprNode.type.getMethod(), "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+
+            return res
+        }
+        ExprType.LOG_OR -> {
+            var res = byteArrayOf()
+
+            val second = generate(exprNode.secondOperand!!, currentClass)
+
+            res += generate(exprNode.firstOperand!!, currentClass)
+            res += byteArrayOf(0x59) // dub
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I").to2ByteArray()
+
+            res += byteArrayOf(0x9A.toByte()) // ifne
+            res += (second.size + 6).to2ByteArray()
+
+            res += second
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", exprNode.type.getMethod(), "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+
+            return res
+        }
+        ExprType.BIT_AND,
+        ExprType.BIT_OR -> {
+            TODO("НЕ ДЕЛАЕМ")
         }
         ExprType.UNARY_MINUS,
         ExprType.NOT,
