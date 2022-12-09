@@ -2370,7 +2370,7 @@ public class __VALUE__ {
             __tableVal.put(new __VALUE__(++lastIntKey), value);
             return;
         }
-        throw new UnsupportedOperationException("Error"); //FIXME изменить ошибку
+        throw new UnsupportedOperationException("Error: bad argument to 'insert' (table expected, got " + this.__type + ")");
     }
 
     public __VALUE__ __invoke__(ArrayList<__VALUE__> args) {
@@ -2482,7 +2482,10 @@ public class __VALUE__ {
         if(__type == __TYPE__.TABLE) {
             return __tableVal.get(key);
         }
-        throw new UnsupportedOperationException("Error"); //FIXME изменить ошибку
+        if(__type == __TYPE__.STRING) {
+            return new __VALUE__();
+        }
+        throw new UnsupportedOperationException("Error: attempt to index of a "+this.__type+" value");
     }
 
     public int __to_bool__() {
@@ -2544,11 +2547,17 @@ public class __VALUE__ {
     }
 
     public static void setmetatable(__VALUE__ t, __VALUE__ mt) {
-        if(t.__type == __TYPE__.TABLE && mt.__type == __TYPE__.TABLE) {
-            t.__metatable = mt.__tableVal;
-            return;
+        if(t.__type == __TYPE__.TABLE) {
+            if(mt.__type == __TYPE__.TABLE || mt.__type == __TYPE__.NIL) {
+                t.__metatable = mt.__tableVal;
+            }
+            else {
+                throw new UnsupportedOperationException("Error: bad argument #2 to 'setmetatable' (nil or table expected)");
+            }
         }
-        throw new UnsupportedOperationException("Error"); //FIXME изменить ошибку
+        else {
+            throw new UnsupportedOperationException("Error: bad argument #1 to 'setmetatable' (table expected, got "+t.__type+")");
+        }
     }
 
     public static void print(ArrayList<__VALUE__> value) {
@@ -2628,6 +2637,6 @@ public class __VALUE__ {
             else
                 return res;
         }
-        throw new UnsupportedOperationException(""); //FIXME изменить ошибку
+        throw new UnsupportedOperationException("Error: attempt to perform arithmetic on a table value");
     }
 }
