@@ -446,7 +446,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             currentClass.pushMethRef("__VALUE__", "__add__", "(L__VALUE__;)L__VALUE__;")
             currentClass.pushMethRef("__VALUE__", "needJmp", "(L__VALUE__;)I")
             currentClass.pushMethRef("__VALUE__", "isZero", "()V")
-            currentClass.pushMethRef("__VALUE__", "isLessThanZero", "()V")
+            currentClass.pushMethRef("__VALUE__", "isLessThanZero", "()I")
             currentClass.pushConstant(Constant.utf8(stmtNode.ident))
             currentClass.pushLocalVar(
                 Pair(stmtNode.actionBlock!!.startID, stmtNode.actionBlock!!.lastID),

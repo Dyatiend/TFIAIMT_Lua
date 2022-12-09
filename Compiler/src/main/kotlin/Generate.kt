@@ -793,18 +793,19 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
 
             val action = generate(stmtNode.actionBlock!!, currentClass)
 
-            val init = generate(stmtNode.initialValue!!, currentClass)
-            val limit = generate(stmtNode.conditionExpr!!, currentClass)
+            var init = generate(stmtNode.initialValue!!, currentClass)
+            init += byteArrayOf(0x59) // dub
+            init += byteArrayOf(0xB6.toByte()) // invokevirtual
+            init += currentClass.pushMethRef("__VALUE__", "checkNumber", "()V").to2ByteArray()
+
+            var limit = generate(stmtNode.conditionExpr!!, currentClass)
+            limit += byteArrayOf(0x59) // dub
+            limit += byteArrayOf(0xB6.toByte()) // invokevirtual
+            limit += currentClass.pushMethRef("__VALUE__", "checkNumber", "()V").to2ByteArray()
 
             res += init
-            res += byteArrayOf(0x59) // dub
-            res += byteArrayOf(0xB6.toByte()) // invokevirtual
-            res += currentClass.pushMethRef("__VALUE__", "checkNumber", "()V").to2ByteArray()
 
             res += limit
-            res += byteArrayOf(0x59) // dub
-            res += byteArrayOf(0xB6.toByte()) // invokevirtual
-            res += currentClass.pushMethRef("__VALUE__", "checkNumber", "()V").to2ByteArray()
 
             res += byteArrayOf(0xB6.toByte()) // invokevirtual
             res += currentClass.pushMethRef("__VALUE__", "needJmp", "(L__VALUE__;)I").to2ByteArray()

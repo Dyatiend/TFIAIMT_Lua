@@ -2409,6 +2409,17 @@ public class __VALUE__ {
     public void checkNumber() {
         if(__type == __TYPE__.INTEGER || __type == __TYPE__.FLOAT)
             return;
+        if(__type == __TYPE__.STRING) {
+            try {
+                float f = Float.parseFloat(__stringVal);
+                __type = __TYPE__.FLOAT;
+                __floatVal = f;
+                __stringVal = "";
+                return;
+            } catch (NumberFormatException e) {
+
+            }
+        }
         throw new IllegalArgumentException("bad 'for' argument (number expected, got " + __type + ")");
     }
 
