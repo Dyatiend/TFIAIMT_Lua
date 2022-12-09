@@ -1,3 +1,5 @@
-a = print(1)
-b = a + 1
-print(b)
+a = {}
+
+append(a, 6)
+
+print(#a)

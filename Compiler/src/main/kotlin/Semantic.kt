@@ -336,7 +336,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                     currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "append" -> {
-                    currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;)L__VALUE__;")
+                    currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)L__VALUE__;")
                 }
                 "setmetatable" -> {
                     currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)L__VALUE__;")
@@ -549,7 +549,7 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
                     currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "append" -> {
-                    currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;)L__VALUE__;")
+                    currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)L__VALUE__;")
                 }
                 "setmetatable" -> {
                     currentClass.pushMethRef("__VALUE__", "setmetatable", "(L__VALUE__;L__VALUE__;)L__VALUE__;")

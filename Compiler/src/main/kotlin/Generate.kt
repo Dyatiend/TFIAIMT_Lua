@@ -1363,7 +1363,7 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                     }
 
                     res += byteArrayOf(0xB6.toByte()) // invokevirtual
-                    res += currentClass.pushMethRef("__VALUE__", "append", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+                    res += currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
 
                     return res
                 }
