@@ -1,6 +1,11 @@
-var
-_var
-var123
-123var
-var_v123
-var_123
+local a = 1
+
+function f2()
+    a = 1
+    -- print(a)
+    return a
+end
+
+f2()
+
+print(a)

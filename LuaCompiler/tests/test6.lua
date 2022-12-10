@@ -1,29 +1,20 @@
-3
-456
-0xff
-0xABFFF
-3.
-.33
-.33e7
-3.0
-3.1415
-31.23e2
-32.3123e-4
-3E1
-0x0.1P2
-0xA23p-4
-0X1.921FB54442D18P+1
+function f(a, b)
+    print(a, b)
+end
 
-0X.1
-0x.1p5
-0x1.
-0x1.p1
+function f1(a, b, ...)
+    c = ...
+    d = ...
+    print(a, b, c, d)
+    return nil
+end
 
-1e
-1.e
-.1e
-1.1e
-0X1p
-0x1.p
-0x.1p
-0x1.1p
+f(10, 2)
+
+f(1)
+
+f()
+
+print(f(1,2))
+
+print(f1(1,2, 3, 4, 5))

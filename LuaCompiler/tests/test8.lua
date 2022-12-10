@@ -1,4 +1,10 @@
-list = {6, 5, 4, 3, 2, 1}
+count = read()
+list = {}
+for i=1, count do
+    append(list, read())
+    -- list[i] = read()
+end
+-- list = {6, 5, 4, 3, 2, 1}
 n = #list
 repeat
     nn = 0

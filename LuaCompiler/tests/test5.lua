@@ -1,52 +1,21 @@
---[[jajaaj
-jajaaj
-jajaaj
-]]
+function enum(tbl)
+    local length = #tbl
+    for i = 1, length do
+        local v = tbl[i]
+        tbl[v] = i
+    end
 
--- Comment1
---Comme[[nt2&^%$#
+    return tbl
+end
 
---[[
-Multiline
-comment
---]]
+Colors = enum {
+   "BLUE",
+   "GREEN",
+   "RED",
+   "VIOLET",
+   "YELLOW",
+}
 
---[[
-Multiline
-//
-*+-23432
-%^34
-~#$
-comment
---]]
-
---[[
-Multiline
-comment
-]]
-
---[=[
-Multiline
-comment
-]]
-]=]
-
---[===[
-Multiline
-comment
-]==] ]] ]=]
-]===]
-
---[[
-asdasdadas
-asdasdadas
-]] a = 1
-
---[=[asd]=] --[[asdasd]]
-
---[===[
-a]====]a
-]===]
-
---[[
-asd
+-- finally, get our integer from the enum!
+local color = Colors.RED
+print(color)

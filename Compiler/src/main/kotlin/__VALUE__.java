@@ -1670,7 +1670,7 @@ public class __VALUE__ {
                     case INTEGER -> {
                         return new __VALUE__(__intVal < o.__intVal);
                     }
-                    case FLOAT -> { //TODO ПРОВЕРИТЬ СРАВНЕНИЕ ФЛОАТОВ
+                    case FLOAT -> {
                         return new __VALUE__(__intVal < o.__floatVal);
                     }
                     case TABLE -> {
@@ -1834,7 +1834,7 @@ public class __VALUE__ {
                     case INTEGER -> {
                         return new __VALUE__(__intVal == o.__intVal);
                     }
-                    case FLOAT -> { //TODO ПРОВЕРИТЬ СРАВНЕНИЕ ФЛОАТОВ
+                    case FLOAT -> {
                         return new __VALUE__(__intVal == o.__floatVal);
                     }
                     case BOOL, NIL, VOID, STRING, TABLE, FUNC -> {
@@ -1850,7 +1850,7 @@ public class __VALUE__ {
                     case INTEGER -> {
                         return new __VALUE__(__floatVal == o.__intVal);
                     }
-                    case FLOAT -> { //TODO ПРОВЕРИТЬ СРАВНЕНИЕ ФЛОАТОВ
+                    case FLOAT -> {
                         return new __VALUE__(__floatVal == o.__floatVal);
                     }
                     case BOOL, NIL, VOID, STRING, TABLE, FUNC -> {
@@ -1880,7 +1880,7 @@ public class __VALUE__ {
                         return __eql__(o.__seqVal.get(0));
                     }
                     case TABLE -> {
-                        return new __VALUE__(this == o); //TODO Проверить
+                        return new __VALUE__(this == o);
                     }
                     case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         return new __VALUE__(false);
@@ -1912,7 +1912,6 @@ public class __VALUE__ {
     }
 
     public __VALUE__ __logic_and__(__VALUE__ o) {
-        //TODO При ложном первом аргументе второй не делать
         switch (__type) {
             case NIL -> {
                 switch (o.__type) {
@@ -2087,10 +2086,10 @@ public class __VALUE__ {
             case SEQ -> {
                 switch (o.__type) {
                     case INTEGER, FLOAT, STRING, TABLE, NIL, VOID, BOOL, FUNC -> {
-                        return __seqVal.get(0).__eql__(o);
+                        return __seqVal.get(0).__logic_and__(o);
                     }
                     case SEQ -> {
-                        return __seqVal.get(0).__eql__(o.__seqVal.get(0));
+                        return __seqVal.get(0).__logic_and__(o.__seqVal.get(0));
                     }
                 }
             }
@@ -2135,7 +2134,7 @@ public class __VALUE__ {
                         return new __VALUE__(o.__funVal);
                     }
                     case SEQ -> {
-                        return __logic_and__(o.__seqVal.get(0));
+                        return __logic_or__(o.__seqVal.get(0));
                     }
                 }
             }
@@ -2160,7 +2159,7 @@ public class __VALUE__ {
                         return new __VALUE__(o.__tableVal);
                     }
                     case SEQ -> {
-                        return __logic_and__(o.__seqVal.get(0));
+                        return __logic_or__(o.__seqVal.get(0));
                     }
                 }
             }
@@ -2185,7 +2184,7 @@ public class __VALUE__ {
                         return new __VALUE__(o.__tableVal);
                     }
                     case SEQ -> {
-                        return __logic_and__(o.__seqVal.get(0));
+                        return __logic_or__(o.__seqVal.get(0));
                     }
                 }
             }
@@ -2209,7 +2208,7 @@ public class __VALUE__ {
                         }
                     }
                     case BOOL -> {
-                        return new __VALUE__(__boolVal && o.__boolVal);
+                        return new __VALUE__(__boolVal || o.__boolVal);
                     }
                     case STRING -> {
                         if(__boolVal) {
@@ -2226,7 +2225,7 @@ public class __VALUE__ {
                         }
                     }
                     case SEQ -> {
-                        return __logic_and__(o.__seqVal.get(0));
+                        return __logic_or__(o.__seqVal.get(0));
                     }
                 }
             }
@@ -2251,7 +2250,7 @@ public class __VALUE__ {
                         return new __VALUE__(o.__tableVal);
                     }
                     case SEQ -> {
-                        return __logic_and__(o.__seqVal.get(0));
+                        return __logic_or__(o.__seqVal.get(0));
                     }
                 }
             }
@@ -2276,17 +2275,17 @@ public class __VALUE__ {
                         return new __VALUE__(o.__tableVal);
                     }
                     case SEQ -> {
-                        return __logic_and__(o.__seqVal.get(0));
+                        return __logic_or__(o.__seqVal.get(0));
                     }
                 }
             }
             case SEQ -> {
                 switch (o.__type) {
                     case INTEGER, FLOAT, STRING, TABLE, NIL, VOID, BOOL, FUNC -> {
-                        return __seqVal.get(0).__eql__(o);
+                        return __seqVal.get(0).__logic_or__(o);
                     }
                     case SEQ -> {
-                        return __seqVal.get(0).__eql__(o.__seqVal.get(0));
+                        return __seqVal.get(0).__logic_or__(o.__seqVal.get(0));
                     }
                 }
             }
@@ -2296,7 +2295,7 @@ public class __VALUE__ {
                         return new __VALUE__();
                     }
                     case SEQ -> {
-                        return __logic_and__(o.__seqVal.get(0));
+                        return __logic_or__(o.__seqVal.get(0));
                     }
                 }
             }
