@@ -1,11 +1,11 @@
-local a = 1
-
-function f2()
-    a = 1
-    -- print(a)
-    return a
+if true then
+    a = 3
+    local a = 1
+    if true then
+        a = 2
+        print(a)
+    end
+    print(a)
 end
-
-f2()
 
 print(a)

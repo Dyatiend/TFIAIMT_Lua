@@ -1,23 +1,19 @@
--- globals.lua
--- show all global variables
+d = read()
 
-local seen={}
-
-function dump(t,i)
-	seen[t]=true
-	local s={}
-	local n=0
-	for k in pairs(t) do
-		n=n+1 s[n]=k
+if d == "asd" then 
+	function f()
+		print(3)
 	end
-	sort(s)
-	for k,v in ipairs(s) do
-		print(i,v)
-		v=t[v]
-		if type(v)=="table" and not seen[v] then
-			dump(v,i.."\t")
-		end
+else
+	function f()
+		print(2)
 	end
 end
 
-dump(_G,"")
+f()
+
+function f()
+	print(1)
+end
+
+f()

@@ -2357,11 +2357,15 @@ public class __VALUE__ {
     private int lastIntKey = 0;
 
     public void __append__(__VALUE__ key, __VALUE__ value) {
-        if (key.__type == __TYPE__.INTEGER
-                && key.__intVal > lastIntKey) {
-            lastIntKey = key.__intVal;
+        if(__type == __TYPE__.TABLE) {
+            if (key.__type == __TYPE__.INTEGER
+                    && key.__intVal > lastIntKey) {
+                lastIntKey = key.__intVal;
+            }
+            __tableVal.put(key, value);
+            return;
         }
-        __tableVal.put(key, value);
+        throw new UnsupportedOperationException("Error: bad argument to 'insert' (table expected, got " + this.__type + ")");
     }
 
     public __VALUE__ __append__(__VALUE__ value) {
