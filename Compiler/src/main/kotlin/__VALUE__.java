@@ -152,7 +152,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__add");
+                        return this.metatableFunc(o, "__add");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -179,7 +179,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__add");
+                            return this.metatableFunc(o, "__add");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -209,7 +209,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__add");
+                            return this.metatableFunc(o, "__add");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -263,7 +263,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__add");
+                            return this.metatableFunc(o, "__add");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -274,9 +274,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__add"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__add")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -321,7 +330,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__sub");
+                        return this.metatableFunc(o, "__sub");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -347,7 +356,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__sub");
+                            return this.metatableFunc(o, "__sub");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -377,7 +386,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__sub");
+                            return this.metatableFunc(o, "__sub");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -431,7 +440,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__sub");
+                            return this.metatableFunc(o, "__sub");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -442,9 +451,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__sub"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__sub"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__sub")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -490,7 +508,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__mul");
+                        return this.metatableFunc(o, "__mul");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -516,7 +534,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__mul");
+                            return this.metatableFunc(o, "__mul");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -546,7 +564,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__mul");
+                            return this.metatableFunc(o, "__mul");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -600,7 +618,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__mul");
+                            return this.metatableFunc(o, "__mul");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -611,9 +629,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__mul"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__mul"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mul")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -658,7 +685,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__div");
+                        return this.metatableFunc(o, "__div");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -684,7 +711,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__div");
+                            return this.metatableFunc(o, "__div");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -714,7 +741,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__div");
+                            return this.metatableFunc(o, "__div");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -768,7 +795,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__div");
+                            return this.metatableFunc(o, "__div");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -779,9 +806,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__div"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__div"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__div")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -826,7 +862,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__idiv");
+                        return this.metatableFunc(o, "__idiv");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -852,7 +888,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__idiv");
+                            return this.metatableFunc(o, "__idiv");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -882,7 +918,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__idiv");
+                            return this.metatableFunc(o, "__idiv");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -936,7 +972,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__idiv");
+                            return this.metatableFunc(o, "__idiv");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -947,9 +983,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__idiv"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__idiv"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__idiv")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -994,7 +1039,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__pow");
+                        return this.metatableFunc(o, "__pow");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1020,7 +1065,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__pow");
+                            return this.metatableFunc(o, "__pow");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1050,7 +1095,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__pow");
+                            return this.metatableFunc(o, "__pow");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1104,7 +1149,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__pow");
+                            return this.metatableFunc(o, "__pow");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1115,9 +1160,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__pow"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__pow"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__pow")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1162,7 +1216,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__xor");
+                        return this.metatableFunc(o, "__bxor");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1194,7 +1248,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__xor");
+                            return this.metatableFunc(o, "__bxor");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1237,7 +1291,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__xor");
+                            return this.metatableFunc(o, "__bxor");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1311,7 +1365,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__xor");
+                            return this.metatableFunc(o, "__bxor");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1322,9 +1376,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
-                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__xor"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(new ArrayList<>(List.of(this, o)));
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__bxor"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__bxor")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__bxor"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__bxor")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1332,14 +1395,14 @@ public class __VALUE__ {
                         }
                     }
                     case TABLE -> {
-                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__xor"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__xor")).__invoke__(new ArrayList<>(List.of(this, o)));
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__bxor"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__bxor")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
                                 return res;
-                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__xor"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__xor")).__invoke__(new ArrayList<>(List.of(this, o)));
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__bxor"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__bxor")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1369,7 +1432,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__mod");
+                        return this.metatableFunc(o, "__mod");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1395,7 +1458,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__mod");
+                            return this.metatableFunc(o, "__mod");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1425,7 +1488,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__mod");
+                            return this.metatableFunc(o, "__mod");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1479,7 +1542,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__mod");
+                            return this.metatableFunc(o, "__mod");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1490,9 +1553,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__mod"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__mod"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__mod")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1537,7 +1609,7 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__concat");
+                        return this.metatableFunc(o, "__concat");
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1578,7 +1650,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__concat");
+                            return this.metatableFunc(o, "__concat");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1600,7 +1672,7 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__concat");
+                            return this.metatableFunc(o, "__concat");
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1611,9 +1683,18 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
                             __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
                             if (res.__type == __TYPE__.SEQ)
                                 return res.__seqVal.get(0);
                             else
@@ -1659,7 +1740,14 @@ public class __VALUE__ {
             case NIL, VOID, BOOL, FUNC -> {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
-                        this.metatableFunc(o, "__less");
+                        __VALUE__ res = this.metatableFunc(o, "__lt");
+                        if(res.__type == __TYPE__.NIL
+                                || res.__type == __TYPE__.VOID
+                                || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                            return new __VALUE__(false);
+                        } else {
+                            return new __VALUE__(true);
+                        }
                     } catch (UnsupportedOperationException ignored) {
                     }
                 }
@@ -1675,7 +1763,14 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__less");
+                            __VALUE__ res = this.metatableFunc(o, "__lt");
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1694,7 +1789,14 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__less");
+                            __VALUE__ res = this.metatableFunc(o, "__lt");
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1711,7 +1813,14 @@ public class __VALUE__ {
                     }
                     case TABLE -> {
                         try {
-                            this.metatableFunc(o, "__less");
+                            __VALUE__ res = this.metatableFunc(o, "__lt");
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
                         } catch (UnsupportedOperationException ignored) {
                         }
                     }
@@ -1722,28 +1831,57 @@ public class __VALUE__ {
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, SEQ, FUNC -> {
-                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__less"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__less")).__invoke__(new ArrayList<>(List.of(this, o)));
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__lt"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__lt")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__lt"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__lt")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
+                            if (res.__type == __TYPE__.SEQ)
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
                         }
                     }
                     case TABLE -> {
-                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__less"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__less")).__invoke__(new ArrayList<>(List.of(this, o)));
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__lt"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__lt")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
-                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__less"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__less")).__invoke__(new ArrayList<>(List.of(this, o)));
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__lt"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__lt")).__invoke__(new ArrayList<>(List.of(this, o)));
                             if (res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
                         }
                     }
                 }
@@ -1764,8 +1902,143 @@ public class __VALUE__ {
     }
 
     public __VALUE__ __less_or_eql__(__VALUE__ o) {
+        switch (__type) {
+            case NIL, VOID, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        __VALUE__ res = this.metatableFunc(o, "__le");
+                        if(res.__type == __TYPE__.NIL
+                                || res.__type == __TYPE__.VOID
+                                || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                            return new __VALUE__(false);
+                        } else {
+                            return new __VALUE__(true);
+                        }
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
+            }
+            case INTEGER -> {
+                switch (o.__type) {
+                    case TABLE -> {
+                        try {
+                            __VALUE__ res = this.metatableFunc(o, "__le");
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case TABLE -> {
+                        try {
+                            __VALUE__ res = this.metatableFunc(o, "__le");
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case TABLE -> {
+                        try {
+                            __VALUE__ res = this.metatableFunc(o, "__le");
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__le"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__le")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                res =  res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__le"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__le")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
+                            if (res.__type == __TYPE__.SEQ)
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__le"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__le")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__le"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__le")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__less_or_eql__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__less_or_eql__(o.__seqVal.get(0));
+                    }
+                }
+            }
+        }
         try {
-            return new __VALUE__(__eql__(o).__boolVal || __less__(o).__boolVal);
+            return new __VALUE__(!o.__less__(this).__boolVal);
         } catch (UnsupportedOperationException e) {
             throw new UnsupportedOperationException("Error: attempt to compare a " + this.__type + " with a " + o.__type);
         }
@@ -1880,7 +2153,33 @@ public class __VALUE__ {
                         return __eql__(o.__seqVal.get(0));
                     }
                     case TABLE -> {
-                        return new __VALUE__(this == o);
+                        if(this == o) {
+                            return new __VALUE__(true);
+                        }
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__eq"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__eq")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__eq"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__eq")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                res = res.__seqVal.get(0);
+                            if(res.__type == __TYPE__.NIL
+                                    || res.__type == __TYPE__.VOID
+                                    || res.__type == __TYPE__.BOOL && !res.__boolVal) {
+                                return new __VALUE__(false);
+                            } else {
+                                return new __VALUE__(true);
+                            }
+                        }
+                        return new __VALUE__(false);
                     }
                     case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
                         return new __VALUE__(false);
@@ -2344,6 +2643,13 @@ public class __VALUE__ {
                 return new __VALUE__(this.__stringVal.length());
             }
             case TABLE -> {
+                if (__metatable != null && __metatable.containsKey(new __VALUE__("__len"))) {
+                    __VALUE__ res = __metatable.get(new __VALUE__("__len")).__invoke__(new ArrayList<>(List.of(this, this)));
+                    if (res.__type == __TYPE__.SEQ)
+                        return res.__seqVal.get(0);
+                    else
+                        return res;
+                }
                 return new __VALUE__(this.__tableVal.size());
             }
             case SEQ -> {
@@ -2358,11 +2664,32 @@ public class __VALUE__ {
 
     public void __append__(__VALUE__ key, __VALUE__ value) {
         if(__type == __TYPE__.TABLE) {
-            if (key.__type == __TYPE__.INTEGER
-                    && key.__intVal > lastIntKey) {
-                lastIntKey = key.__intVal;
+            if(key.__type == __TYPE__.SEQ)
+                key = key.__seqVal.get(0);
+
+            if(__tableVal.containsKey(key)) {
+                if (key.__type == __TYPE__.INTEGER
+                        && key.__intVal > lastIntKey) {
+                    lastIntKey = key.__intVal;
+                }
+                __tableVal.put(key, value);
+            } else {
+                if (__metatable != null && __metatable.containsKey(new __VALUE__("__newindex"))) {
+                    if(__metatable.get(new __VALUE__("__newindex")).__type == __TYPE__.FUNC) {
+                        __metatable.get(new __VALUE__("__newindex")).__invoke__(new ArrayList<>(List.of(this, key, value)));
+                        return;
+                    }
+                    else if(__metatable.get(new __VALUE__("__newindex")).__type == __TYPE__.TABLE) {
+                        __metatable.get(new __VALUE__("__newindex")).__append__(key, value);
+                        return;
+                    }
+                }
+                if (key.__type == __TYPE__.INTEGER
+                        && key.__intVal > lastIntKey) {
+                    lastIntKey = key.__intVal;
+                }
+                __tableVal.put(key, value);
             }
-            __tableVal.put(key, value);
             return;
         }
         throw new UnsupportedOperationException("Error: bad argument to 'insert' (table expected, got " + this.__type + ")");
@@ -2379,6 +2706,18 @@ public class __VALUE__ {
     public __VALUE__ __invoke__(ArrayList<__VALUE__> args) {
         if (__type == __TYPE__.FUNC) {
             return __funVal.invoke(args);
+        } else if(__type == __TYPE__.TABLE) {
+            if (__metatable != null && __metatable.containsKey(new __VALUE__("__call"))) {
+                ArrayList<__VALUE__> parameters = new ArrayList<>();
+                parameters.add(this);
+                parameters.addAll(args);
+                __VALUE__ res = __metatable.get(new __VALUE__("__call")).__invoke__(parameters);
+                if (res.__type == __TYPE__.SEQ)
+                    return res.__seqVal.get(0);
+                else
+                    return res;
+            }
+            throw new UnsupportedOperationException("Error: attempt to invoke of a table value");
         } else {
             throw new UnsupportedOperationException("Error: attempt to invoke of a " + this.__type + " value");
         }
@@ -2564,10 +2903,34 @@ public class __VALUE__ {
 
     public __VALUE__ getByKey(__VALUE__ key) {
         if(__type == __TYPE__.TABLE) {
-            if(__tableVal.containsKey(key))
-                return __tableVal.get(key);
-            else
+            if(key.__type == __TYPE__.SEQ)
+                key = key.__seqVal.get(0);
+
+            if(__tableVal.containsKey(key)) {
+                __VALUE__ value = __tableVal.get(key);
+                if (value.__type == __TYPE__.SEQ)
+                    return value.__seqVal.get(0);
+                else
+                    return value;
+            }
+            else {
+                if (__metatable != null && __metatable.containsKey(new __VALUE__("__index"))) {
+                    if(__metatable.get(new __VALUE__("__index")).__type == __TYPE__.FUNC) {
+                        __VALUE__ res = __metatable.get(new __VALUE__("__index")).__invoke__(new ArrayList<>(List.of(this, key)));
+                        if (res.__type == __TYPE__.SEQ)
+                            return res.__seqVal.get(0);
+                        else
+                            return res;
+                    } else if(__metatable.get(new __VALUE__("__index")).__type == __TYPE__.TABLE) {
+                        __VALUE__ res = __metatable.get(new __VALUE__("__index")).getByKey(key);
+                        if (res.__type == __TYPE__.SEQ)
+                            return res.__seqVal.get(0);
+                        else
+                            return res;
+                    }
+                }
                 return new __VALUE__();
+            }
         }
         if(__type == __TYPE__.STRING) {
             return new __VALUE__();
