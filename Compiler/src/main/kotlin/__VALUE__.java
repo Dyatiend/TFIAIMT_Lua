@@ -2411,9 +2411,6 @@ public class __VALUE__ {
         if(__type == __TYPE__.STRING) {
             try {
                 float f = Float.parseFloat(__stringVal);
-                __type = __TYPE__.FLOAT;
-                __floatVal = f;
-                __stringVal = "";
                 return;
             } catch (NumberFormatException e) {
 
@@ -2432,6 +2429,15 @@ public class __VALUE__ {
             if (__floatVal == 0)
                 throw new IllegalArgumentException("'for' step is zero");
         }
+        if(__type == __TYPE__.STRING) {
+            try {
+                float f = Float.parseFloat(__stringVal);
+                if (f == 0)
+                    throw new IllegalArgumentException("'for' step is zero");
+            } catch (NumberFormatException e) {
+
+            }
+        }
     }
 
     // Для цикла for
@@ -2445,6 +2451,16 @@ public class __VALUE__ {
             if (__floatVal < 0)
                 return 1;
             return 0;
+        }
+        if(__type == __TYPE__.STRING) {
+            try {
+                float f = Float.parseFloat(__stringVal);
+                if (f < 0)
+                    return 1;
+                return 0;
+            } catch (NumberFormatException e) {
+
+            }
         }
         throw new RuntimeException();
     }
@@ -2466,6 +2482,17 @@ public class __VALUE__ {
                         else
                             return 0;
                     }
+                    case STRING -> {
+                        try {
+                            float f2 = Float.parseFloat(o.__stringVal);
+                            if (__intVal <= f2)
+                                return 1;
+                            else
+                                return 0;
+                        } catch (NumberFormatException e) {
+
+                        }
+                    }
                 }
             }
             case FLOAT -> {
@@ -2482,6 +2509,49 @@ public class __VALUE__ {
                         else
                             return 0;
                     }
+                    case STRING -> {
+                        try {
+                            float f2 = Float.parseFloat(o.__stringVal);
+                            if (__floatVal <= f2)
+                                return 1;
+                            else
+                                return 0;
+                        } catch (NumberFormatException e) {
+
+                        }
+                    }
+                }
+            }
+            case STRING -> {
+                try {
+                    float f = Float.parseFloat(__stringVal);
+                    switch (o.__type) {
+                        case INTEGER -> {
+                            if (f <= o.__intVal)
+                                return 1;
+                            else
+                                return 0;
+                        }
+                        case FLOAT -> {
+                            if (f <= o.__floatVal)
+                                return 1;
+                            else
+                                return 0;
+                        }
+                        case STRING -> {
+                            try {
+                                float f2 = Float.parseFloat(o.__stringVal);
+                                if (f <= f2)
+                                    return 1;
+                                else
+                                    return 0;
+                            } catch (NumberFormatException e) {
+
+                            }
+                        }
+                    }
+                } catch (NumberFormatException e) {
+
                 }
             }
         }
