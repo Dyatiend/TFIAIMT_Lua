@@ -315,6 +315,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
         StmtType.FUNCTION_CALL -> {
             when(stmtNode.functionCall?.ident) {
                 "print" -> {
+                    currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
                     currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
                     currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
                     currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
@@ -524,6 +525,7 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
         ExprType.FUNCTION_CALL -> {
             when (exprNode.ident) {
                 "print" -> {
+                    currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V")
                     currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList"))))
                     currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
                     currentClass.pushMethRef("__VALUE__", "print", "(Ljava/util/ArrayList;)L__VALUE__;")

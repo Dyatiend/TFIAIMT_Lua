@@ -1253,7 +1253,15 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                         //res += generate(exprNode.args!!, currentClass)
                     } else {
                         res += byteArrayOf(0xBB.toByte()) // NEW
-                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).toByte()
+                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("java/util/ArrayList")))).to2ByteArray()
+                        res += byteArrayOf(0x59) // dub
+                        res += byteArrayOf(0x59) // dub
+
+                        res += byteArrayOf(0xB7.toByte()) // invokespecial
+                        res += currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V").to2ByteArray() // MethodRef VALUE Init
+
+                        res += byteArrayOf(0xBB.toByte()) // NEW
+                        res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
                         res += byteArrayOf(0x59) // dub
 
                         res += byteArrayOf(0x12.toByte()) // ldc
@@ -1261,6 +1269,11 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
 
                         res += byteArrayOf(0xB7.toByte()) // invokespecial
                         res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
+
+                        res += byteArrayOf(0xB6.toByte()) // invokevirtual
+                        res += currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z").to2ByteArray()
+
+                        res += byteArrayOf(0x57) // POP add result
                     }
 
                     res += byteArrayOf(0xB8.toByte()) // invokestatic
