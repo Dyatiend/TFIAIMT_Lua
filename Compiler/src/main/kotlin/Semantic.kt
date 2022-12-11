@@ -460,6 +460,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
             fillTables(stmtNode.actionBlock!!, currentClass)
         }
         StmtType.VAR_DEF -> {
+            currentClass.pushMethRef("__VALUE__", "getFromSeq", "(I)L__VALUE__;")
             fillTables(stmtNode.identList!!, currentClass, start, end)
 
             stmtNode.values?.let {
@@ -717,7 +718,7 @@ private fun fillTables(fieldNode: FieldNode, currentClass: ClassModel) {
     }
     fieldNode.value?.let {
         fillTables(it, currentClass)
-        currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)V")
+        currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)L__VALUE__;")
     }
 }
 

@@ -1697,7 +1697,8 @@ private fun generate(fieldNode: FieldNode, currentClass: ClassModel) : ByteArray
         res += generate(fieldNode.value!!, currentClass)
 
         res += byteArrayOf(0xB6.toByte()) // invokevirtual
-        res += currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)V").to2ByteArray()
+        res += currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)L__VALUE__;").to2ByteArray()
+        res += byteArrayOf(0x57) // POP result
     }
 
     return res

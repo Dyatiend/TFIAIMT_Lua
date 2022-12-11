@@ -2490,7 +2490,10 @@ public class __VALUE__ {
 
     public __VALUE__ getByKey(__VALUE__ key) {
         if(__type == __TYPE__.TABLE) {
-            return __tableVal.get(key);
+            if(__tableVal.containsKey(key))
+                return __tableVal.get(key);
+            else
+                return new __VALUE__();
         }
         if(__type == __TYPE__.STRING) {
             return new __VALUE__();
