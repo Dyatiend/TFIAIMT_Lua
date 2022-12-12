@@ -5,16 +5,19 @@ fun main(args: Array<String>) {
 
     val process = ProcessBuilder("../LuaCompiler/cmake-build-debug/LuaCompiler","../LuaCompiler/tests/test3.lua").start()
 
-    val rootNode = Utils.fromXML("xml.xml")!!
+    try {
+        val rootNode = Utils.fromXML("xml.xml")!!
+        fillTables(rootNode)
 
-    fillTables(rootNode)
+        classesTable.toCSV()
 
-    classesTable.toCSV()
+        generateProgram(rootNode)
 
-    generateProgram(rootNode)
-
-    val file = File("tree.dot")
-    file.writeText("")
-    Utils.printProgram(rootNode, file)
-    file.writeText(file.readText().replace("@", "").replace("nodes.", ""))
+        val file = File("tree.dot")
+        file.writeText("")
+        Utils.printProgram(rootNode, file)
+        file.writeText(file.readText().replace("@", "").replace("nodes.", ""))
+    } catch (e: Exception) {
+        println("Syntax error.")
+    }
 }
