@@ -1165,6 +1165,8 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             val second = generate(exprNode.secondOperand!!, currentClass)
 
             res += generate(exprNode.firstOperand!!, currentClass)
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "__adjust__", "()L__VALUE__;").to2ByteArray()
             res += byteArrayOf(0x59) // dub
             res += byteArrayOf(0xB6.toByte()) // invokevirtual
             res += currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I").to2ByteArray()
@@ -1184,6 +1186,8 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             val second = generate(exprNode.secondOperand!!, currentClass)
 
             res += generate(exprNode.firstOperand!!, currentClass)
+            res += byteArrayOf(0xB6.toByte()) // invokevirtual
+            res += currentClass.pushMethRef("__VALUE__", "__adjust__", "()L__VALUE__;").to2ByteArray()
             res += byteArrayOf(0x59) // dub
             res += byteArrayOf(0xB6.toByte()) // invokevirtual
             res += currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I").to2ByteArray()

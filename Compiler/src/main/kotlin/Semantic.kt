@@ -604,6 +604,7 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
         ExprType.NOT_EQUAL,
         ExprType.LOG_AND,
         ExprType.LOG_OR -> {
+            currentClass.pushMethRef("__VALUE__", "__adjust__", "()L__VALUE__;")
             currentClass.pushMethRef("__VALUE__", "__to_bool__", "()I")
             fillTables(exprNode.firstOperand!!, currentClass)
             fillTables(exprNode.secondOperand!!, currentClass)
