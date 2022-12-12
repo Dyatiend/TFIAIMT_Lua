@@ -1202,13 +1202,13 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             return res
         }
         ExprType.BIT_AND,
-        ExprType.BIT_OR -> {
+        ExprType.BIT_OR,
+        ExprType.BIT_NOT -> {
             TODO("НЕ ДЕЛАЕМ")
         }
         ExprType.UNARY_MINUS,
         ExprType.NOT,
-        ExprType.LEN,
-        ExprType.BIT_NOT -> {
+        ExprType.LEN -> {
             var res = byteArrayOf()
 
             res += generate(exprNode.firstOperand!!, currentClass)
