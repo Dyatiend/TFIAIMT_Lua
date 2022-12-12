@@ -2439,71 +2439,39 @@ public class __VALUE__ {
             }
             case INTEGER -> {
                 switch (o.__type) {
-                    case NIL, VOID, FUNC -> {
-                        return new __VALUE__();
-                    }
-                    case INTEGER -> {
-                        return new __VALUE__(o.__intVal);
-                    }
-                    case FLOAT -> {
-                        return new __VALUE__(o.__floatVal);
-                    }
-                    case BOOL -> {
-                        return new __VALUE__(o.__boolVal);
-                    }
-                    case STRING -> {
-                        return new __VALUE__(o.__stringVal);
-                    }
-                    case TABLE -> {
-                        return new __VALUE__(o.__tableVal);
-                    }
-                    case SEQ -> {
-                        return __logic_or__(o.__seqVal.get(0));
+                    case NIL, VOID, FUNC, INTEGER, FLOAT, BOOL, STRING, TABLE, SEQ -> {
+                        return new __VALUE__(this.__intVal);
                     }
                 }
             }
             case FLOAT -> {
                 switch (o.__type) {
-                    case NIL, VOID, FUNC -> {
-                        return new __VALUE__();
-                    }
-                    case INTEGER -> {
-                        return new __VALUE__(o.__intVal);
-                    }
-                    case FLOAT -> {
-                        return new __VALUE__(o.__floatVal);
-                    }
-                    case BOOL -> {
-                        return new __VALUE__(o.__boolVal);
-                    }
-                    case STRING -> {
-                        return new __VALUE__(o.__stringVal);
-                    }
-                    case TABLE -> {
-                        return new __VALUE__(o.__tableVal);
-                    }
-                    case SEQ -> {
-                        return __logic_or__(o.__seqVal.get(0));
+                    case NIL, VOID, FUNC, INTEGER, FLOAT, BOOL, STRING, TABLE, SEQ -> {
+                        return new __VALUE__(this.__floatVal);
                     }
                 }
             }
             case BOOL -> {
                 switch (o.__type) {
                     case NIL, VOID, FUNC -> {
-                        return new __VALUE__();
+                        if(__boolVal) {
+                            return new __VALUE__(__boolVal);
+                        } else {
+                            return new __VALUE__();
+                        }
                     }
                     case INTEGER -> {
                         if(__boolVal) {
-                            return new __VALUE__(o.__intVal);
-                        } else {
                             return new __VALUE__(__boolVal);
+                        } else {
+                            return new __VALUE__(o.__intVal);
                         }
                     }
                     case FLOAT -> {
                         if(__boolVal) {
-                            return new __VALUE__(o.__floatVal);
-                        } else {
                             return new __VALUE__(__boolVal);
+                        } else {
+                            return new __VALUE__(o.__floatVal);
                         }
                     }
                     case BOOL -> {
@@ -2511,16 +2479,16 @@ public class __VALUE__ {
                     }
                     case STRING -> {
                         if(__boolVal) {
-                            return new __VALUE__(o.__stringVal);
-                        } else {
                             return new __VALUE__(__boolVal);
+                        } else {
+                            return new __VALUE__(o.__stringVal);
                         }
                     }
                     case TABLE -> {
                         if(__boolVal) {
-                            return new __VALUE__(o.__tableVal);
-                        } else {
                             return new __VALUE__(__boolVal);
+                        } else {
+                            return new __VALUE__(o.__tableVal);
                         }
                     }
                     case SEQ -> {
@@ -2530,51 +2498,15 @@ public class __VALUE__ {
             }
             case STRING -> {
                 switch (o.__type) {
-                    case NIL, VOID, FUNC -> {
-                        return new __VALUE__();
-                    }
-                    case INTEGER -> {
-                        return new __VALUE__(o.__intVal);
-                    }
-                    case FLOAT -> {
-                        return new __VALUE__(o.__floatVal);
-                    }
-                    case BOOL -> {
-                        return new __VALUE__(o.__boolVal);
-                    }
-                    case STRING -> {
-                        return new __VALUE__(o.__stringVal);
-                    }
-                    case TABLE -> {
-                        return new __VALUE__(o.__tableVal);
-                    }
-                    case SEQ -> {
-                        return __logic_or__(o.__seqVal.get(0));
+                    case NIL, VOID, FUNC, INTEGER, FLOAT, BOOL, STRING, TABLE, SEQ -> {
+                        return new __VALUE__(this.__stringVal);
                     }
                 }
             }
             case TABLE -> {
                 switch (o.__type) {
-                    case NIL, VOID, FUNC -> {
-                        return new __VALUE__();
-                    }
-                    case INTEGER -> {
-                        return new __VALUE__(o.__intVal);
-                    }
-                    case FLOAT -> {
-                        return new __VALUE__(o.__floatVal);
-                    }
-                    case BOOL -> {
-                        return new __VALUE__(o.__boolVal);
-                    }
-                    case STRING -> {
-                        return new __VALUE__(o.__stringVal);
-                    }
-                    case TABLE -> {
-                        return new __VALUE__(o.__tableVal);
-                    }
-                    case SEQ -> {
-                        return __logic_or__(o.__seqVal.get(0));
+                    case NIL, VOID, FUNC, INTEGER, FLOAT, BOOL, STRING, TABLE, SEQ -> {
+                        return new __VALUE__(this.__tableVal);
                     }
                 }
             }
@@ -2590,11 +2522,8 @@ public class __VALUE__ {
             }
             case FUNC -> {
                 switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, TABLE, FUNC -> {
-                        return new __VALUE__();
-                    }
-                    case SEQ -> {
-                        return __logic_or__(o.__seqVal.get(0));
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, TABLE, FUNC, SEQ -> {
+                        return new __VALUE__(this.__funVal);
                     }
                 }
             }
