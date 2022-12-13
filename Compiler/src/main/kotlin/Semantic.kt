@@ -462,7 +462,12 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
         }
         StmtType.VAR_DEF -> {
             currentClass.pushMethRef("__VALUE__", "getFromSeq", "(I)L__VALUE__;")
-            fillTables(stmtNode.identList!!, currentClass, start, end)
+
+            if (stmtNode.values == null) {
+                fillTables(stmtNode.identList!!, currentClass, start, end)
+            } else {
+                fillTables(stmtNode.identList!!, currentClass, stmtNode.values!!.last.id + 1, end)
+            }
 
             stmtNode.values?.let {
                 fillTables(it, currentClass)

@@ -991,6 +991,18 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                     }
                 }
 
+                if(num == null) {
+                    for (it in currentClass.localVarsTable.column(item.ident)) {
+                        val f = it.key.first
+                        val s = it.key.second
+                        val n = it.value
+
+                        if (f == stmtNode.values!!.last.id + 1) {
+                            num = if (currentClass.name == "__PROGRAM__") n - 1 else n
+                        }
+                    }
+                }
+
                 res += byteArrayOf(0x3A.toByte()) // astore
                 res += num!!.toByte()
             }
