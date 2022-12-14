@@ -3,7 +3,7 @@ import java.io.File
 
 fun main(args: Array<String>) {
 
-    val process = ProcessBuilder("../LuaCompiler/cmake-build-debug/LuaCompiler","../LuaCompiler/tests/test3.lua").start()
+    val process = ProcessBuilder("../LuaCompiler/cmake-build-debug/LuaCompiler","../LuaCompiler/tests/test.lua").start()
 
     try {
         val rootNode = Utils.fromXML("xml.xml")!!
@@ -18,6 +18,7 @@ fun main(args: Array<String>) {
         Utils.printProgram(rootNode, file)
         file.writeText(file.readText().replace("@", "").replace("nodes.", ""))
     } catch (e: Exception) {
+        e.printStackTrace()
         println("Syntax error.")
     }
 }

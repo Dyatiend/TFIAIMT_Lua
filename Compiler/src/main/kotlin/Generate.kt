@@ -499,8 +499,8 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                                         res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
                                         res += byteArrayOf(0x59) // dub
 
-                                        res += byteArrayOf(0x12.toByte()) // ldc
-                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).toByte()
+                                        res += byteArrayOf(0x13.toByte()) // ldc_w
+                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).to2ByteArray()
 
                                         res += byteArrayOf(0xB7.toByte()) // invokespecial
                                         res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
@@ -515,8 +515,8 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                                         res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
                                         res += byteArrayOf(0x59) // dub
 
-                                        res += byteArrayOf(0x12.toByte()) // ldc
-                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).toByte()
+                                        res += byteArrayOf(0x13.toByte()) // ldc_w
+                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).to2ByteArray()
 
                                         res += byteArrayOf(0xB7.toByte()) // invokespecial
                                         res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
@@ -560,8 +560,8 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                                         res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
                                         res += byteArrayOf(0x59) // dub
 
-                                        res += byteArrayOf(0x12.toByte()) // ldc
-                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).toByte()
+                                        res += byteArrayOf(0x13.toByte()) // ldc_w
+                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).to2ByteArray()
 
                                         res += byteArrayOf(0xB7.toByte()) // invokespecial
                                         res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
@@ -578,8 +578,8 @@ private fun generate(stmtNode: StmtNode, currentClass: ClassModel): ByteArray {
                                         res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
                                         res += byteArrayOf(0x59) // dub
 
-                                        res += byteArrayOf(0x12.toByte()) // ldc
-                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).toByte()
+                                        res += byteArrayOf(0x13.toByte()) // ldc_w
+                                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(curVar.ident)))).to2ByteArray()
 
                                         res += byteArrayOf(0xB7.toByte()) // invokespecial
                                         res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
@@ -1109,8 +1109,8 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
             res += byteArrayOf(0x59) // dub
 
-            res += byteArrayOf(0x12.toByte()) // ldc
-            res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(exprNode.stringValue)))).toByte()
+            res += byteArrayOf(0x13.toByte()) // ldc_w
+            res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(exprNode.stringValue)))).to2ByteArray()
 
             res += byteArrayOf(0xB7.toByte()) // invokespecial
             res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
@@ -1124,8 +1124,8 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
             res += byteArrayOf(0x59) // dub
 
-            res += byteArrayOf(0x12.toByte()) // ldc
-            res += currentClass.pushConstant(Constant.integer(exprNode.intNumberValue)).toByte()
+            res += byteArrayOf(0x13.toByte()) // ldc_w
+            res += currentClass.pushConstant(Constant.integer(exprNode.intNumberValue)).to2ByteArray()
 
             res += byteArrayOf(0xB7.toByte()) // invokespecial
             res += currentClass.pushMethRef("__VALUE__", "<init>", "(I)V").to2ByteArray() // MethodRef VALUE Init
@@ -1139,8 +1139,8 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
             res += byteArrayOf(0x59) // dub
 
-            res += byteArrayOf(0x12.toByte()) // ldc
-            res += currentClass.pushConstant(Constant.integer(if(exprNode.boolValue) 1 else 0)).toByte()
+            res += byteArrayOf(0x13.toByte()) // ldc_w
+            res += currentClass.pushConstant(Constant.integer(if(exprNode.boolValue) 1 else 0)).to2ByteArray()
 
             res += byteArrayOf(0xB7.toByte()) // invokespecial
             res += currentClass.pushMethRef("__VALUE__", "<init>", "(Z)V").to2ByteArray() // MethodRef VALUE Init
@@ -1280,8 +1280,8 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
                         res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
                         res += byteArrayOf(0x59) // dub
 
-                        res += byteArrayOf(0x12.toByte()) // ldc
-                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8("")))).toByte()
+                        res += byteArrayOf(0x13.toByte()) // ldc_w
+                        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8("")))).to2ByteArray()
 
                         res += byteArrayOf(0xB7.toByte()) // invokespecial
                         res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
@@ -1535,8 +1535,8 @@ private fun generate(exprNode: ExprNode, currentClass: ClassModel): ByteArray {
             res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
             res += byteArrayOf(0x59) // dub
 
-            res += byteArrayOf(0x12.toByte()) // ldc
-            res += currentClass.pushConstant(Constant.float(exprNode.floatNumberValue.toFloat())).toByte()
+            res += byteArrayOf(0x13.toByte()) // ldc_w
+            res += currentClass.pushConstant(Constant.float(exprNode.floatNumberValue.toFloat())).to2ByteArray()
 
             res += byteArrayOf(0xB7.toByte()) // invokespecial
             res += currentClass.pushMethRef("__VALUE__", "<init>", "(F)V").to2ByteArray() // MethodRef VALUE Init
@@ -1643,8 +1643,8 @@ private fun generate(varItemNode: VarItemNode, currentClass: ClassModel) : ByteA
                 res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
                 res += byteArrayOf(0x59) // dub
 
-                res += byteArrayOf(0x12.toByte()) // ldc
-                res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident)))).toByte()
+                res += byteArrayOf(0x13.toByte()) // ldc_w
+                res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident)))).to2ByteArray()
 
                 res += byteArrayOf(0xB7.toByte()) // invokespecial
                 res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
@@ -1661,8 +1661,8 @@ private fun generate(varItemNode: VarItemNode, currentClass: ClassModel) : ByteA
                 res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
                 res += byteArrayOf(0x59) // dub
 
-                res += byteArrayOf(0x12.toByte()) // ldc
-                res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident)))).toByte()
+                res += byteArrayOf(0x13.toByte()) // ldc_w
+                res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(varItemNode.ident)))).to2ByteArray()
 
                 res += byteArrayOf(0xB7.toByte()) // invokespecial
                 res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
@@ -1699,8 +1699,8 @@ private fun generate(fieldNode: FieldNode, currentClass: ClassModel) : ByteArray
         res += currentClass.pushConstant(Constant._class(currentClass.pushConstant(Constant.utf8("__VALUE__")))).to2ByteArray()
         res += byteArrayOf(0x59) // dub
 
-        res += byteArrayOf(0x12.toByte()) // ldc
-        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(fieldNode.ident!!)))).toByte()
+        res += byteArrayOf(0x13.toByte()) // ldc_w
+        res += currentClass.pushConstant(Constant.string(currentClass.pushConstant(Constant.utf8(fieldNode.ident!!)))).to2ByteArray()
 
         res += byteArrayOf(0xB7.toByte()) // invokespecial
         res += currentClass.pushMethRef("__VALUE__", "<init>", "(Ljava/lang/String;)V").to2ByteArray() // MethodRef VALUE Init
