@@ -3,7 +3,8 @@ import java.io.File
 
 fun main(args: Array<String>) {
 
-    val process = ProcessBuilder("../LuaCompiler/cmake-build-debug/LuaCompiler","../LuaCompiler/tests/test.lua").start()
+    val process =
+        ProcessBuilder("../LuaCompiler/cmake-build-debug/LuaCompiler", "../LuaCompiler/tests/test13.lua").start()
 
     try {
         val rootNode = Utils.fromXML("xml.xml")!!

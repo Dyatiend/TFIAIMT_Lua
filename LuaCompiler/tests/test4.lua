@@ -1,17 +1,18 @@
 local function add(a,b)
    print(a, b)
-    assert(true, "a is not a number")
-    assert(false, "b is not a number")
+    assert(a < 5, "a is not a number")
+    assert(b > 10, "b is not a number")
+    print("asdasd")
     return a+b
  end
- 
+
 --  add(10)
 
 function myfunction ()
     n = n/nil
  end
  
- if pcall(add, 10, 20) then
+ if pcall(add, 1, 2) then
     print("Success")
  else
      print("Failure")

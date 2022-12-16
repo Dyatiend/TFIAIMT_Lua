@@ -1603,135 +1603,32 @@ public class __VALUE__ {
         throw new UnsupportedOperationException("Error: attempt to mod a " + this.__type + " with a " + o.__type);
     }
 
-    public __VALUE__ __concat__(__VALUE__ o) {
-
-        switch (__type) {
-            case NIL, VOID, BOOL, FUNC -> {
-                if (o.__type == __TYPE__.TABLE) {
-                    try {
-                        return this.metatableFunc(o, "__concat");
-                    } catch (UnsupportedOperationException ignored) {
-                    }
+    public static __VALUE__ xpcall(__VALUE__ func, __VALUE__ errorFunc, ArrayList<__VALUE__> args) {
+        __VALUE__ result;
+        try {
+            result = func.__invoke__(args);
+        } catch (Exception e) {
+            ArrayList<__VALUE__> parameter = new ArrayList<>();
+            parameter.add(new __VALUE__(e.getMessage()));
+            try {
+                __VALUE__ resultError = errorFunc.__invoke__(parameter);
+                if (resultError.__type == __TYPE__.VOID) {
+                    resultError.__type = __TYPE__.NIL;
                 }
-            }
-
-            case INTEGER -> {
-                switch (o.__type) {
-                    case INTEGER -> {
-                        return new __VALUE__(String.valueOf(__intVal) + String.valueOf(o.__intVal));
-                    }
-                    case FLOAT -> {
-                        return new __VALUE__(String.valueOf(__intVal) + String.valueOf(o.__floatVal));
-                    }
-                    case STRING -> {
-                        return new __VALUE__(String.valueOf(__intVal) + o.__stringVal);
-                    }
-                    case TABLE -> {
-                        try {
-                            this.metatableFunc(o, "__concat");
-                        } catch (UnsupportedOperationException ignored) {
-                        }
-                    }
-                    case SEQ -> {
-                        return __concat__(o.__seqVal.get(0));
-                    }
-                }
-            }
-            case FLOAT -> {
-                switch (o.__type) {
-                    case INTEGER -> {
-                        return new __VALUE__(String.valueOf(__floatVal) + String.valueOf(o.__intVal));
-                    }
-                    case FLOAT -> {
-                        return new __VALUE__(String.valueOf(__floatVal) + String.valueOf(o.__floatVal));
-                    }
-                    case STRING -> {
-                        return new __VALUE__(String.valueOf(__floatVal) + o.__stringVal);
-                    }
-                    case TABLE -> {
-                        try {
-                            return this.metatableFunc(o, "__concat");
-                        } catch (UnsupportedOperationException ignored) {
-                        }
-                    }
-                    case SEQ -> {
-                        return __concat__(o.__seqVal.get(0));
-                    }
-                }
-            }
-            case STRING -> {
-                switch (o.__type) {
-                    case INTEGER -> {
-                        return new __VALUE__(__stringVal + String.valueOf(o.__intVal));
-                    }
-                    case FLOAT -> {
-                        return new __VALUE__(__stringVal + String.valueOf(o.__floatVal));
-                    }
-                    case STRING -> {
-                        return new __VALUE__(__stringVal + o.__stringVal);
-                    }
-                    case TABLE -> {
-                        try {
-                            return this.metatableFunc(o, "__concat");
-                        } catch (UnsupportedOperationException ignored) {
-                        }
-                    }
-                    case SEQ -> {
-                        return __concat__(o.__seqVal.get(0));
-                    }
-                }
-            }
-            case TABLE -> {
-                switch (o.__type) {
-                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
-                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
-                            if (res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
-                        }
-                    }
-                    case SEQ -> {
-                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
-                            if (res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
-                        }
-                    }
-                    case TABLE -> {
-                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
-                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
-                            if (res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
-                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__concat"))) {
-                            __VALUE__ res = o.__metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
-                            if (res.__type == __TYPE__.SEQ)
-                                return res.__seqVal.get(0);
-                            else
-                                return res;
-                        }
-                    }
-                }
-            }
-            case SEQ -> {
-                switch (o.__type) {
-                    case INTEGER, FLOAT, STRING, TABLE -> {
-                        return __seqVal.get(0).__concat__(o);
-                    }
-                    case SEQ -> {
-                        return __seqVal.get(0).__concat__(o.__seqVal.get(0));
-                    }
-                }
+                List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(false), resultError);
+                return new __VALUE__(listParameters);
+            } catch (Exception ee) {
+                return new __VALUE__(List.of(new __VALUE__(false), new __VALUE__("error in error handling")));
             }
         }
-
-
-        throw new UnsupportedOperationException("Error: attempt to concatenate a " + this.__type + " with a " + o.__type);
+        List<__VALUE__> listParameters;
+        if (result.__type == __TYPE__.VOID) {
+            listParameters = new ArrayList<>();
+            listParameters.add(new __VALUE__(true));
+            return new __VALUE__(listParameters);
+        }
+        listParameters = Arrays.asList(new __VALUE__(true), result);
+        return new __VALUE__(listParameters);
     }
 
     public __VALUE__ __less__(__VALUE__ o) {
@@ -1741,7 +1638,7 @@ public class __VALUE__ {
                 if (o.__type == __TYPE__.TABLE) {
                     try {
                         __VALUE__ res = this.metatableFunc(o, "__lt");
-                        if(res.__type == __TYPE__.NIL
+                        if (res.__type == __TYPE__.NIL
                                 || res.__type == __TYPE__.VOID
                                 || res.__type == __TYPE__.BOOL && !res.__boolVal) {
                             return new __VALUE__(false);
@@ -2977,7 +2874,7 @@ public class __VALUE__ {
             return new __VALUE__(listParameters);
         }
         List<__VALUE__> listParameters;
-        if(result.__type == __TYPE__.VOID) {
+        if (result.__type == __TYPE__.VOID) {
             listParameters = new ArrayList<>();
             listParameters.add(new __VALUE__(true));
             return new __VALUE__(listParameters);
@@ -2986,28 +2883,135 @@ public class __VALUE__ {
         return new __VALUE__(listParameters);
     }
 
-    public static __VALUE__ xpcall(__VALUE__ func, __VALUE__ errorFunc, ArrayList<__VALUE__> args) {
-        __VALUE__ result;
-        try {
-            result = func.__invoke__(args);
-        } catch (Exception e) {
-            ArrayList<__VALUE__> parameter = new ArrayList<>();
-            parameter.add(new __VALUE__(e.getMessage()));
-            __VALUE__ resultError = errorFunc.__invoke__(parameter);
-            if(resultError.__type == __TYPE__.VOID) {
-                resultError.__type = __TYPE__.NIL;
+    public __VALUE__ __concat__(__VALUE__ o) {
+
+        switch (__type) {
+            case NIL, VOID, BOOL, FUNC -> {
+                if (o.__type == __TYPE__.TABLE) {
+                    try {
+                        return this.metatableFunc(o, "__concat");
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                }
             }
-            List<__VALUE__> listParameters = Arrays.asList(new __VALUE__(false), resultError);
-            return new __VALUE__(listParameters);
+
+            case INTEGER -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(String.valueOf(__intVal) + o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(String.valueOf(__intVal) + o.__floatVal);
+                    }
+                    case STRING -> {
+                        return new __VALUE__(__intVal + o.__stringVal);
+                    }
+                    case TABLE -> {
+                        try {
+                            this.metatableFunc(o, "__concat");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __concat__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case FLOAT -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(String.valueOf(__floatVal) + o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(String.valueOf(__floatVal) + o.__floatVal);
+                    }
+                    case STRING -> {
+                        return new __VALUE__(__floatVal + o.__stringVal);
+                    }
+                    case TABLE -> {
+                        try {
+                            return this.metatableFunc(o, "__concat");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __concat__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case STRING -> {
+                switch (o.__type) {
+                    case INTEGER -> {
+                        return new __VALUE__(__stringVal + o.__intVal);
+                    }
+                    case FLOAT -> {
+                        return new __VALUE__(__stringVal + o.__floatVal);
+                    }
+                    case STRING -> {
+                        return new __VALUE__(__stringVal + o.__stringVal);
+                    }
+                    case TABLE -> {
+                        try {
+                            return this.metatableFunc(o, "__concat");
+                        } catch (UnsupportedOperationException ignored) {
+                        }
+                    }
+                    case SEQ -> {
+                        return __concat__(o.__seqVal.get(0));
+                    }
+                }
+            }
+            case TABLE -> {
+                switch (o.__type) {
+                    case NIL, VOID, INTEGER, FLOAT, BOOL, STRING, FUNC -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case SEQ -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o.__seqVal.get(0))));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                    case TABLE -> {
+                        if (__metatable != null && __metatable.containsKey(new __VALUE__("__concat"))) {
+                            __VALUE__ res = __metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        } else if (o.__metatable != null && o.__metatable.containsKey(new __VALUE__("__concat"))) {
+                            __VALUE__ res = o.__metatable.get(new __VALUE__("__concat")).__invoke__(new ArrayList<>(List.of(this, o)));
+                            if (res.__type == __TYPE__.SEQ)
+                                return res.__seqVal.get(0);
+                            else
+                                return res;
+                        }
+                    }
+                }
+            }
+            case SEQ -> {
+                switch (o.__type) {
+                    case INTEGER, FLOAT, STRING, TABLE -> {
+                        return __seqVal.get(0).__concat__(o);
+                    }
+                    case SEQ -> {
+                        return __seqVal.get(0).__concat__(o.__seqVal.get(0));
+                    }
+                }
+            }
         }
-        List<__VALUE__> listParameters;
-        if(result.__type == __TYPE__.VOID) {
-            listParameters = new ArrayList<>();
-            listParameters.add(new __VALUE__(true));
-            return new __VALUE__(listParameters);
-        }
-        listParameters = Arrays.asList(new __VALUE__(true), result);
-        return new __VALUE__(listParameters);
+
+
+        throw new UnsupportedOperationException("Error: attempt to concatenate a " + this.__type + " with a " + o.__type);
     }
 
     private __VALUE__ metatableFunc(__VALUE__ o, String nameFunction) {

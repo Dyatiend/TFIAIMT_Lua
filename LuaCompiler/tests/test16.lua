@@ -1,3 +1,5 @@
+n = read() + 0
+
 function t()
     print(1)
     return true
@@ -8,11 +10,11 @@ function f()
     return false
 end
 
-a = f() and t()
+a = n < 10 and t()
 
 print("------")
 
-b = t() or f()
+b = n < 10 or f()
 
 print(a)
 print(b)

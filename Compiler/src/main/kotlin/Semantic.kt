@@ -334,7 +334,12 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                     currentClass.pushMethRef("__VALUE__", "pcall", "(L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
                 }
                 "xpcall" -> {
-                    currentClass.pushMethRef("__VALUE__", "xpcall", "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;")
+                    currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
+                    currentClass.pushMethRef(
+                        "__VALUE__",
+                        "xpcall",
+                        "(L__VALUE__;L__VALUE__;Ljava/util/ArrayList;)L__VALUE__;"
+                    )
                 }
                 "append" -> {
                     currentClass.pushMethRef("__VALUE__", "__append__", "(L__VALUE__;)L__VALUE__;")
@@ -354,6 +359,7 @@ private fun fillTables(stmtNode: StmtNode, currentClass: ClassModel, start: Int,
                         globalProgramClass.pushGlobalVar(stmtNode.functionCall!!.ident)
                     }
 
+                    currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
                     currentClass.pushFieldRef("__PROGRAM__", stmtNode.functionCall!!.ident, "L__VALUE__;")
                     currentClass.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
                     currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")
@@ -574,6 +580,7 @@ private fun fillTables(exprNode: ExprNode, currentClass: ClassModel) {
                         globalProgramClass.pushGlobalVar(exprNode.ident)
                     }
 
+                    currentClass.pushMethRef("java/util/ArrayList", "<init>", "()V")
                     currentClass.pushFieldRef("__PROGRAM__", exprNode.ident, "L__VALUE__;")
                     currentClass.pushMethRef("__VALUE__", "__invoke__", "([L__VALUE__;)L__VALUE__;")
                     currentClass.pushMethRef("java/util/ArrayList", "add", "(Ljava/lang/Object;)Z")

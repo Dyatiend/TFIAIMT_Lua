@@ -1,19 +1,20 @@
-operaion = read()
-n1 = read()
-n2 = read()
+print(5 + 2)
+print(5.0 + 2)
+print(5 + 2.0)
+print(5.0 + 2.0)
 
-if operaion == "+" then
-    print(n1 + n2)
-elseif operaion == "-" then
-    print(n1 - n2)
-elseif operaion == "*" then
-    print(n1 * n2)
-elseif operaion == "//" then
-    print(n1 // n2)
-elseif operaion == "%" then
-    print(n1 % n2)
-elseif operaion == ".." then
-    print(n1 .. n2)
-elseif operaion == "^" then
-    print(n1 ^ n2)
-end
+print(5 - 2)
+print(5.0 - 2)
+print(5 - 2.0)
+print(5.0 - 2.0)
+
+print(5 * 2)
+print(5.0 * 2)
+print(5 * 2.0)
+print(5.0 * 2.0)
+
+print(5 / 2)
+print(5.0 / 2)
+print(5 / 2.0)
+print(5.0 / 2.0)
+

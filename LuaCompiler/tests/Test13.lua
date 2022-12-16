@@ -1,19 +1,19 @@
 d = read()
 
-if d == "asd" then 
-	function f()
-		print(3)
+if d == "plus" then 
+	function f(a)
+		
+		a[1] = a[1] + 1
 	end
 else
-	function f()
-		print(2)
+	function f(a, b)
+		print(b)
+		a[1] = a[1] - 1
 	end
 end
 
-f()
+t = {2}
 
-function f()
-	print(1)
-end
+f(t)
+print(t[1])
 
-f()

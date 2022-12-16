@@ -17,5 +17,5 @@ Colors = enum {
 }
 
 -- finally, get our integer from the enum!
-local color = Colors.RED
+local color = Colors.GRAY
 print(color)

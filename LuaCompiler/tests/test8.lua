@@ -1,9 +1,17 @@
 count = read()
 list = {}
 for i=1, count do
-    append(list, read())
+    list[i] = read()
+    list[i] = list[i] + 0
     -- list[i] = read()
 end
+
+print("initial array:")
+
+for i = 1, #list do
+    print(list[i])
+end
+
 -- list = {6, 5, 4, 3, 2, 1}
 n = #list
 repeat
@@ -18,6 +26,8 @@ repeat
     end
     n = nn
 until n==0
+
+print("sorted array:")
 
 for i = 1, #list do
     print(list[i])
